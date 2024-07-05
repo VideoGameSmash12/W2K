@@ -1,0 +1,4 @@
+ext {
+    mc_version = "1.8.9"
+    pre_fabric = true
+}

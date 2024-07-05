@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "id": "w2k-drivers-v1_8",
+  "version": "${version}",
+  "name": "1.8.9 Drivers for W2K",
+  "description": "",
+  "authors": [],
+  "contact": {
+    "repo": "https://github.com/videogamesm12/W2K"
+  },
+  "license": "MIT",
+  "icon": "assets/w2k/icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "main": [
+      "me.videogamesm12.w2k.drivers.v1_8.W2K"
+    ],
+    "w2k-version-fetcher-driver": [
+      "me.videogamesm12.w2k.drivers.v1_8.required.W18VersionFetcherDriver"
+    ]
+  },
+  "mixins": [
+  ],
+  "depends": {
+    "minecraft": "*"
+  }
+}

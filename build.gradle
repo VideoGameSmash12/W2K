@@ -1,0 +1,88 @@
+plugins {
+    id 'fabric-loom' version '1.7-SNAPSHOT'
+    id "legacy-looming" version "1.7-SNAPSHOT" // Version must be the same as fabric-loom's
+    id 'maven-publish'
+}
+
+version = project.mod_version
+group = project.maven_group
+
+ext {
+    version = "1.8.9"
+    pre_fabric = true
+}
+
+dependencies {
+    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+
+    subprojects.each {
+        include project("${it.name}:")
+    }
+}
+
+allprojects {
+    apply plugin: 'fabric-loom'
+    apply plugin: 'maven-publish'
+    apply plugin: 'legacy-looming'
+
+    ext {
+        mc_version = "1.8.9";
+        mc_legacy_mappings_version = 541;
+        mc_mappings_version = "";
+        pre_fabric = true
+        post_seventeen = false
+    }
+
+    tasks.withType(JavaCompile).configureEach {
+        if (post_seventeen) {
+            it.options.release.set(16)
+        }
+        else {
+            it.options.release.set(8)
+        }
+    }
+
+    // Including this because without it I can't actually use mixins for some reason???
+    dependencies {
+        minecraft "com.mojang:minecraft:${project.mc_version}"
+        if (pre_fabric)
+        {
+            mappings legacy.yarn(project.mc_version, project.mc_legacy_mappings_version)
+        }
+        else
+        {
+            mappings "net.fabricmc:yarn:${project.mc_mappings_version}:v2"
+        }
+
+        modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+
+        compileOnly 'org.projectlombok:lombok:1.18.34'
+        annotationProcessor 'org.projectlombok:lombok:1.18.34'
+    }
+
+    processResources {
+        inputs.property "version", rootProject.version
+        filteringCharset "UTF-8"
+
+        filesMatching("fabric.mod.json") {
+            expand "version": rootProject.version
+        }
+    }
+
+    /*task sourcesJar(type: Jar, dependsOn: classes) {
+        archiveClassifier.set("sources")
+        from sourceSets.main.allSource
+    }*/
+}
+
+subprojects {
+    version rootProject.version
+
+    dependencies {
+        implementation rootProject
+    }
+}
+
+subprojects.each {
+    remapJar.dependsOn("${it.path}:remapJar")
+}
