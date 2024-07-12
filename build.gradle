@@ -7,12 +7,10 @@ plugins {
 version = project.mod_version
 group = project.maven_group
 
-ext {
-    version = "1.8.9"
-    pre_fabric = true
-}
-
 dependencies {
+    minecraft "com.mojang:minecraft:1.8.9"
+    mappings legacy.yarn("1.8.9", 541)
+
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
     subprojects.each {
@@ -23,11 +21,8 @@ dependencies {
 allprojects {
     apply plugin: 'fabric-loom'
     apply plugin: 'maven-publish'
-    apply plugin: 'legacy-looming'
 
     ext {
-        mc_version = "1.8.9";
-        mc_legacy_mappings_version = 541;
         mc_mappings_version = "";
         pre_fabric = true
         post_seventeen = false
@@ -44,16 +39,6 @@ allprojects {
 
     // Including this because without it I can't actually use mixins for some reason???
     dependencies {
-        minecraft "com.mojang:minecraft:${project.mc_version}"
-        if (pre_fabric)
-        {
-            mappings legacy.yarn(project.mc_version, project.mc_legacy_mappings_version)
-        }
-        else
-        {
-            mappings "net.fabricmc:yarn:${project.mc_mappings_version}:v2"
-        }
-
         modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
         compileOnly 'org.projectlombok:lombok:1.18.34'

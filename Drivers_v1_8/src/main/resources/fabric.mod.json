@@ -15,13 +15,18 @@
     "main": [
       "me.videogamesm12.w2k.drivers.v1_8.W2K"
     ],
-    "w2k-version-fetcher-driver": [
-      "me.videogamesm12.w2k.drivers.v1_8.required.W18VersionFetcherDriver"
+    "w2k-event-passthru-driver": [
+      "me.videogamesm12.w2k.drivers.v1_8.required.W18EventPassthruDriver"
+    ],
+    "w2k-version-bridge-driver": [
+      "me.videogamesm12.w2k.drivers.v1_8.required.W18VersionBridgeDriver"
     ]
   },
   "mixins": [
+    "w2k.drivers.1_8.mixins.json"
   ],
   "depends": {
-    "minecraft": "*"
+    "minecraft": "1.8.9",
+    "legacy-fabric-api": "*"
   }
 }

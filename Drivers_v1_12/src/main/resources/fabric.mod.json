@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "w2k-drivers-v1_12",
+  "version": "${version}",
+  "name": "1.12.2 Drivers for W2K",
+  "description": "",
+  "authors": [],
+  "contact": {
+    "repo": "https://github.com/videogamesm12/W2K"
+  },
+  "license": "MIT",
+  "icon": "assets/w2k/icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "main": [
+      "me.videogamesm12.w2k.drivers.v1_12.W2K"
+    ],
+    "w2k-event-passthru-driver": [
+      "me.videogamesm12.w2k.drivers.v1_12.required.W112EventPassthruDriver"
+    ],
+    "w2k-version-bridge-driver": [
+      "me.videogamesm12.w2k.drivers.v1_12.required.W112VersionBridgeDriver"
+    ]
+  },
+  "mixins": [
+    "w2k.drivers.1_12.mixins.json"
+  ],
+  "depends": {
+    "minecraft": "1.12.2",
+    "legacy-fabric-api": "*"
+  }
+}

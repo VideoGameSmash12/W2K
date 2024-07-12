@@ -1,0 +1,19 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "me.videogamesm12.w2k.drivers.v1_12.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "client": [
+    "accessor.DHAccessor",
+    "accessor.IGHAccessor",
+    "injector.BlockEntityRendererMixin",
+    "injector.ChatHudMixin",
+    "injector.ClientPlayNetworkHandlerMixin",
+    "injector.EntityRendererMixin",
+    "injector.GameRendererMixin",
+    "injector.MinecraftClientMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

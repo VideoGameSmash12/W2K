@@ -1,0 +1,7 @@
+{
+  "w2k.blackbox.command.show": "Opening the Blackbox window...",
+  "w2k.blackbox.command.status": "Blackbox is currently %s.",
+  "w2k.blackbox.command.status.inMemoryAndVisible": "in memory and visible",
+  "w2k.blackbox.command.status.inMemoryButNotVisible": "in memory, but not visible",
+  "w2k.blackbox.command.status.notInMemory": "not in memory"
+}

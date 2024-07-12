@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "w2k-supervisor",
+  "version": "${version}",
+  "name": "Supervisor",
+  "description": "Powerhouse tool that allows users to control their client",
+  "authors": [
+    "videogamesm12"
+  ],
+  "contact": {},
+  "license": "MIT",
+  "icon": "assets/w2k-supervisor/icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "me.videogamesm12.w2k.supervisor.Entrypoints"
+    ],
+    "preLaunch": [
+      "me.videogamesm12.w2k.supervisor.Entrypoints"
+    ]
+  },
+  "depends": {
+    "minecraft": ">=1.8.9"
+  },
+  "custom": {
+    "modmenu": {
+      "badges": ["library"],
+      "parent": "w2k"
+    }
+  }
+}

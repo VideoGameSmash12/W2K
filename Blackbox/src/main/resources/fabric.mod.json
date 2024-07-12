@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "id": "w2k-blackbox",
+  "version": "${version}",
+  "name": "Blackbox",
+  "description": "Supervisor's graphical interface.",
+  "authors": [
+    "videogamesm12",
+    "Alco_Rs11 (Icon)"
+  ],
+  "contact": {},
+  "license": "MIT",
+  "icon": "assets/w2k-blackbox/icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "me.videogamesm12.w2k.blackbox.Entrypoints"
+    ],
+    "w2k-blackbox": [
+      "me.videogamesm12.w2k.blackbox.theming.inbuilt.IBThemeProvider",
+      "me.videogamesm12.w2k.blackbox.theming.flatlaf.FThemeProvider",
+      "me.videogamesm12.w2k.blackbox.theming.custom.flatlaf.CFThemeProvider",
+      "me.videogamesm12.w2k.blackbox.theming.custom.intellij.CIThemeProvider"
+    ]
+  },
+  "depends": {
+    "minecraft": ">=1.8.9",
+    "w2k-supervisor": "*"
+  },
+  "custom": {
+    "modmenu": {
+      "parent": "w2k"
+    }
+  }
+}

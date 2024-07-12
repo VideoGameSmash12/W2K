@@ -12,6 +12,9 @@ import org.apache.logging.log4j.Logger;
 public class W2K implements ModInitializer
 {
     @Getter
+    private static W2K instance;
+
+    @Getter
     private static final EventBus eventBus = new EventBus();
     @Getter
     private static final Logger logger = LogManager.getLogger("W2K");
@@ -22,6 +25,8 @@ public class W2K implements ModInitializer
     @Override
     public void onInitialize()
     {
+        instance = this;
+
         logger.info("Setting up driver manager");
         driverManager = new WDriverManager();
         logger.info("Kernel successfully initialized");
