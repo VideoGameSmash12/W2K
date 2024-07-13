@@ -4,7 +4,9 @@
   "version": "${version}",
   "name": "W2K",
   "description": "",
-  "authors": [],
+  "authors": [
+    "videogamesm12"
+  ],
   "contact": {
     "repo": "https://github.com/videogamesm12/W2K"
   },

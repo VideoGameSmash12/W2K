@@ -26,5 +26,11 @@
   ],
   "depends": {
     "minecraft": "1.16.5"
+  },
+  "custom": {
+    "modmenu": {
+      "badges": ["library"],
+      "parent": "w2k"
+    }
   }
 }

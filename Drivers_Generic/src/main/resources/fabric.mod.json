@@ -18,5 +18,10 @@
   },
   "depends": {
     "minecraft": "*"
+  },
+  "custom": {
+    "modmenu": {
+      "parent": "w2k"
+    }
   }
 }

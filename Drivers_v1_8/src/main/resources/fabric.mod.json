@@ -16,7 +16,7 @@
       "me.videogamesm12.w2k.drivers.v1_8.W2K"
     ],
     "w2k-event-passthru-driver": [
-      "me.videogamesm12.w2k.drivers.v1_8.required.W18EventPassthruDriver"
+      "me.videogamesm12.w2k.drivers.v1_8.required.W18EventPassThruDriver"
     ],
     "w2k-version-bridge-driver": [
       "me.videogamesm12.w2k.drivers.v1_8.required.W18VersionBridgeDriver"
@@ -26,7 +26,12 @@
     "w2k.drivers.1_8.mixins.json"
   ],
   "depends": {
-    "minecraft": "1.8.9",
-    "legacy-fabric-api": "*"
+    "minecraft": "1.8.9"
+  },
+  "custom": {
+    "modmenu": {
+      "badges": ["library"],
+      "parent": "w2k"
+    }
   }
 }

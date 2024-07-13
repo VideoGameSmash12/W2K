@@ -9,7 +9,7 @@ import net.legacyfabric.fabric.api.client.event.lifecycle.v1.ClientLifecycleEven
 import net.minecraft.client.MinecraftClient;
 
 @WDriverMetadata(identifier = "18_event_passthru", maxVersion = "1.12.2", minVersion = "1.12.2", minProtocolVersion = 0, maxProtocolVersion = 0)
-public class W112EventPassthruDriver implements WEventPassThruDriver, ClientLifecycleEvents.ClientStarted, ClientLifecycleEvents.ClientStopping
+public class W112EventPassThruDriver implements WEventPassThruDriver, ClientLifecycleEvents.ClientStarted, ClientLifecycleEvents.ClientStopping
 {
     @Override
     public void setupStartedEvent()
