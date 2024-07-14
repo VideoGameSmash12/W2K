@@ -11,6 +11,7 @@ dependencies {
     mappings legacy.yarn("1.8.9", 541)
 
     implementation project(":Supervisor")
+    implementation "net.kyori:adventure-api:4.17.0"
 
     include compileOnly("com.formdev:flatlaf:3.0")
     include compileOnly("com.formdev:flatlaf-intellij-themes:3.0")

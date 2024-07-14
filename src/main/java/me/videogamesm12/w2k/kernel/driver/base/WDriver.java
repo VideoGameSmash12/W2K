@@ -1,6 +1,11 @@
 package me.videogamesm12.w2k.kernel.driver.base;
 
 import me.videogamesm12.w2k.kernel.W2K;
+import net.fabricmc.loader.api.FabricLoader;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public interface WDriver
 {
@@ -25,6 +30,12 @@ public interface WDriver
             return false;
         }
 
+        final List<String> missingRequiredMods = Arrays.stream(metadata.requiredMods()).filter(mod -> !FabricLoader.getInstance().isModLoaded(mod)).collect(Collectors.toList());
+        if (!missingRequiredMods.isEmpty())
+        {
+            W2K.getLogger().warn("Ignoring driver {} as the mods it depends on are missing: {}", name(), missingRequiredMods);
+            return false;
+        }
 
         return true;
     }

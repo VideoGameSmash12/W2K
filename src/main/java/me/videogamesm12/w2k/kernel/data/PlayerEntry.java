@@ -9,6 +9,10 @@ import net.minecraft.text.Text;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * <h1>PlayerEntry</h1>
+ * <p>Version-agnostic wrapper for PlayerListEntry.</p>
+ */
 @RequiredArgsConstructor
 @Getter
 public class PlayerEntry

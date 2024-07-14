@@ -1,7 +1,6 @@
 package me.videogamesm12.w2k.kernel.driver.base;
 
 import me.videogamesm12.w2k.kernel.data.PlayerEntry;
-import net.minecraft.client.network.PlayerListEntry;
 import net.minecraft.text.Text;
 
 import java.util.List;

@@ -8,8 +8,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.time.Instant;
-
 @Mixin(GameRenderer.class)
 public class GameRendererMixin
 {
@@ -23,10 +21,10 @@ public class GameRendererMixin
         }
     }
 
-    @Inject(method = "render", at = @At("RETURN"))
+    @Inject(method = "render", at = @At("TAIL"))
     public void postRender(float tickDelta, long nanoTime, CallbackInfo ci)
     {
-        Watchdog.LAST_RENDERED_TIME = Instant.now().toEpochMilli();
+        Watchdog.LAST_RENDERED_TIME = System.currentTimeMillis();
     }
 
     @Inject(method = "renderWorld(FJ)V", at = @At("HEAD"), cancellable = true)

@@ -13,8 +13,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.time.Instant;
-
 @Mixin(MinecraftClient.class)
 public class MinecraftClientMixin
 {
@@ -25,12 +23,12 @@ public class MinecraftClientMixin
      * <p>This code is what stores the timestamps.</p>
      * @param ci    CallbackInfo
      */
-    @Inject(method = "run", at = @At("RETURN"))
+    @Inject(method = "run", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/MinecraftClient;method_18228(Z)V", shift = At.Shift.AFTER))
     public void onPostRender(CallbackInfo ci)
     {
         if (Supervisor.getConfig().getWatchdogSettings().isFreezeDetectionEnabled())
         {
-            Watchdog.LAST_RENDERED_TIME = Instant.now().toEpochMilli();
+            Watchdog.LAST_RENDERED_TIME = System.currentTimeMillis();
         }
     }
 

@@ -27,7 +27,6 @@ import me.videogamesm12.w2k.supervisor.Supervisor;
 import me.videogamesm12.w2k.supervisor.api.SVComponent;
 import me.videogamesm12.w2k.supervisor.api.event.ClientFreezeEvent;
 
-import java.time.Instant;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -63,9 +62,9 @@ public class Watchdog extends Thread implements SVComponent
             }
 
             // The client hasn't rendered something in 5 seconds. This usually indicates that the game has frozen.
-            if (Instant.now().toEpochMilli() - LAST_RENDERED_TIME >= Supervisor.getConfig().getWatchdogSettings().getFreezeDetectionThreshold())
+            if (System.currentTimeMillis() - LAST_RENDERED_TIME >= Supervisor.getConfig().getWatchdogSettings().getFreezeDetectionThreshold())
             {
-                long lastRendered = Instant.now().toEpochMilli() - LAST_RENDERED_TIME;
+                long lastRendered = System.currentTimeMillis() - LAST_RENDERED_TIME;
                 W2K.getLogger().warn("The Supervisor has detected a client-side freeze. Last rendered " + lastRendered + "ms ago");
                 Supervisor.getEventBus().post(new ClientFreezeEvent(lastRendered));
             }

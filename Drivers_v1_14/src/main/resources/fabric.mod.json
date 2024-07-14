@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
-  "id": "w2k-drivers-v1_16",
+  "id": "w2k-drivers-v1_14",
   "version": "${version}",
-  "name": "1.16.5 Drivers for W2K",
+  "name": "1.14.4 Drivers for W2K",
   "description": "",
   "authors": [],
   "contact": {
@@ -12,21 +12,18 @@
   "icon": "assets/w2k/icon.png",
   "environment": "client",
   "entrypoints": {
-    "main": [
-      "me.videogamesm12.w2k.drivers.v1_16.W2K"
-    ],
     "w2k-event-passthru-driver": [
-      "me.videogamesm12.w2k.drivers.v1_16.required.W116EventPassthruDriver"
+      "me.videogamesm12.w2k.drivers.v1_14.required.W114EventPassthruDriver"
     ],
     "w2k-version-bridge-driver": [
-      "me.videogamesm12.w2k.drivers.v1_16.required.W116VersionBridgeDriver"
+      "me.videogamesm12.w2k.drivers.v1_14.required.W114VersionBridgeDriver"
     ]
   },
   "mixins": [
-    "w2k.drivers.1_16.mixins.json"
+    "w2k.drivers.1_14.mixins.json"
   ],
   "depends": {
-    "minecraft": "1.16.5"
+    "minecraft": "1.14.4"
   },
   "custom": {
     "modmenu": {

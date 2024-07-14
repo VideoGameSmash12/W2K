@@ -45,11 +45,6 @@ public class PlayerTableModel extends AbstractTableModel implements Dynamic
     @Override
     public void update()
     {
-        if (MinecraftClient.getInstance().world == null)
-        {
-            return;
-        }
-
         rows.clear();
 
         rows.addAll(Supervisor.getInstance().getOnlinePlayers().stream().map(PlayerEntry::toTableRow).collect(Collectors.toList()));
