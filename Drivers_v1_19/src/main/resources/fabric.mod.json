@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "id": "w2k-drivers-v1_19",
+  "version": "${version}",
+  "name": "1.19 Drivers for W2K",
+  "description": "",
+  "authors": [],
+  "contact": {
+    "repo": "https://github.com/videogamesm12/W2K"
+  },
+  "license": "MIT",
+  "icon": "assets/w2k/icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "main": [
+      "me.videogamesm12.w2k.drivers.v1_19.W2K"
+    ],
+    "w2k-event-passthru-driver": [
+      "me.videogamesm12.w2k.drivers.v1_19.required.W119EventPassthruDriver"
+    ],
+    "w2k-version-bridge-driver": [
+      "me.videogamesm12.w2k.drivers.v1_19.required.W119VersionBridgeDriver"
+    ]
+  },
+  "mixins": [
+    "w2k.drivers.1_19.mixins.json"
+  ],
+  "depends": {
+    "minecraft": "1.19"
+  },
+  "custom": {
+    "modmenu": {
+      "badges": ["library"],
+      "parent": "w2k"
+    }
+  }
+}

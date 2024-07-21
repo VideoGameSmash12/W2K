@@ -32,12 +32,16 @@ allprojects {
         mc_mappings_version = "";
         pre_fabric = true
         post_seventeen = false
+        seventeen = false
         post_twenty_five = false
     }
 
     tasks.withType(JavaCompile).configureEach {
-        if (post_seventeen) {
+        if (seventeen) {
             it.options.release.set(16)
+        }
+        else if (post_seventeen) {
+            it.options.release.set(17)
         }
         else if (post_twenty_five) {
             it.options.release.set(21)
@@ -50,6 +54,7 @@ allprojects {
     // Including this because without it I can't actually use mixins for some reason???
     dependencies {
         modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+        implementation "net.kyori:adventure-api:4.17.0"
 
         compileOnly 'org.projectlombok:lombok:1.18.34'
         annotationProcessor 'org.projectlombok:lombok:1.18.34'

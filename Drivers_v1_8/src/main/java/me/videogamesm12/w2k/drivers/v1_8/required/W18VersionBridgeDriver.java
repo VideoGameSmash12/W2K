@@ -1,11 +1,13 @@
 package me.videogamesm12.w2k.drivers.v1_8.required;
 
+import com.google.gson.JsonElement;
 import me.videogamesm12.w2k.drivers.v1_8.mixin.accessor.DHAccessor;
 import me.videogamesm12.w2k.drivers.v1_8.mixin.accessor.IGHAccessor;
 import me.videogamesm12.w2k.kernel.W2K;
 import me.videogamesm12.w2k.kernel.data.PlayerEntry;
 import me.videogamesm12.w2k.kernel.driver.base.WDriverMetadata;
 import me.videogamesm12.w2k.kernel.driver.base.WVersionBridgeDriver;
+import me.videogamesm12.w2k.kernel.util.ComponentUtils;
 import net.minecraft.client.ClientBrandRetriever;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.PlayerListEntry;
@@ -76,9 +78,17 @@ public class W18VersionBridgeDriver implements WVersionBridgeDriver
     }
 
     @Override
-    public String textToString(Text text)
+    public String textToString(JsonElement text)
     {
-        return text.asFormattedString();
+        final Text parsed = Text.Serializer.deserialize(text.toString());
+        if (parsed == null)
+        {
+            return "";
+        }
+        else
+        {
+            return parsed.asUnformattedString();
+        }
     }
 
     @Override
@@ -90,8 +100,9 @@ public class W18VersionBridgeDriver implements WVersionBridgeDriver
         }
 
         return MinecraftClient.getInstance().getNetworkHandler().getPlayerList().stream().map(entry ->
-                new PlayerEntry(entry.getProfile(), entry.getDisplayName(), entry.getLatency(),
-                        entry.getGameMode().getName(), entry.getModel(), entry.getSkinTexture().toString()))
+                new PlayerEntry(entry.getProfile(), ComponentUtils.stringToElement(Text.Serializer.serialize(entry.getDisplayName())),
+                        entry.getLatency(), entry.getGameMode().getName(), entry.getModel(),
+                        entry.getSkinTexture().toString()))
                 .collect(Collectors.toList());
     }
 }

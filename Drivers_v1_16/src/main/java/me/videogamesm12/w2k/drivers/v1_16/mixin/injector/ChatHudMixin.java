@@ -15,6 +15,6 @@ public class ChatHudMixin
     @Inject(method = "addMessage(Lnet/minecraft/text/Text;IIZ)V", at = @At("RETURN"))
     public void hookForEvent(Text message, int messageId, int timestamp, boolean ignoreLimit, CallbackInfo ci)
     {
-        Supervisor.getEventBus().post(new ChatMessageEvent(message));
+        Supervisor.getEventBus().post(new ChatMessageEvent(Text.Serializer.toJsonTree(message)));
     }
 }

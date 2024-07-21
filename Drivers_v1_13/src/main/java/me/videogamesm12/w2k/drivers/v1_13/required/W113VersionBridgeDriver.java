@@ -1,11 +1,14 @@
 package me.videogamesm12.w2k.drivers.v1_13.required;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 import me.videogamesm12.w2k.drivers.v1_13.mixin.accessor.DHAccessor;
 import me.videogamesm12.w2k.drivers.v1_13.mixin.accessor.IGHAccessor;
 import me.videogamesm12.w2k.kernel.W2K;
 import me.videogamesm12.w2k.kernel.data.PlayerEntry;
 import me.videogamesm12.w2k.kernel.driver.base.WDriverMetadata;
 import me.videogamesm12.w2k.kernel.driver.base.WVersionBridgeDriver;
+import me.videogamesm12.w2k.kernel.util.ComponentUtils;
 import net.minecraft.client.ClientBrandRetriever;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.LiteralText;
@@ -18,6 +21,8 @@ import java.util.stream.Collectors;
 @WDriverMetadata(identifier = "12_version_bridge", maxVersion = "1.12.2", minVersion = "1.12.2", minProtocolVersion = 0, maxProtocolVersion = 0)
 public class W113VersionBridgeDriver implements WVersionBridgeDriver
 {
+    private static final Gson GSON = new Gson();
+
     @Override
     public void disconnect()
     {
@@ -74,9 +79,17 @@ public class W113VersionBridgeDriver implements WVersionBridgeDriver
     }
 
     @Override
-    public String textToString(Text text)
+    public String textToString(JsonElement text)
     {
-        return text.asFormattedString();
+        final Text parsed = Text.Serializer.deserializeText(text.toString());
+        if (parsed == null)
+        {
+            return "";
+        }
+        else
+        {
+            return parsed.asFormattedString();
+        }
     }
 
     @Override
@@ -88,8 +101,9 @@ public class W113VersionBridgeDriver implements WVersionBridgeDriver
         }
 
         return MinecraftClient.getInstance().getNetworkHandler().getPlayerList().stream().map(entry ->
-                new PlayerEntry(entry.getProfile(), entry.getDisplayName(), entry.getLatency(),
-                        entry.getGameMode().getGameModeName(), entry.getModel(), entry.getSkinTexture().toString()))
+                new PlayerEntry(entry.getProfile(), ComponentUtils.stringToElement(Text.Serializer.serialize(entry.getDisplayName())),
+                        entry.getLatency(), entry.getGameMode().getGameModeName(), entry.getModel(),
+                        entry.getSkinTexture().toString()))
                 .collect(Collectors.toList());
     }
 }

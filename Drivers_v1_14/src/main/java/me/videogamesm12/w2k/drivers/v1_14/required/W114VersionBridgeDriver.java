@@ -1,5 +1,6 @@
 package me.videogamesm12.w2k.drivers.v1_14.required;
 
+import com.google.gson.JsonElement;
 import me.videogamesm12.w2k.drivers.v1_14.mixin.accessor.DHAccessor;
 import me.videogamesm12.w2k.drivers.v1_14.mixin.accessor.IGHAccessor;
 import me.videogamesm12.w2k.kernel.W2K;
@@ -74,9 +75,17 @@ public class W114VersionBridgeDriver implements WVersionBridgeDriver
     }
 
     @Override
-    public String textToString(Text text)
+    public String textToString(JsonElement text)
     {
-        return text.getString();
+        final Text parsed = Text.Serializer.fromJson(text);
+        if (parsed == null)
+        {
+            return "";
+        }
+        else
+        {
+            return parsed.getString();
+        }
     }
 
     @Override
@@ -88,7 +97,7 @@ public class W114VersionBridgeDriver implements WVersionBridgeDriver
         }
 
         return MinecraftClient.getInstance().getNetworkHandler().getPlayerList().stream().map(entry ->
-                new PlayerEntry(entry.getProfile(), entry.getDisplayName(), entry.getLatency(),
+                new PlayerEntry(entry.getProfile(), Text.Serializer.toJsonTree(entry.getDisplayName()), entry.getLatency(),
                         entry.getGameMode() != null ? entry.getGameMode().getName() : "", entry.getModel(),
                         entry.getSkinTexture().toString())).collect(Collectors.toList());
     }

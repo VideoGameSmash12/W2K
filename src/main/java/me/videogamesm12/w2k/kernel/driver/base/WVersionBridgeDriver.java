@@ -1,5 +1,6 @@
 package me.videogamesm12.w2k.kernel.driver.base;
 
+import com.google.gson.JsonElement;
 import me.videogamesm12.w2k.kernel.data.PlayerEntry;
 import net.minecraft.text.Text;
 
@@ -17,7 +18,7 @@ public interface WVersionBridgeDriver extends WDriver
 
     void sendMessage(String message);
 
-    String textToString(Text text);
+    String textToString(JsonElement text);
 
     List<PlayerEntry> getOnlinePlayers();
 }

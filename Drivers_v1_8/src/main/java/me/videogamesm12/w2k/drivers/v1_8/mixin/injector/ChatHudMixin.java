@@ -1,6 +1,6 @@
 package me.videogamesm12.w2k.drivers.v1_8.mixin.injector;
 
-import me.videogamesm12.w2k.kernel.W2K;
+import me.videogamesm12.w2k.kernel.util.ComponentUtils;
 import me.videogamesm12.w2k.supervisor.Supervisor;
 import me.videogamesm12.w2k.supervisor.api.event.ChatMessageEvent;
 import net.minecraft.client.gui.hud.ChatHud;
@@ -16,6 +16,6 @@ public class ChatHudMixin
     @Inject(method = "addMessage(Lnet/minecraft/text/Text;IIZ)V", at = @At("RETURN"))
     public void hookForEvent(Text message, int messageId, int timestamp, boolean ignoreLimit, CallbackInfo ci)
     {
-        Supervisor.getEventBus().post(new ChatMessageEvent(message));
+        Supervisor.getEventBus().post(new ChatMessageEvent(ComponentUtils.stringToElement(Text.Serializer.serialize(message))));
     }
 }
