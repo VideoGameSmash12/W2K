@@ -2,7 +2,7 @@ package me.videogamesm12.w2k.kernel.driver.base;
 
 import com.google.gson.JsonElement;
 import me.videogamesm12.w2k.kernel.data.PlayerEntry;
-import net.minecraft.text.Text;
+import net.kyori.adventure.text.Component;
 
 import java.util.List;
 
@@ -17,6 +17,8 @@ public interface WVersionBridgeDriver extends WDriver
     void scheduleSafeShutdown();
 
     void sendMessage(String message);
+
+    void displayMessage(Component text);
 
     String textToString(JsonElement text);
 

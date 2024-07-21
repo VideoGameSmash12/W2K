@@ -3,6 +3,8 @@ package me.videogamesm12.w2k.kernel;
 import com.google.common.eventbus.EventBus;
 import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
+import me.videogamesm12.w2k.kernel.command.WCommandManager;
+import me.videogamesm12.w2k.kernel.commands.W2KCmd;
 import me.videogamesm12.w2k.kernel.driver.WDriverManager;
 import net.fabricmc.api.ModInitializer;
 import org.apache.logging.log4j.LogManager;
@@ -21,6 +23,8 @@ public class W2K implements ModInitializer
 
     @Getter
     private WDriverManager driverManager;
+    @Getter
+    private WCommandManager commandManager;
 
     @Override
     public void onInitialize()
@@ -29,11 +33,17 @@ public class W2K implements ModInitializer
 
         logger.info("Setting up driver manager");
         driverManager = new WDriverManager();
+        logger.info("Setting up command manager");
+        commandManager = new WCommandManager();
         logger.info("Kernel successfully initialized");
 
         logger.info("Loading required drivers");
         driverManager.loadRequiredDrivers();
 
-        logger.info("We are running version " + driverManager.getVersionFetcher().getGameVersion() + "!");
+        logger.info("Loading optional drivers");
+        driverManager.loadOptionalDrivers();
+
+        logger.info("We are running version {}!", driverManager.getVersionFetcher().getGameVersion());
+        commandManager.registerCommand(W2KCmd.class);
     }
 }

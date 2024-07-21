@@ -8,7 +8,7 @@ import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 public class ComponentUtils
 {
     private static final GsonComponentSerializer MODERN_GSON_SERIALIZER = GsonComponentSerializer.gson();
-    private static final GsonComponentSerializer LEGACY_GSON_SERIALIZER = GsonComponentSerializer.builder().downsampleColors().build();
+    private static final GsonComponentSerializer LEGACY_GSON_SERIALIZER = GsonComponentSerializer.colorDownsamplingGson();
     private static final Gson GSON = new Gson();
 
     public static JsonElement serializeComponent(Component component)

@@ -8,6 +8,7 @@ import me.videogamesm12.w2k.kernel.data.PlayerEntry;
 import me.videogamesm12.w2k.kernel.driver.base.WDriverMetadata;
 import me.videogamesm12.w2k.kernel.driver.base.WVersionBridgeDriver;
 import me.videogamesm12.w2k.kernel.util.ComponentUtils;
+import net.kyori.adventure.text.Component;
 import net.minecraft.client.ClientBrandRetriever;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.LiteralText;
@@ -73,6 +74,13 @@ public class W112VersionBridgeDriver implements WVersionBridgeDriver
         }
 
         MinecraftClient.getInstance().player.sendChatMessage(message);
+    }
+
+    @Override
+    public void displayMessage(Component text)
+    {
+        MinecraftClient.getInstance().inGameHud.getChatHud().addMessage(
+                Text.Serializer.deserializeText(ComponentUtils.serializeComponentAsLegacy(text).toString()));
     }
 
     @Override

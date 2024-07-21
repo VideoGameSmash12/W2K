@@ -1,0 +1,4 @@
+{
+  "w2k.command.command_error": "Command error: %s",
+  "w2k.command.command_usage": "Usage: %s"
+}

@@ -20,6 +20,9 @@
     ],
     "w2k-version-bridge-driver": [
       "me.videogamesm12.w2k.drivers.v1_19.required.W119VersionBridgeDriver"
+    ],
+    "w2k-command-wrapper-driver": [
+      "me.videogamesm12.w2k.drivers.v1_19.required.W119CommandDriver"
     ]
   },
   "mixins": [

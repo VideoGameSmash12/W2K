@@ -18,7 +18,7 @@ public class WDriverManager
     private WVersionBridgeDriver versionBridge;
     private WVersionFetcherDriver versionFetcher;
     private WEventPassThruDriver eventPassThru;
-    private WCommandDriver commandSystem;
+    private WCommandDriver commandWrapper;
     private final Map<String, WDriver> optionalDrivers = new HashMap<>();
 
     public void loadRequiredDrivers()
@@ -26,14 +26,9 @@ public class WDriverManager
         eventPassThru = FabricLoader.getInstance().getEntrypoints("w2k-event-passthru-driver", WEventPassThruDriver.class).stream().filter(WDriver::isSupported).findAny().orElseThrow(() -> new IllegalStateException("Event pass-through driver not found!"));
         versionBridge = FabricLoader.getInstance().getEntrypoints("w2k-version-bridge-driver", WVersionBridgeDriver.class).stream().filter(WDriver::isSupported).findAny().orElseThrow(() -> new IllegalStateException("Version bridge driver not found!"));
         versionFetcher = FabricLoader.getInstance().getEntrypoints("w2k-version-fetcher-driver", WVersionFetcherDriver.class).stream().filter(WDriver::isSupported).findAny().orElseThrow(() -> new IllegalStateException("Version fetcher driver not found!"));
-        commandSystem = FabricLoader.getInstance().getEntrypoints("w2k-command-executor-driver", WCommandDriver.class).stream().filter(WDriver::isSupported).findAny().orElse(null);
+        commandWrapper = FabricLoader.getInstance().getEntrypoints("w2k-command-wrapper-driver", WCommandDriver.class).stream().filter(WDriver::isSupported).findAny().orElse(null);
 
         eventPassThru.setupEvents();
-
-        if (commandSystem != null)
-        {
-            commandSystem.onInitialize();
-        }
     }
 
     public void loadOptionalDrivers()
