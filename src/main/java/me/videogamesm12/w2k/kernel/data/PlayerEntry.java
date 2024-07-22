@@ -5,8 +5,6 @@ import com.mojang.authlib.GameProfile;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import me.videogamesm12.w2k.kernel.W2K;
-import net.kyori.adventure.text.Component;
-import net.minecraft.text.Text;
 
 import java.util.Arrays;
 import java.util.List;

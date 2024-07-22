@@ -1,4 +1,14 @@
 {
+  "chat.click.copy_to_clipboard": "Click to Copy to Clipboard",
   "w2k.command.command_error": "Command error: %s",
-  "w2k.command.command_usage": "Usage: %s"
+  "w2k.command.command_usage": "Usage: %s",
+  "w2k.command.w2k.info": "You are running %s version %s.",
+  "w2k.command.w2k.build_info.branch": "Branch: %s",
+  "w2k.command.w2k.build_info.commit_id": "Commit: %s (%s)",
+  "w2k.command.w2k.build_info.commit_time": "Commit Date: %s",
+  "w2k.command.w2k.build_info.dirty": "Dirty: %s",
+  "w2k.command.w2k.build_info.header": "Build Details:",
+  "w2k.command.w2k.build_info.origin_url": "Origin URL: %s",
+  "w2k.command.w2k.click_to_see_build_info": "Click to see build metadata",
+  "w2k.command.w2k.unable_to_fetch_build_data": "Unable to fetch build metadata"
 }

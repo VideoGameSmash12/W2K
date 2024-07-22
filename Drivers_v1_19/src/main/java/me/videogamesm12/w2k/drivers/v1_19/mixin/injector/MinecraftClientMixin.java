@@ -21,7 +21,7 @@ public class MinecraftClientMixin
      * <p>This code is what stores the timestamps.</p>
      * @param ci    CallbackInfo
      */
-    @Inject(method = "run", at = @At("TAIL"))
+    @Inject(method = "render", at = @At("RETURN"))
     public void onPostRender(CallbackInfo ci)
     {
         if (Supervisor.getConfig().getWatchdogSettings().isFreezeDetectionEnabled())

@@ -1,2 +1,11 @@
 commandError=Command error: %s
 commandUsage=Usage: %s
+w2k.command.w2k.info=You are running %s version %s.
+w2k.command.w2k.build_info.branch=Branch: %s
+w2k.command.w2k.build_info.commit_id=Commit: %s (%s)
+w2k.command.w2k.build_info.commit_time=Commit Date: %s
+w2k.command.w2k.build_info.dirty=Dirty: %s
+w2k.command.w2k.build_info.header=Build Details:
+w2k.command.w2k.build_info.origin_url=Origin URL: %s
+w2k.command.w2k.hover_to_view_build_info=Hover to see build metadata
+w2k.command.w2k.unable_to_fetch_build_data=Unable to fetch build metadata
