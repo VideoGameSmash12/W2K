@@ -2,14 +2,16 @@
   "schemaVersion": 1,
   "id": "w2k-drivers-v1_19_1",
   "version": "${version}",
-  "name": "1.19.1 - 1.19.2 Drivers for W2K",
-  "description": "",
-  "authors": [],
+  "name": "The Wild Drivers: 1984 Edition",
+  "description": "Minecraft 1.19.1 to 1.19.2 drivers for W2K",
+  "authors": [
+    "videogamesm12"
+  ],
   "contact": {
     "repo": "https://github.com/videogamesm12/W2K"
   },
   "license": "MIT",
-  "icon": "assets/w2k/icon.png",
+  "icon": "assets/w2k-drivers-v1_19_1/icon.png",
   "environment": "client",
   "entrypoints": {
     "main": [

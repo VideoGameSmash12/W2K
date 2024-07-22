@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "id": "w2k-toolbox",
+  "version": "${version}",
+  "name": "Toolbox",
+  "description": "Miscellaneous tools and commands",
+  "authors": [
+    "videogamesm12"
+  ],
+  "contact": {},
+  "license": "MIT",
+  "icon": "assets/w2k-toolbox/icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "me.videogamesm12.w2k.toolbox.Toolbox"
+    ]
+  },
+  "depends": {
+    "minecraft": ">=1.8.9",
+    "w2k": "*"
+  },
+  "custom": {
+    "modmenu": {
+      "parent": "w2k"
+    }
+  }
+}

@@ -9,7 +9,7 @@
     "repo": "https://github.com/videogamesm12/W2K"
   },
   "license": "MIT",
-  "icon": "assets/w2k/icon.png",
+  "icon": "assets/w2k-drivers-generic/icon.png",
   "environment": "client",
   "entrypoints": {
     "w2k-version-fetcher-driver": [
@@ -21,6 +21,7 @@
   },
   "custom": {
     "modmenu": {
+      "badges": ["library"],
       "parent": "w2k"
     }
   }

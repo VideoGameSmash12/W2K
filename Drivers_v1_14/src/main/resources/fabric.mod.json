@@ -2,14 +2,16 @@
   "schemaVersion": 1,
   "id": "w2k-drivers-v1_14",
   "version": "${version}",
-  "name": "1.14.4 Drivers for W2K",
-  "description": "",
-  "authors": [],
+  "name": "Village & Pillage Drivers",
+  "description": "Minecraft 1.14.4 drivers for W2K",
+  "authors": [
+    "videogamesm12"
+  ],
   "contact": {
     "repo": "https://github.com/videogamesm12/W2K"
   },
   "license": "MIT",
-  "icon": "assets/w2k/icon.png",
+  "icon": "assets/w2k-drivers-v1_14/icon.png",
   "environment": "client",
   "entrypoints": {
     "w2k-event-passthru-driver": [

@@ -3,10 +3,10 @@
   "id": "w2k-blackbox",
   "version": "${version}",
   "name": "Blackbox",
-  "description": "Supervisor's graphical interface.",
+  "description": "GUI for the Supervisor.",
   "authors": [
     "videogamesm12",
-    "Alco_Rs11 (Icon)"
+    "Alco_Rs11 (Window Icon)"
   ],
   "contact": {},
   "license": "MIT",

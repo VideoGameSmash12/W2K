@@ -2,14 +2,16 @@
   "schemaVersion": 1,
   "id": "w2k-drivers-v1_17",
   "version": "${version}",
-  "name": "1.17.1 Drivers for W2K",
-  "description": "",
-  "authors": [],
+  "name": "Caves, Cliffs, & Drivers",
+  "description": "Minecraft 1.17.1 drivers for W2K",
+  "authors": [
+    "videogamesm12"
+  ],
   "contact": {
     "repo": "https://github.com/videogamesm12/W2K"
   },
   "license": "MIT",
-  "icon": "assets/w2k/icon.png",
+  "icon": "assets/w2k-drivers-v1_17/icon.png",
   "environment": "client",
   "entrypoints": {
     "main": [
