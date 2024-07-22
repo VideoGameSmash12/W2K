@@ -8,13 +8,7 @@ public @interface WDriverMetadata
 {
     String identifier();
 
-    int minProtocolVersion();
-
-    int maxProtocolVersion();
-
-    String minVersion();
-
-    String maxVersion();
-
     String[] requiredMods() default {};
+
+    String[] breaks() default {};
 }

@@ -10,7 +10,7 @@ import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
 import net.kyori.adventure.text.Component;
 import org.apache.commons.lang3.ArrayUtils;
 
-@WDriverMetadata(identifier = "16_command_wrapper", minVersion = "1.16.5", maxVersion = "1.16.5", minProtocolVersion = 0, maxProtocolVersion = 0)
+@WDriverMetadata(identifier = "16_command_wrapper")
 public class W116CommandDriver implements WCommandDriver
 {
     @Override

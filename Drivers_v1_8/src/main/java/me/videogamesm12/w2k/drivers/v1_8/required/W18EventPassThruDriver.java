@@ -7,7 +7,7 @@ import me.videogamesm12.w2k.kernel.event.lifecycle.ClientStartedEvent;
 import me.videogamesm12.w2k.kernel.event.lifecycle.ClientStoppedEvent;
 import net.legacyfabric.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 
-@WDriverMetadata(identifier = "18_event_passthru", maxVersion = "1.8.9", minVersion = "1.8.9", minProtocolVersion = 0, maxProtocolVersion = 0, requiredMods = "legacy-fabric-api")
+@WDriverMetadata(identifier = "18_event_passthru", requiredMods = "legacy-fabric-api")
 public class W18EventPassThruDriver implements WEventPassThruDriver
 {
     @Override

@@ -13,7 +13,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Objects;
 
-@WDriverMetadata(identifier = "generic:version_fetcher", minVersion = "1.8.9", maxVersion = "*", minProtocolVersion = 0, maxProtocolVersion = 999)
+@WDriverMetadata(identifier = "generic:version_fetcher")
 public class WGenericVersionFetcherDriver implements WVersionFetcherDriver
 {
     private static MinecraftVersion version;

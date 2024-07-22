@@ -19,11 +19,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@WDriverMetadata(identifier = "12_version_bridge", maxVersion = "1.12.2", minVersion = "1.12.2", minProtocolVersion = 0, maxProtocolVersion = 0)
+@WDriverMetadata(identifier = "13_version_bridge")
 public class W113VersionBridgeDriver implements WVersionBridgeDriver
 {
-    private static final Gson GSON = new Gson();
-
     @Override
     public void disconnect()
     {

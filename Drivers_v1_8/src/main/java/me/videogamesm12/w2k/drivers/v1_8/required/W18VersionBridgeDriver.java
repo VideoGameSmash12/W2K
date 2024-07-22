@@ -18,7 +18,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@WDriverMetadata(identifier = "18_version_bridge", maxVersion = "1.8.9", minVersion = "1.8.9", minProtocolVersion = 0, maxProtocolVersion = 0)
+@WDriverMetadata(identifier = "18_version_bridge")
 public class W18VersionBridgeDriver implements WVersionBridgeDriver
 {
     @Override

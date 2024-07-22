@@ -8,7 +8,7 @@ import me.videogamesm12.w2k.kernel.event.lifecycle.ClientStoppedEvent;
 import net.legacyfabric.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.minecraft.client.MinecraftClient;
 
-@WDriverMetadata(identifier = "18_event_passthru", maxVersion = "1.12.2", minVersion = "1.12.2", minProtocolVersion = 0, maxProtocolVersion = 0)
+@WDriverMetadata(identifier = "12_event_passthru", requiredMods = "legacy-fabric-api")
 public class W112EventPassThruDriver implements WEventPassThruDriver
 {
     @Override

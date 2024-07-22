@@ -37,6 +37,13 @@ public interface WDriver
             return false;
         }
 
+        final List<String> breaks = Arrays.stream(metadata.requiredMods()).filter(mod -> FabricLoader.getInstance().isModLoaded(mod)).collect(Collectors.toList());
+        if (!breaks.isEmpty())
+        {
+            W2K.getLogger().warn("Ignoring driver {} as it breaks mods: {}", name(), breaks);
+            return false;
+        }
+
         return true;
     }
 

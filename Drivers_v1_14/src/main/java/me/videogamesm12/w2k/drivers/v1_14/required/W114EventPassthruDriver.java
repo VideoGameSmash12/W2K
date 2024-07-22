@@ -8,7 +8,7 @@ import me.videogamesm12.w2k.kernel.event.lifecycle.ClientStoppedEvent;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.minecraft.client.MinecraftClient;
 
-@WDriverMetadata(identifier = "14_event_passthru", maxVersion = "1.14.4", minVersion = "1.14.4", minProtocolVersion = 0, maxProtocolVersion = 0)
+@WDriverMetadata(identifier = "14_event_passthru")
 public class W114EventPassthruDriver implements WEventPassThruDriver, ClientLifecycleEvents.ClientStarted, ClientLifecycleEvents.ClientStopping
 {
     @Override
