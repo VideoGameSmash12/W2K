@@ -2,8 +2,11 @@ package me.videogamesm12.w2k.kernel.command;
 
 import me.videogamesm12.w2k.kernel.W2K;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class WCommandManager
 {
@@ -47,5 +50,15 @@ public class WCommandManager
     public boolean isRegistered(String name)
     {
         return commandMap.containsKey(name);
+    }
+
+    public List<String> getCommandNames()
+    {
+        return new ArrayList<>(commandMap.keySet());
+    }
+
+    public WCommand getCommand(String name)
+    {
+        return commandMap.get(name);
     }
 }

@@ -8,6 +8,7 @@
     "accessor.IGHAccessor",
     "injector.BlockEntityRendererMixin",
     "injector.ChatHudMixin",
+    "injector.ClientPlayerEntityMixin",
     "injector.ClientPlayNetworkHandlerMixin",
     "injector.EntityRendererMixin",
     "injector.GameRendererMixin",

@@ -80,6 +80,8 @@ public class W113VersionBridgeDriver implements WVersionBridgeDriver
     @Override
     public void displayMessage(Component text)
     {
+        System.out.println(ComponentUtils.serializeComponentAsLegacy(text).toString());
+
         MinecraftClient.getInstance().inGameHud.getChatHud().addMessage(
                 Text.Serializer.deserializeText(ComponentUtils.serializeComponentAsLegacy(text).toString()));
     }
