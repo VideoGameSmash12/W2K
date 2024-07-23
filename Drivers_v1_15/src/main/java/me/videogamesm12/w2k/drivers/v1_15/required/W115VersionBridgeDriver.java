@@ -4,6 +4,7 @@ import com.google.gson.JsonElement;
 import me.videogamesm12.w2k.drivers.v1_15.mixin.accessor.DHAccessor;
 import me.videogamesm12.w2k.drivers.v1_15.mixin.accessor.IGHAccessor;
 import me.videogamesm12.w2k.kernel.W2K;
+import me.videogamesm12.w2k.kernel.data.EntityEntry;
 import me.videogamesm12.w2k.kernel.data.PlayerEntry;
 import me.videogamesm12.w2k.kernel.driver.base.WDriverMetadata;
 import me.videogamesm12.w2k.kernel.driver.base.WVersionBridgeDriver;
@@ -11,12 +12,14 @@ import me.videogamesm12.w2k.kernel.util.ComponentUtils;
 import net.kyori.adventure.text.Component;
 import net.minecraft.client.ClientBrandRetriever;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.entity.EntityType;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @WDriverMetadata(identifier = "15_version_bridge")
 public class W115VersionBridgeDriver implements WVersionBridgeDriver
@@ -109,5 +112,23 @@ public class W115VersionBridgeDriver implements WVersionBridgeDriver
                 new PlayerEntry(entry.getProfile(), Text.Serializer.toJsonTree(entry.getDisplayName()), entry.getLatency(),
                         entry.getGameMode() != null ? entry.getGameMode().getName() : "", entry.getModel(),
                         entry.getSkinTexture().toString())).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<EntityEntry> getNearbyEntities()
+    {
+        if (MinecraftClient.getInstance().world == null)
+        {
+            return Collections.emptyList();
+        }
+
+        return StreamSupport.stream(MinecraftClient.getInstance().world.getEntities().spliterator(), false)
+                .map(entity -> new EntityEntry(Text.Serializer.toJsonTree(
+                        entity.getDisplayName() != null ? entity.getDisplayName() : new LiteralText(entity.getEntityName())),
+                        EntityType.getId(entity.getType()).toString(),
+                        String.format("%s, %s, %s", entity.getX(), entity.getY(), entity.getZ()),
+                        entity.getEntityId(),
+                        entity.getUuid()))
+                .collect(Collectors.toList());
     }
 }

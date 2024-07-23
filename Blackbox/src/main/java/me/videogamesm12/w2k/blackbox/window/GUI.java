@@ -1,7 +1,6 @@
 package me.videogamesm12.w2k.blackbox.window;
 
 import lombok.Getter;
-import me.videogamesm12.w2k.blackbox.Configuration;
 import me.videogamesm12.w2k.kernel.W2K;
 import me.videogamesm12.w2k.blackbox.window.menu.W2KMenu;
 import me.videogamesm12.w2k.blackbox.Blackbox;
@@ -16,6 +15,7 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.io.InputStream;
+import java.util.ConcurrentModificationException;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -59,6 +59,7 @@ public class GUI extends JFrame
         // TODO: Consider adding icons for each tab. It might make the UI look fancier.
         tabbedPane.addTab("General", new MainTab());
         tabbedPane.addTab("Players", new PlayersTab());
+        tabbedPane.addTab("Entities", new EntitiesTab());
         // End of component setup
 
         // Sets up timers
@@ -91,8 +92,20 @@ public class GUI extends JFrame
                 if (Blackbox.getInstance().getConfig().isAutoRefreshEnabled()
                         && tabbedPane.getSelectedComponent() instanceof Dynamic)
                 {
-                    Dynamic dynamicTab = (Dynamic) tabbedPane.getSelectedComponent();
-                    dynamicTab.update();
+                    try
+                    {
+                        Dynamic dynamicTab = (Dynamic) tabbedPane.getSelectedComponent();
+                        dynamicTab.update();
+                    }
+                    // As bad of a practice as this is, this is a necessary evil sometimes since we're accessing data
+                    //  from another thread and this is by design
+                    catch (ConcurrentModificationException ignored)
+                    {
+                    }
+                    catch (Throwable ex)
+                    {
+                        W2K.getLogger().error("Couldn't update current tab", ex);
+                    }
                 }
             }
         }, 0, 1000);

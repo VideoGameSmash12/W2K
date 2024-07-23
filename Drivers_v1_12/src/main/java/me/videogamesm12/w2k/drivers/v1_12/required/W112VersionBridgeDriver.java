@@ -1,9 +1,11 @@
 package me.videogamesm12.w2k.drivers.v1_12.required;
 
 import com.google.gson.JsonElement;
+import me.videogamesm12.w2k.drivers.v1_12.mixin.accessor.ClientWorldAccessor;
 import me.videogamesm12.w2k.drivers.v1_12.mixin.accessor.DHAccessor;
 import me.videogamesm12.w2k.drivers.v1_12.mixin.accessor.IGHAccessor;
 import me.videogamesm12.w2k.kernel.W2K;
+import me.videogamesm12.w2k.kernel.data.EntityEntry;
 import me.videogamesm12.w2k.kernel.data.PlayerEntry;
 import me.videogamesm12.w2k.kernel.driver.base.WDriverMetadata;
 import me.videogamesm12.w2k.kernel.driver.base.WVersionBridgeDriver;
@@ -11,11 +13,15 @@ import me.videogamesm12.w2k.kernel.util.ComponentUtils;
 import net.kyori.adventure.text.Component;
 import net.minecraft.client.ClientBrandRetriever;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
+import net.minecraft.text.TranslatableText;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @WDriverMetadata(identifier = "12_version_bridge")
@@ -109,6 +115,25 @@ public class W112VersionBridgeDriver implements WVersionBridgeDriver
                 new PlayerEntry(entry.getProfile(), ComponentUtils.stringToElement(Text.Serializer.serialize(entry.getDisplayName())),
                         entry.getLatency(), entry.getGameMode().getGameModeName(), entry.getModel(),
                         entry.getSkinTexture().toString()))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<EntityEntry> getNearbyEntities()
+    {
+        if (MinecraftClient.getInstance().world == null)
+        {
+            return Collections.emptyList();
+        }
+
+        return ((ClientWorldAccessor) MinecraftClient.getInstance().world).getEntities().stream()
+                .map(entity -> new EntityEntry(ComponentUtils.stringToElement(Text.Serializer.serialize(
+                        entity.getCustomName() != null && !entity.getCustomName().isEmpty() ? new LiteralText(entity.getCustomName()) : new TranslatableText(entity.getTranslationKey()))),
+                        EntityType.getId(entity) != null ? Objects.requireNonNull(EntityType.getId(entity)).toString() :
+                                entity instanceof PlayerEntity ? "minecraft:player" : "minecraft:unknown",
+                        String.format("%s, %s, %s", entity.x, entity.y, entity.z),
+                        entity.getEntityId(),
+                        entity.getUuid()))
                 .collect(Collectors.toList());
     }
 }

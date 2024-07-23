@@ -17,7 +17,7 @@ public class SysTray
         if (SystemTray.isSupported())
         {
             icon = new TrayIcon(Toolkit.getDefaultToolkit().createImage(
-                    Blackbox.class.getClassLoader().getResource("assets/w2k-blackbox/supervisor_icon.png")),
+                    Blackbox.class.getClassLoader().getResource("assets/w2k-blackbox/icon.png")),
                     "Blackbox - Click to Open");
             icon.setImageAutoSize(true);
             icon.addMouseListener(new MouseAdapter()
