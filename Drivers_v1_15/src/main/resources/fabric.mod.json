@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "id": "w2k-drivers-v1_15",
+  "version": "${version}",
+  "name": "Buzzy Drivers",
+  "description": "Minecraft 1.15.2 drivers for W2K",
+  "authors": [
+    "videogamesm12"
+  ],
+  "contact": {
+    "repo": "https://github.com/videogamesm12/W2K"
+  },
+  "license": "MIT",
+  "icon": "assets/w2k-drivers-v1_15/icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "w2k-event-passthru-driver": [
+      "me.videogamesm12.w2k.drivers.v1_15.required.W115EventPassthruDriver"
+    ],
+    "w2k-version-bridge-driver": [
+      "me.videogamesm12.w2k.drivers.v1_15.required.W115VersionBridgeDriver"
+    ],
+    "w2k-command-wrapper-driver": [
+      "me.videogamesm12.w2k.drivers.v1_15.required.W115CommandDriver"
+    ]
+  },
+  "mixins": [
+    "w2k.drivers.1_15.mixins.json"
+  ],
+  "depends": {
+    "minecraft": "1.15.2"
+  },
+  "custom": {
+    "modmenu": {
+      "badges": ["library"],
+      "parent": "w2k"
+    }
+  }
+}

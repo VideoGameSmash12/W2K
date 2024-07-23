@@ -2,7 +2,6 @@ package me.videogamesm12.w2k.blackbox.window.menu;
 
 import me.videogamesm12.w2k.blackbox.window.general.Dynamic;
 import me.videogamesm12.w2k.blackbox.window.menu.w2k.ModMenu;
-import me.videogamesm12.w2k.blackbox.window.menu.w2k.ModulesMenu;
 
 import javax.swing.*;
 import java.util.Queue;
@@ -18,7 +17,7 @@ public class W2KMenu extends JMenu implements Dynamic
     {
         super("W2K");
         //--
-        add(new ModulesMenu());
+        //add(new ModulesMenu());
         add(hooksMenu);
     }
 

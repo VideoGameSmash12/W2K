@@ -1,0 +1,69 @@
+package me.videogamesm12.w2k.drivers.v1_15.mixin.injector;
+
+import me.videogamesm12.w2k.kernel.W2K;
+import me.videogamesm12.w2k.supervisor.Supervisor;
+import me.videogamesm12.w2k.supervisor.components.flags.Flags;
+import me.videogamesm12.w2k.supervisor.components.watchdog.Watchdog;
+import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.client.MinecraftClient;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+@Mixin(MinecraftClient.class)
+public class MinecraftClientMixin
+{
+    /**
+     * <p>Supervisor's freeze detection works by injecting some code at the tail-end of the game's rendering method to
+     *  store a timestamp for when the last time a frame successfully rendered occurs, then periodically checking
+     *  through another thread if it exceeds 5 seconds.</p>
+     * <p>This code is what stores the timestamps.</p>
+     * @param ci    CallbackInfo
+     */
+    @Inject(method = "run", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/MinecraftClient;render(Z)V", shift = At.Shift.AFTER))
+    public void onPostRender(CallbackInfo ci)
+    {
+        if (Supervisor.getConfig().getWatchdogSettings().isFreezeDetectionEnabled())
+        {
+            Watchdog.LAST_RENDERED_TIME = System.currentTimeMillis();
+        }
+    }
+
+    /**
+     * <p>This forces the Supervisor to properly shut down after the client has crashed if a mod like Not Enough Crashes is not present.</p>
+     * <p>If the crash was intentionally caused by the Supervisor, this reverts also the flag if Not Enough Crashes was detected to avoid a potential softlock.</p>
+     * @param ci    CallbackInfo
+     */
+    @Inject(method = "cleanUpAfterCrash", at = @At("RETURN"))
+    public void onCleanUpAfterCrash(CallbackInfo ci)
+    {
+        if (!FabricLoader.getInstance().isModLoaded("notenoughcrashes"))
+        {
+            Supervisor.getInstance().shutdown();
+        }
+        else
+        {
+            Flags flags = Supervisor.getInstance().getFlags();
+
+            if (flags.isSupposedToCrash())
+            {
+                flags.setSupposedToCrash(false);
+            }
+        }
+    }
+
+    /**
+     * <p>This will intentionally crash the client if the relevant flags are set.</p>
+     * @param ci    CallbackInfo
+     */
+    @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/MinecraftClient;tick()V", shift = At.Shift.AFTER))
+    public void intentionallyCrash(CallbackInfo ci)
+    {
+        if (Supervisor.getInstance().getFlags().isSupposedToCrash())
+        {
+            W2K.getLogger().info("Hey, want to see a magic trick?");
+            int lol = 0 / 0;
+        }
+    }
+}
