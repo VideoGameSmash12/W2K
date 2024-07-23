@@ -3,7 +3,7 @@
   "id": "w2k-drivers-v1_17",
   "version": "${version}",
   "name": "Caves, Cliffs, & Drivers",
-  "description": "Minecraft 1.17.1 drivers for W2K",
+  "description": "Minecraft 1.17.1 & 1.18.2 drivers for W2K",
   "authors": [
     "videogamesm12"
   ],
@@ -31,7 +31,7 @@
     "w2k.drivers.1_17.mixins.json"
   ],
   "depends": {
-    "minecraft": "1.17.1"
+    "minecraft": ["1.17.1", "1.18.2"]
   },
   "custom": {
     "modmenu": {
