@@ -12,6 +12,7 @@ public enum Experiments
 {
     COMMAND_LINE_LAF_OVERRIDE,
     DEFAULT_LAF_BASED_ON_SYSTEM_CONFIG,
+    DRASTIC_NON_PLAYER_ENTITY_REMOVAL_OPTION,
     EXPERIMENTS_EXISTENCE_ACKNOWLEDGED;
 
     private static List<Experiments> enabled = null;

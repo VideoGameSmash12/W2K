@@ -20,6 +20,7 @@ import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -88,6 +89,21 @@ public class W18VersionBridgeDriver implements WVersionBridgeDriver
     {
         MinecraftClient.getInstance().inGameHud.getChatHud().addMessage(
                 Text.Serializer.deserialize(ComponentUtils.serializeComponentAsLegacy(text).toString()));
+    }
+
+    @Override
+    public void removeEntitiesWithExceptions(String... exclusions)
+    {
+        if (MinecraftClient.getInstance().world == null)
+        {
+            return;
+        }
+
+        ((ClientWorldAccessor) MinecraftClient.getInstance().world).getEntities().stream().filter(entity ->
+                Arrays.stream(exclusions).noneMatch(type -> type.equalsIgnoreCase(((EntityAccessor) entity).getSavedEntityId() != null ?
+                        ((EntityAccessor) entity).getSavedEntityId() :
+                        entity instanceof PlayerEntity ? "minecraft:player" : "minecraft:unknown"))).forEach(entity ->
+                MinecraftClient.getInstance().world.removeEntity(entity.getEntityId()));
     }
 
     @Override

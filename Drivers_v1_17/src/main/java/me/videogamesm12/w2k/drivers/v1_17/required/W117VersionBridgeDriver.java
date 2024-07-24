@@ -12,12 +12,16 @@ import me.videogamesm12.w2k.kernel.util.ComponentUtils;
 import net.kyori.adventure.text.Component;
 import net.minecraft.client.ClientBrandRetriever;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -84,6 +88,19 @@ public class W117VersionBridgeDriver implements WVersionBridgeDriver
     {
         MinecraftClient.getInstance().inGameHud.getChatHud().addMessage(
                 Text.Serializer.fromJson(ComponentUtils.serializeComponent(text)));
+    }
+
+    @Override
+    public void removeEntitiesWithExceptions(String... exclusions)
+    {
+        if (MinecraftClient.getInstance().world == null)
+        {
+            return;
+        }
+
+        StreamSupport.stream(MinecraftClient.getInstance().world.getEntities().spliterator(), true).filter(entity ->
+                Arrays.stream(exclusions).noneMatch(type -> type.equalsIgnoreCase(EntityType.getId(entity.getType()) != null ? Objects.requireNonNull(EntityType.getId(entity.getType())).toString() :
+                        entity instanceof PlayerEntity ? "minecraft:player" : "minecraft:unknown"))).forEach(entity -> MinecraftClient.getInstance().world.removeEntity(entity.getId(), Entity.RemovalReason.DISCARDED));
     }
 
     @Override

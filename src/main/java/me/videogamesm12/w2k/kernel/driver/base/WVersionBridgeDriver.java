@@ -21,6 +21,8 @@ public interface WVersionBridgeDriver extends WDriver
 
     void displayMessage(Component text);
 
+    void removeEntitiesWithExceptions(String... exclusions);
+
     String textToString(JsonElement text);
 
     List<PlayerEntry> getOnlinePlayers();

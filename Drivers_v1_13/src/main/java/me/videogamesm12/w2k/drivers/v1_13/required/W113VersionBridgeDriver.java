@@ -2,6 +2,7 @@ package me.videogamesm12.w2k.drivers.v1_13.required;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
+import me.videogamesm12.w2k.drivers.v1_13.mixin.accessor.ClientWorldAccessor;
 import me.videogamesm12.w2k.drivers.v1_13.mixin.accessor.DHAccessor;
 import me.videogamesm12.w2k.drivers.v1_13.mixin.accessor.IGHAccessor;
 import me.videogamesm12.w2k.kernel.W2K;
@@ -14,9 +15,11 @@ import net.kyori.adventure.text.Component;
 import net.minecraft.client.ClientBrandRetriever;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -83,10 +86,22 @@ public class W113VersionBridgeDriver implements WVersionBridgeDriver
     @Override
     public void displayMessage(Component text)
     {
-        System.out.println(ComponentUtils.serializeComponentAsLegacy(text).toString());
-
         MinecraftClient.getInstance().inGameHud.getChatHud().addMessage(
                 Text.Serializer.deserializeText(ComponentUtils.serializeComponentAsLegacy(text).toString()));
+    }
+
+    @Override
+    public void removeEntitiesWithExceptions(String... exclusions)
+    {
+        if (MinecraftClient.getInstance().world == null)
+        {
+            return;
+        }
+
+        ((ClientWorldAccessor) MinecraftClient.getInstance().world).getEntities().stream().filter(entity ->
+                Arrays.stream(exclusions).noneMatch(type -> type.equalsIgnoreCase(EntityType.getId(entity.method_15557()) != null ? Objects.requireNonNull(EntityType.getId(entity.method_15557())).toString() :
+                        entity instanceof PlayerEntity ? "minecraft:player" : "minecraft:unknown"))).forEach(entity ->
+                MinecraftClient.getInstance().world.removeEntity(entity.getEntityId()));
     }
 
     @Override

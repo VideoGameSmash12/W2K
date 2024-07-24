@@ -154,6 +154,11 @@ public class Supervisor extends Thread
         return W2K.getInstance().getDriverManager().getVersionBridge().getNearbyEntities();
     }
 
+    public void removeAllNonPlayerEntities()
+    {
+        W2K.getInstance().getDriverManager().getVersionBridge().removeEntitiesWithExceptions("minecraft:player", "minecraft:unknown");
+    }
+
     public void shutdown()
     {
         saveConfiguration();

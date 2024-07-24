@@ -1,5 +1,6 @@
 package me.videogamesm12.w2k.blackbox.window.menu;
 
+import me.videogamesm12.w2k.kernel.Experiments;
 import me.videogamesm12.w2k.supervisor.Configuration;
 import me.videogamesm12.w2k.supervisor.Supervisor;
 
@@ -14,11 +15,38 @@ public class MitigationsMenu extends JMenu
         // GLOBAL
         final Configuration config = Supervisor.getConfig();
 
-        // RENDERING
+        // OPTIONS
         add(setupRenderingMenu(config));    // RENDER
         add(setupNetworkingMenu(config));   // NETWORK
         addSeparator();                     //--
         add(setupDrasticMenu());            // DRASTIC
+        if (Experiments.experimentEnabled(Experiments.DRASTIC_NON_PLAYER_ENTITY_REMOVAL_OPTION))
+        {
+            add(setupExperimentalMenu());
+        }
+    }
+
+    private JMenu setupExperimentalMenu()
+    {
+        final JMenu menu = new JMenu("Experimental");
+        menu.setToolTipText("Funny stuff happens here.");
+
+        final JMenuItem disconnect = new JMenuItem("Remove non-player entities");
+        disconnect.setToolTipText("Removes all nearby non-player entities from memory on the client's side.");
+        disconnect.addActionListener((e) ->
+        {
+            try
+            {
+                Supervisor.getInstance().removeAllNonPlayerEntities();
+            }
+            catch (IllegalStateException | IllegalArgumentException ex)
+            {
+                JOptionPane.showMessageDialog(this, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        });
+        menu.add(disconnect);
+
+        return menu;
     }
 
     private JMenu setupDrasticMenu()
