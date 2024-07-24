@@ -10,7 +10,7 @@ import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 
-@Parameters(name = "w2k", usage = "/<command> [details]")
+@Parameters(name = "w2k", usage = "/<command> [details | experiments]")
 public class W2KCmd extends WCommand
 {
     @Override

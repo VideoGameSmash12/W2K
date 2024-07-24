@@ -69,6 +69,5 @@ public enum FlatLAFThemes implements ITheme
     @Override
     public void showOptionalMessage()
     {
-
     }
 }

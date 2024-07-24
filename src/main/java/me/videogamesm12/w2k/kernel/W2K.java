@@ -4,6 +4,7 @@ import com.google.common.eventbus.EventBus;
 import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
 import me.videogamesm12.w2k.kernel.command.WCommandManager;
+import me.videogamesm12.w2k.kernel.commands.ExperimentsCmd;
 import me.videogamesm12.w2k.kernel.commands.W2KCmd;
 import me.videogamesm12.w2k.kernel.driver.WDriverManager;
 import net.fabricmc.api.ModInitializer;
@@ -45,5 +46,16 @@ public class W2K implements ModInitializer
 
         logger.info("We are running version {}!", driverManager.getVersionFetcher().getGameVersion());
         commandManager.registerCommand(W2KCmd.class);
+        if (Experiments.experimentEnabled(Experiments.EXPERIMENTS_EXISTENCE_ACKNOWLEDGED))
+        {
+            commandManager.registerCommand(ExperimentsCmd.class);
+        }
+
+        // Experiments
+        if (!Experiments.getEnabledExperiments().isEmpty())
+        {
+            logger.warn("[!] Experiments have been enabled. Expect some instability. List of enabled experiments:");
+            Experiments.getEnabledExperiments().forEach(experiment -> logger.warn("[!]  - {}", experiment.name()));
+        }
     }
 }

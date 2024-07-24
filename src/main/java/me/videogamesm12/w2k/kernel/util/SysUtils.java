@@ -1,5 +1,11 @@
 package me.videogamesm12.w2k.kernel.util;
 
+import com.llamalad7.mixinextras.lib.apache.commons.ArrayUtils;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import net.fabricmc.loader.api.SemanticVersion;
+import net.fabricmc.loader.api.VersionParsingException;
+
 public class SysUtils
 {
     public static OperatingSystem getOperatingSystem()
@@ -13,6 +19,11 @@ public class SysUtils
         else return OperatingSystem.OTHER;
     }
 
+    public static OperatingSystemVersion getOperatingSystemVersion()
+    {
+        return OperatingSystemVersion.fromString(System.getProperty("os.version").toLowerCase());
+    }
+
     public enum OperatingSystem
     {
         WINDOWS,
@@ -20,5 +31,36 @@ public class SysUtils
         LINUX,
         SOLARIS,
         OTHER
+    }
+
+    @RequiredArgsConstructor
+    @Getter
+    public static class OperatingSystemVersion
+    {
+        private static final OperatingSystemVersion unknown = new OperatingSystemVersion(0, 0, 0, "", "");
+        //--
+        private final int major;
+        private final int minor;
+        private final int patch;
+        private final String additional;
+        private final String build;
+
+        public static OperatingSystemVersion fromString(String value)
+        {
+            try
+            {
+                final SemanticVersion version = SemanticVersion.parse(value);
+
+                return new OperatingSystemVersion(version.getVersionComponent(0),
+                        version.getVersionComponentCount() >= 1 ? version.getVersionComponent(1) : 0,
+                        version.getVersionComponentCount() >= 2 ? version.getVersionComponent(2) : 0,
+                        version.getPrereleaseKey().orElse(""),
+                        version.getBuildKey().orElse(""));
+            }
+            catch (VersionParsingException ex)
+            {
+                return unknown;
+            }
+        }
     }
 }
