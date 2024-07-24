@@ -45,7 +45,7 @@ public class ThemeMenu extends JMenu
                 themeItem.setSelected(Blackbox.getInstance().getConfig().getTheme().equalsIgnoreCase(themeId));
                 themeItem.addActionListener((e) ->
                 {
-                    W2K.getLogger().info("Switching theme to " + theme.getThemeName() + "...");
+                    W2K.getLogger().info("Switching theme to {}...", theme.getThemeName());
                     //--
                     ITheme originalTheme = ThemeRegistry.getTheme(Blackbox.getInstance().getConfig().getTheme());
                     Blackbox.getInstance().getConfig().setTheme(themeId);

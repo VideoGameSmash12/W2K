@@ -33,7 +33,17 @@ public class MitigationsMenu extends JMenu
         //--
         final JMenuItem disconnect = new JMenuItem("Disconnect");
         disconnect.setToolTipText("Disconnects you from the server you are currently connected to.");
-        disconnect.addActionListener((e) -> Supervisor.getInstance().disconnect());
+        disconnect.addActionListener((e) ->
+        {
+            try
+            {
+                Supervisor.getInstance().disconnect();
+            }
+            catch (IllegalStateException | IllegalArgumentException ex)
+            {
+                JOptionPane.showMessageDialog(this, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        });
         menu.add(disconnect);
         //--
         final JMenuItem shutdownSafe = new JMenuItem("Shutdown");

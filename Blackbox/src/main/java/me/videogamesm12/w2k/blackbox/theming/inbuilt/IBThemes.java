@@ -59,13 +59,6 @@ public enum IBThemes implements ITheme
     @Override
     public void apply()
     {
-        Arrays.stream(UIManager.getInstalledLookAndFeels()).forEach(style ->
-        {
-            W2K.getLogger().info("DEBUG, NAME - {}", style.getName());
-            W2K.getLogger().info("DEBUG, CLASS - {}", style.getClassName());
-            W2K.getLogger().info("DEBUG, TOSTRING - {}", style.toString());
-        });
-
         try
         {
             UIManager.setLookAndFeel(themeClass);
