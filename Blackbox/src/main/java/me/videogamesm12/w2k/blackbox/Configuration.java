@@ -21,6 +21,7 @@ public class Configuration
 {
     private boolean enhancedListingEnabled = false;
     private boolean showOnStartupEnabled = false;
+    private boolean systemTrayEnabled = true;
     private boolean ignoringFreezesDuringStartup = true;
     private boolean autoRefreshEnabled = true;
     private String theme = Experiments.experimentEnabled(Experiments.DEFAULT_LAF_BASED_ON_SYSTEM_CONFIG) ? getDefaultTheme() : "DARK";

@@ -32,7 +32,7 @@ public class W119VersionBridgeDriver implements WVersionBridgeDriver
             throw new IllegalStateException("Not connected to a server");
         }
 
-        MinecraftClient.getInstance().getNetworkHandler().onDisconnected(Text.literal("Disconnected by Supervisor"));
+        MinecraftClient.getInstance().getNetworkHandler().getConnection().disconnect(Text.literal("Disconnected by Supervisor"));
     }
 
     @Override

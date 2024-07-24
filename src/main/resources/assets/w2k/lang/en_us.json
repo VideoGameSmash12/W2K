@@ -26,5 +26,7 @@
   "w2k.experiment.default_laf_based_on_system_config.name": "OS-Aware Initial Blackbox Themes",
   "w2k.experiment.default_laf_based_on_system_config.description": "Changes the behavior of the Blackbox when setting up a fresh installation to use a theme based on the system you're using and how it's configured instead of defaulting to a Material Dark theme.",
   "w2k.experiment.experiments_existence_acknowledged.name": "W2K Experiments-related Commands & Interface",
-  "w2k.experiment.experiments_existence_acknowledged.description": "Adds commands and other additional interactive features related to W2K's experiments."
+  "w2k.experiment.experiments_existence_acknowledged.description": "Adds commands and other additional interactive features related to W2K's experiments.",
+  "w2k.experiment.supervisor_catches_crashes.name": "Crash Detection",
+  "w2k.experiment.supervisor_catches_crashes.description": "New feature in which components like the Blackbox can detect a client crash and prompt the user to open the automatically generated crash report directly."
 }

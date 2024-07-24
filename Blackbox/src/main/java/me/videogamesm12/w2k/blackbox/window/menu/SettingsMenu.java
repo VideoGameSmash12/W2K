@@ -15,6 +15,8 @@ public class SettingsMenu extends JMenu
         autoRefresh.addActionListener(e -> Blackbox.getInstance().getConfig().setAutoRefreshEnabled(autoRefresh.isSelected()));
         JCheckBoxMenuItem showOnStartup = new JCheckBoxMenuItem("Show on start-up", Blackbox.getInstance().getConfig().isShowOnStartupEnabled());
         showOnStartup.addActionListener(e -> Blackbox.getInstance().getConfig().setShowOnStartupEnabled(showOnStartup.isSelected()));
+        JCheckBoxMenuItem systemTrayEnabled = new JCheckBoxMenuItem("Add icon to system tray", Blackbox.getInstance().getConfig().isSystemTrayEnabled());
+        systemTrayEnabled.addActionListener(e -> Blackbox.getInstance().getConfig().setSystemTrayEnabled(systemTrayEnabled.isSelected()));
         JCheckBoxMenuItem ignoreClientFreezes = new JCheckBoxMenuItem("Ignore client freezes on start-up", Blackbox.getInstance().getConfig().isIgnoringFreezesDuringStartup());
         ignoreClientFreezes.addActionListener(e -> Blackbox.getInstance().getConfig().setIgnoringFreezesDuringStartup(ignoreClientFreezes.isSelected()));
         //--
@@ -32,6 +34,7 @@ public class SettingsMenu extends JMenu
         addSeparator();
         add(autoRefresh);
         add(showOnStartup);
+        add(systemTrayEnabled);
         add(ignoreClientFreezes);
     }
 }

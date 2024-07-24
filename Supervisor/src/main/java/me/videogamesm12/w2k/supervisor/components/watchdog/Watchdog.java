@@ -22,10 +22,7 @@
 
 package me.videogamesm12.w2k.supervisor.components.watchdog;
 
-import com.google.common.eventbus.Subscribe;
-import me.videogamesm12.w2k.kernel.Experiments;
 import me.videogamesm12.w2k.kernel.W2K;
-import me.videogamesm12.w2k.kernel.event.lifecycle.ClientCrashedEvent;
 import me.videogamesm12.w2k.supervisor.Supervisor;
 import me.videogamesm12.w2k.supervisor.api.SVComponent;
 import me.videogamesm12.w2k.supervisor.api.event.ClientFreezeEvent;
@@ -70,7 +67,7 @@ public class Watchdog extends Thread implements SVComponent
             if (System.currentTimeMillis() - LAST_RENDERED_TIME >= Supervisor.getConfig().getWatchdogSettings().getFreezeDetectionThreshold())
             {
                 long lastRendered = System.currentTimeMillis() - LAST_RENDERED_TIME;
-                W2K.getLogger().warn("The Supervisor has detected a client-side freeze. Last rendered " + lastRendered + "ms ago");
+                W2K.getLogger().warn("The Supervisor has detected a client-side freeze. Last rendered {}ms ago", lastRendered);
                 Supervisor.getEventBus().post(new ClientFreezeEvent(lastRendered));
             }
         }, 0, 5, TimeUnit.SECONDS);

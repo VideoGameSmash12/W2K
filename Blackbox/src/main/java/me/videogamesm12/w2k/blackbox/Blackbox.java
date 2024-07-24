@@ -2,6 +2,7 @@ package me.videogamesm12.w2k.blackbox;
 
 import com.google.common.eventbus.Subscribe;
 import lombok.Getter;
+import me.videogamesm12.w2k.blackbox.command.BlackboxCmd;
 import me.videogamesm12.w2k.blackbox.window.tool.crashpad.Crashpad;
 import me.videogamesm12.w2k.kernel.Experiments;
 import me.videogamesm12.w2k.kernel.W2K;
@@ -14,6 +15,7 @@ import me.videogamesm12.w2k.blackbox.theming.ThemeRegistry;
 import me.videogamesm12.w2k.blackbox.theming.inbuilt.IBThemes;
 import me.videogamesm12.w2k.blackbox.window.GUI;
 import me.videogamesm12.w2k.blackbox.window.SysTray;
+import me.videogamesm12.w2k.supervisor.api.event.ClientFreezeEvent;
 import net.fabricmc.loader.api.FabricLoader;
 
 import javax.swing.*;
@@ -42,12 +44,12 @@ public class Blackbox extends Thread
 
     @Getter
     private Configuration config;
-
     @Getter
     private GUI mainWindow;
-
     @Getter
     private SysTray systemTrayIcon;
+    @Getter
+    private boolean freezesIgnored;
 
     @Override
     public void run()
@@ -60,7 +62,8 @@ public class Blackbox extends Thread
         ThemeRegistry.setupThemes();
         try
         {
-            if (Experiments.experimentEnabled(Experiments.COMMAND_LINE_LAF_OVERRIDE) && System.getProperty("me.videogamesm12.w2k.blackbox_theme") != null)
+            if (Experiments.experimentEnabled(Experiments.COMMAND_LINE_LAF_OVERRIDE)
+                    && System.getProperty("me.videogamesm12.w2k.blackbox_theme") != null)
             {
                 config.setTheme(System.getProperty("me.videogamesm12.w2k.blackbox_theme"));
             }
@@ -79,6 +82,8 @@ public class Blackbox extends Thread
         {
             startup();
         }
+
+        W2K.getInstance().getCommandManager().registerCommand(BlackboxCmd.class);
     }
     
     @Subscribe
@@ -99,9 +104,34 @@ public class Blackbox extends Thread
     }
 
     @Subscribe
+    public void onClientFreeze(ClientFreezeEvent event)
+    {
+        if (config.isIgnoringFreezesDuringStartup() && !Supervisor.getInstance().getFlags().isGameStartedYet() ||
+                mainWindow != null && mainWindow.isVisible() || freezesIgnored)
+        {
+            return;
+        }
+
+        int response = JOptionPane.showConfirmDialog(Blackbox.getInstance().getMainWindow(),
+                "Your client froze. Would you like to open the Blackbox?", "Yikes!",
+                JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+
+        if (response == JOptionPane.YES_OPTION)
+        {
+            openWindow();
+        }
+        else
+        {
+            freezesIgnored = true;
+        }
+    }
+
+    @Subscribe
     public void onClientCrashed(ClientCrashedEvent event)
     {
-        int response = JOptionPane.showConfirmDialog(Blackbox.getInstance().getMainWindow(), "Your client crashed. Would you like to view the crash report?", "Uh oh!", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+        int response = JOptionPane.showConfirmDialog(Blackbox.getInstance().getMainWindow(),
+                "Your client crashed. Would you like to view the crash report?", "Uh oh!",
+                JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
 
         if (response == JOptionPane.YES_OPTION)
         {
@@ -113,7 +143,8 @@ public class Blackbox extends Thread
                     final Crashpad crashpad = new Crashpad(event.getCrashReportFile());
                     final AtomicBoolean done = new AtomicBoolean(false);
                     crashpad.setVisible(true);
-                    crashpad.setIconImage(Blackbox.getInstance().getMainWindow() != null ? Blackbox.getInstance().getMainWindow().getIconImage() : null);
+                    crashpad.setIconImage(Blackbox.getInstance().getMainWindow() != null ?
+                            Blackbox.getInstance().getMainWindow().getIconImage() : null);
 
                     // Awful hacks below
                     crashpad.addWindowListener(new WindowAdapter()
@@ -145,7 +176,9 @@ public class Blackbox extends Thread
                     }
                     catch (Throwable ex)
                     {
-                        JOptionPane.showMessageDialog(Blackbox.getInstance().getMainWindow(), "We weren't able to open Notepad. The crash report is located at " + event.getCrashReportFile().getAbsolutePath() + ".");
+                        JOptionPane.showMessageDialog(Blackbox.getInstance().getMainWindow(),
+                                "We weren't able to open Notepad. The crash report is located at "
+                                        + event.getCrashReportFile().getAbsolutePath() + ".");
                     }
 
                     break;
@@ -158,7 +191,10 @@ public class Blackbox extends Thread
 
     private void startup()
     {
-        setupSystemTrayIcon();
+        if (config.isSystemTrayEnabled())
+        {
+            setupSystemTrayIcon();
+        }
 
         if (config.isShowOnStartupEnabled() && mainWindow == null)
         {

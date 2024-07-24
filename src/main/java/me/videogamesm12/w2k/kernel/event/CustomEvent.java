@@ -12,8 +12,8 @@ import lombok.Setter;
 public abstract class CustomEvent
 {
     /**
-     * Returns whether the event was cancelled. Events don't necessarily need to support being cancelled, but you're
-     * strongly advised to do support it anyway.
+     * Whether the event was cancelled. Events don't necessarily need to support being cancelled, but you're strongly
+     * advised to support it anyway.
      */
     private boolean cancelled;
 }
