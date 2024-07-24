@@ -2,6 +2,7 @@ package me.videogamesm12.w2k.blackbox;
 
 import com.google.common.eventbus.Subscribe;
 import lombok.Getter;
+import me.videogamesm12.w2k.kernel.Experiments;
 import me.videogamesm12.w2k.kernel.W2K;
 import me.videogamesm12.w2k.kernel.event.lifecycle.ClientStartedEvent;
 import me.videogamesm12.w2k.kernel.event.lifecycle.ClientStoppedEvent;
@@ -53,6 +54,11 @@ public class Blackbox extends Thread
         ThemeRegistry.setupThemes();
         try
         {
+            if (Experiments.experimentEnabled(Experiments.COMMAND_LINE_LAF_OVERRIDE) && System.getProperty("me.videogamesm12.w2k.blackbox_theme") != null)
+            {
+                config.setTheme(System.getProperty("me.videogamesm12.w2k.blackbox_theme"));
+            }
+
             ThemeRegistry.getTheme(config.getTheme()).apply();
         }
         catch (Exception ex)

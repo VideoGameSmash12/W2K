@@ -21,6 +21,8 @@
   "w2k.command.w2k.click_to_see_build_info": "Click to see build metadata",
   "w2k.command.w2k.unable_to_fetch_build_data": "Unable to fetch build metadata",
 
+  "w2k.experiment.command_line_laf_override.name": "Command-line Blackbox Theme Override",
+  "w2k.experiment.command_line_laf_override.description": "Instructs the Blackbox to override the theme it uses when launching the game with one defined in the command-line Java option \"me.videogamesm12.w2k.blackbox_theme\" if set.",
   "w2k.experiment.default_laf_based_on_system_config.name": "OS-Aware Initial Blackbox Themes",
   "w2k.experiment.default_laf_based_on_system_config.description": "Changes the behavior of the Blackbox when setting up a fresh installation to use a theme based on the system you're using and how it's configured instead of defaulting to a Material Dark theme.",
   "w2k.experiment.experiments_existence_acknowledged.name": "W2K Experiments-related Commands & Interface",
