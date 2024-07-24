@@ -22,7 +22,10 @@
 
 package me.videogamesm12.w2k.supervisor.components.watchdog;
 
+import com.google.common.eventbus.Subscribe;
+import me.videogamesm12.w2k.kernel.Experiments;
 import me.videogamesm12.w2k.kernel.W2K;
+import me.videogamesm12.w2k.kernel.event.lifecycle.ClientCrashedEvent;
 import me.videogamesm12.w2k.supervisor.Supervisor;
 import me.videogamesm12.w2k.supervisor.api.SVComponent;
 import me.videogamesm12.w2k.supervisor.api.event.ClientFreezeEvent;
@@ -40,7 +43,7 @@ public class Watchdog extends Thread implements SVComponent
     @Override
     public String identifier()
     {
-        return "wnt:watchdog";
+        return "w2k:watchdog";
     }
 
     @Override
@@ -52,6 +55,8 @@ public class Watchdog extends Thread implements SVComponent
     @Override
     public void run()
     {
+        W2K.getEventBus().register(this);
+
         freezeDetector.scheduleAtFixedRate(() ->
         {
             // Has the game even started up yet? Is freeze detection even enabled?

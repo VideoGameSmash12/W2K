@@ -3,8 +3,11 @@ package me.videogamesm12.w2k.kernel.util;
 import com.llamalad7.mixinextras.lib.apache.commons.ArrayUtils;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import me.videogamesm12.w2k.kernel.W2K;
 import net.fabricmc.loader.api.SemanticVersion;
 import net.fabricmc.loader.api.VersionParsingException;
+
+import java.io.IOException;
 
 public class SysUtils
 {
@@ -22,6 +25,14 @@ public class SysUtils
     public static OperatingSystemVersion getOperatingSystemVersion()
     {
         return OperatingSystemVersion.fromString(System.getProperty("os.version").toLowerCase());
+    }
+
+    public static void execute(String... args) throws IOException, InterruptedException
+    {
+        W2K.getLogger().info("THE GREAT CORNHOLIO NEEDS YOUR BUNGHOLIO TO GIVE YOUR TEEPEE TO ME");
+        W2K.getLogger().info(String.join(" ", args));
+
+        Process process = Runtime.getRuntime().exec(args);
     }
 
     public enum OperatingSystem

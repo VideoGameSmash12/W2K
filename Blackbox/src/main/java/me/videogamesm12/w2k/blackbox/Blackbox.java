@@ -2,8 +2,10 @@ package me.videogamesm12.w2k.blackbox;
 
 import com.google.common.eventbus.Subscribe;
 import lombok.Getter;
+import me.videogamesm12.w2k.blackbox.window.tool.crashpad.Crashpad;
 import me.videogamesm12.w2k.kernel.Experiments;
 import me.videogamesm12.w2k.kernel.W2K;
+import me.videogamesm12.w2k.kernel.event.lifecycle.ClientCrashedEvent;
 import me.videogamesm12.w2k.kernel.event.lifecycle.ClientStartedEvent;
 import me.videogamesm12.w2k.kernel.event.lifecycle.ClientStoppedEvent;
 import me.videogamesm12.w2k.kernel.util.SysUtils;
@@ -14,7 +16,11 @@ import me.videogamesm12.w2k.blackbox.window.GUI;
 import me.videogamesm12.w2k.blackbox.window.SysTray;
 import net.fabricmc.loader.api.FabricLoader;
 
+import javax.swing.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Blackbox extends Thread
 {
@@ -90,6 +96,64 @@ public class Blackbox extends Thread
     public void onClientStopped(ClientStoppedEvent event)
     {
         Configuration.save(config);
+    }
+
+    @Subscribe
+    public void onClientCrashed(ClientCrashedEvent event)
+    {
+        int response = JOptionPane.showConfirmDialog(Blackbox.getInstance().getMainWindow(), "Your client crashed. Would you like to view the crash report?", "Uh oh!", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+
+        if (response == JOptionPane.YES_OPTION)
+        {
+            switch (SysUtils.getOperatingSystem())
+            {
+                default:
+                case LINUX:
+                {
+                    final Crashpad crashpad = new Crashpad(event.getCrashReportFile());
+                    final AtomicBoolean done = new AtomicBoolean(false);
+                    crashpad.setVisible(true);
+                    crashpad.setIconImage(Blackbox.getInstance().getMainWindow() != null ? Blackbox.getInstance().getMainWindow().getIconImage() : null);
+
+                    // Awful hacks below
+                    crashpad.addWindowListener(new WindowAdapter()
+                    {
+                        @Override
+                        public void windowClosed(WindowEvent e)
+                        {
+                            super.windowClosed(e);
+                            done.set(true);
+                        }
+                    });
+                    while (true)
+                    {
+                        if (done.get() || !crashpad.isVisible())
+                        {
+                            break;
+                        }
+
+                        continue;
+                    }
+
+                    break;
+                }
+                case WINDOWS:
+                {
+                    try
+                    {
+                        SysUtils.execute("notepad", event.getCrashReportFile().getAbsolutePath());
+                    }
+                    catch (Throwable ex)
+                    {
+                        JOptionPane.showMessageDialog(Blackbox.getInstance().getMainWindow(), "We weren't able to open Notepad. The crash report is located at " + event.getCrashReportFile().getAbsolutePath() + ".");
+                    }
+
+                    break;
+                }
+            }
+        }
+
+        event.setCancelled(true);
     }
 
     private void startup()

@@ -32,4 +32,6 @@ public class Flags
     private boolean gameStartedYet;
 
     private boolean supposedToCrash;
+
+    private boolean shutdownPostCrashAllowed = false;
 }
