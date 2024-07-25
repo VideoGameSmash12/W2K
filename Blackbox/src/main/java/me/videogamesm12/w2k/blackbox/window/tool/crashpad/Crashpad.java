@@ -11,8 +11,8 @@ public class Crashpad extends JFrame
 {
     public Crashpad(File file)
     {
-        super("Crashpad");
-        setName("Crashpad");
+        super("Helper");
+        setName("Helper");
         setMinimumSize(new Dimension(640, 360));
         setPreferredSize(new Dimension(854, 480));
 

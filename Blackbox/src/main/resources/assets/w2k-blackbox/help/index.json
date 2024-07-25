@@ -1,0 +1,33 @@
+{
+  "Welcome": "assets/w2k-blackbox/help/main.html",
+  "What's being worked on?": "assets/w2k-blackbox/help/experiments.html",
+  "Blackbox": {
+    "About the Blackbox": "assets/w2k-blackbox/help/blackbox/about.html",
+    "Tabs": {
+      "General": "assets/w2k-blackbox/help/blackbox/tabs/general.html",
+      "Players": "assets/w2k-blackbox/help/blackbox/tabs/players.html",
+      "Entities": "assets/w2k-blackbox/help/blackbox/tabs/entities.html",
+      "Maps": "assets/w2k-blackbox/help/blackbox/tabs/maps.html",
+      "Inventory": "assets/w2k-blackbox/help/blackbox/tabs/inventory.html"
+    },
+    "Configuration": {
+      "Changing the themes": "assets/w2k-blackbox/help/blackbox/configuration/changing-themes.html",
+      "Creating your own themes": "assets/w2k-blackbox/help/blackbox/configuration/creating-own-themes.html"
+    }
+  },
+  "Supervisor": {
+    "About the Supervisor": "assets/w2k-blackbox/help/supervisor/about.html",
+    "What is the purpose of the Supervisor?": "assets/w2k-blackbox/help/supervisor/purpose.html"
+  },
+  "Poker": {
+    "About Poker": "assets/w2k-blackbox/help/poker/about.html",
+    "Supported Mods": {
+      "Hotbars+": "assets/w2k-blackbox/help/poker/supported/hotbars-plus.html",
+      "Meteor Client": "assets/w2k-blackbox/help/poker/supported/meteor.html",
+      "Wurst": "assets/w2k-blackbox/help/poker/supported/wurst.html"
+    }
+  },
+  "Toolbox": {
+    "About the Toolbox": "assets/w2k-blackbox/help/toolbox/about.html"
+  }
+}

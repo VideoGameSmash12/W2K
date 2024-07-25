@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public enum Experiments
 {
+    BLACKBOX_HELP_WINDOW,
     COMMAND_LINE_LAF_OVERRIDE,
     DEFAULT_LAF_BASED_ON_SYSTEM_CONFIG,
     EXPERIMENTS_EXISTENCE_ACKNOWLEDGED,

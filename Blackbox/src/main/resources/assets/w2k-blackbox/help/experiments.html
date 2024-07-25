@@ -1,0 +1,62 @@
+<html lang="en">
+    <head>
+        <title>What is being worked on?</title>
+        <style>
+            body
+            {
+                margin: 8px;
+            }
+
+            .big
+            {
+                font-size: 20px;
+            }
+
+            .code
+            {
+                font-family: Monospace;
+            }
+        </style>
+    </head>
+    <body>
+        <span class="big">What is being worked on?</span>
+        <p>A new feature of W2K (compared to W95 and WNT, its predecessors) is an optional, opt-in experiment system.
+            This allows you to continue to run the latest version of W2K without having to sacrifice stability issues
+            that might be caused by unfinished/unstable/untested features that were added to be experimented with.</p>
+        <p>To enable experiments, you need to add <span class="code">-Dme.videogamesm12.w2k.enabled_experiments=</span>
+            (with the internal names of the experiments in question appended at the end, separated by commas) to your
+            instance's Java launch options. Experimental features can only be disabled by modifying the aforementioned
+            launch options.</p>
+        <p>The following experiments are currently available at this moment in time:</p>
+        <ul>
+            <li>
+                <b>BLACKBOX_HELP_WINDOW</b>
+                <p>Offers this help window as a tool in the Blackbox.</p>
+                <br>
+            </li>
+            <li>
+                <b>COMMAND_LINE_LAF_OVERRIDE</b>
+                <p>A means to override the theme used by the Blackbox through a command-line parameter.</p>
+                <br>
+            </li>
+            <li>
+                <b>DEFAULT_LAF_BASED_ON_SYSTEM_CONFIG</b>
+                <p>Experimental behavior that instructs the Blackbox to use differing defaults for its theme based on
+                    your system configuration.</p>
+                <br>
+            </li>
+            <li>
+                <b>EXPERIMENTS_EXISTENCE_ACKNOWLEDGED</b>
+                <p>User-facing mentions and interfaces for Experiments through in-game commands.</p>
+                <br>
+            </li>
+            <li>
+                <b>SUPERVISOR_CATCHES_CRASHES</b>
+                <p>Crash detection in the Supervisor that catches a standard client crash and prompts the user with the
+                    option to view the automatically generated crash report. Might be improved upon later to add more
+                    options in the future.</p>
+                <br>
+            </li>
+        </ul>
+    </body>
+</html>

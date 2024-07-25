@@ -1,6 +1,7 @@
 package me.videogamesm12.w2k.blackbox.window;
 
 import lombok.Getter;
+import me.videogamesm12.w2k.blackbox.window.tool.helper.Helper;
 import me.videogamesm12.w2k.kernel.W2K;
 import me.videogamesm12.w2k.blackbox.window.menu.W2KMenu;
 import me.videogamesm12.w2k.blackbox.Blackbox;
@@ -23,6 +24,8 @@ public class GUI extends JFrame
 {
     @Getter
     private Console console;
+    @Getter
+    private Helper helper;
     //--
     private final JMenuBar menuBar;
     private final JTabbedPane tabbedPane;
@@ -126,6 +129,16 @@ public class GUI extends JFrame
         }
 
         console.setVisible(true);
+    }
+
+    public void openHelperWindow()
+    {
+        if (helper == null)
+        {
+            helper = new Helper();
+        }
+
+        helper.setVisible(true);
     }
 
     public void setupIcon()
