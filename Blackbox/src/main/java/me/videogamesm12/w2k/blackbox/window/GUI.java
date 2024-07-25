@@ -146,7 +146,7 @@ public class GUI extends JFrame
         try
         {
             // Loads the icon from disk.
-            InputStream iconStream = Blackbox.class.getClassLoader().getResourceAsStream("assets/w2k-blackbox/icon.png");
+            InputStream iconStream = Blackbox.class.getClassLoader().getResourceAsStream("assets/w2k-blackbox/icons/default/icon.png");
             setIconImage(ImageIO.read(iconStream));
         }
         catch (Exception ex)

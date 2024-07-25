@@ -1,26 +1,18 @@
 package me.videogamesm12.w2k.blackbox.window.tool.helper;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
 import me.videogamesm12.w2k.blackbox.Blackbox;
 import me.videogamesm12.w2k.blackbox.window.tool.helper.tab.AbstractHelperTab;
 import me.videogamesm12.w2k.blackbox.window.tool.helper.tab.MainHelperTab;
+import me.videogamesm12.w2k.kernel.W2K;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
-import javax.swing.tree.*;
 import java.awt.*;
-import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.Arrays;
-import java.util.Objects;
+import java.io.InputStream;
 
 public class Helper extends JFrame
 {
-    private final Gson gson = new Gson();
-
     public Helper()
     {
         super("Help");
@@ -66,61 +58,17 @@ public class Helper extends JFrame
         // Finally, we do this
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         setLocation(dim.width/2 - getSize().width/2, dim.height/2 - getSize().height/2);
+
+        try
+        {
+            InputStream iconStream = Blackbox.class.getClassLoader().getResourceAsStream("assets/w2k-blackbox/icons/default/helper.png");
+            setIconImage(ImageIO.read(iconStream));
+        }
+        catch (IOException ex)
+        {
+            W2K.getLogger().error("Failed to read icon for Helper", ex);
+        }
+
         pack();
-    }
-
-    public File getCustomPagesFolder()
-    {
-        final File folder = new File(Blackbox.getFolder(), "knowledge");
-        folder.mkdirs();
-        return folder;
-    }
-
-    public TreeModel getTreeModel()
-    {
-        final JsonElement jsonElement = gson.fromJson(new InputStreamReader(Objects.requireNonNull(Blackbox.class
-                .getClassLoader().getResourceAsStream("assets/w2k-blackbox/help/index.json"))), JsonElement.class);
-
-        return new DefaultTreeModel(getTreeNode("Help", jsonElement));
-    }
-
-    public MutableTreeNode getTreeNode(String name, JsonElement element)
-    {
-        final DefaultMutableTreeNode node;
-
-        if (element.isJsonObject())
-        {
-            node = name.isEmpty() ? new DefaultMutableTreeNode() : new DefaultMutableTreeNode(name);
-            JsonObject object = element.getAsJsonObject();
-            object.entrySet().forEach(entry -> node.add(getTreeNode(entry.getKey(), entry.getValue())));
-        }
-        else if (element.isJsonPrimitive())
-        {
-            final JsonPrimitive primitive = element.getAsJsonPrimitive();
-
-            if (primitive.isString())
-            {
-                node = new PageTreeNode(name, primitive.getAsString());
-            }
-            else
-            {
-                node = new DefaultMutableTreeNode();
-            }
-        }
-        else if (element.isJsonArray())
-        {
-            node = new DefaultMutableTreeNode();
-
-            for (JsonElement member : element.getAsJsonArray())
-            {
-                node.add(getTreeNode("", member));
-            }
-        }
-        else
-        {
-            node = new DefaultMutableTreeNode();
-        }
-
-        return node;
     }
 }

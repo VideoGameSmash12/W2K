@@ -20,7 +20,6 @@
  * OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-
 package me.videogamesm12.w2k.blackbox.theming;
 
 public interface ITheme

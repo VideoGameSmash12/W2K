@@ -22,7 +22,6 @@
 
 package me.videogamesm12.w2k.blackbox.theming;
 
-
 import me.videogamesm12.w2k.blackbox.Blackbox;
 
 import javax.swing.*;
@@ -40,6 +39,11 @@ public interface IThemeType
         if (Blackbox.getInstance().getMainWindow().getConsole() != null)
         {
             SwingUtilities.updateComponentTreeUI(Blackbox.getInstance().getMainWindow().getConsole());
+        }
+
+        if (Blackbox.getInstance().getMainWindow().getHelper() != null)
+        {
+            SwingUtilities.updateComponentTreeUI(Blackbox.getInstance().getMainWindow().getHelper());
         }
     }
 }
