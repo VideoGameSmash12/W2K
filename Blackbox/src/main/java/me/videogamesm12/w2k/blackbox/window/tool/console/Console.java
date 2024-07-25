@@ -27,6 +27,7 @@ public class Console extends JFrame
         layout.setVerticalGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(tabs,
                 GroupLayout.Alignment.TRAILING));
         addTab(new MainChatTab());
+        addTab(new FantasiaTab());
 
         // Set up the menu bar
         final JMenuBar menuBar = new JMenuBar();
