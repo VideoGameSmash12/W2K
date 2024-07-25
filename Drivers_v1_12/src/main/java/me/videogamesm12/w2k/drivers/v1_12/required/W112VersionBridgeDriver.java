@@ -7,6 +7,7 @@ import me.videogamesm12.w2k.drivers.v1_12.mixin.accessor.IGHAccessor;
 import me.videogamesm12.w2k.drivers.v1_12.mixin.accessor.PersistentStateManagerAccessor;
 import me.videogamesm12.w2k.kernel.W2K;
 import me.videogamesm12.w2k.kernel.data.EntityEntry;
+import me.videogamesm12.w2k.kernel.data.InventoryEntry;
 import me.videogamesm12.w2k.kernel.data.MapEntry;
 import me.videogamesm12.w2k.kernel.data.PlayerEntry;
 import me.videogamesm12.w2k.kernel.driver.base.WDriverMetadata;
@@ -17,14 +18,15 @@ import net.minecraft.client.ClientBrandRetriever;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.item.Item;
 import net.minecraft.item.map.MapState;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 @WDriverMetadata(identifier = "12_version_bridge")
@@ -154,5 +156,47 @@ public class W112VersionBridgeDriver implements WVersionBridgeDriver
                     return new MapEntry(state.id, String.valueOf(state.scale), String.valueOf(state.dimensionId),
                             state.xCenter, state.zCenter, false, state.colors);
                 }).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<InventoryEntry> getInventory()
+    {
+        if (MinecraftClient.getInstance().player == null)
+        {
+            return Collections.emptyList();
+        }
+
+        final PlayerInventory inventory = MinecraftClient.getInstance().player.inventory;
+        final List<InventoryEntry> entries = new ArrayList<>();
+        final AtomicInteger slot = new AtomicInteger(0);
+
+        entries.addAll(inventory.field_15082.stream().map(entry ->
+                new InventoryEntry(ComponentUtils.serializeComponentAsLegacy(Component.text(entry.getCustomName())),
+                        entry.getItem() != null && Item.REGISTRY.getIdentifier(entry.getItem()) != null ?
+                                Item.REGISTRY.getIdentifier(entry.getItem()).toString() : "minecraft:unknown",
+                        entry.getCount(),
+                        entry.getDamage(),
+                        String.valueOf(slot.getAndIncrement()),
+                        entry.getNbt() != null ? entry.getNbt().toString() : null)).collect(Collectors.toList()));
+
+        entries.addAll(inventory.field_15083.stream().map(entry ->
+                new InventoryEntry(ComponentUtils.serializeComponentAsLegacy(Component.text(entry.getCustomName())),
+                        entry.getItem() != null && Item.REGISTRY.getIdentifier(entry.getItem()) != null ?
+                                Item.REGISTRY.getIdentifier(entry.getItem()).toString() : "minecraft:unknown",
+                        entry.getCount(),
+                        entry.getDamage(),
+                        String.valueOf(slot.getAndIncrement()),
+                        entry.getNbt() != null ? entry.getNbt().toString() : null)).collect(Collectors.toList()));
+
+        entries.addAll(inventory.field_15084.stream().map(entry ->
+                new InventoryEntry(ComponentUtils.serializeComponentAsLegacy(Component.text(entry.getCustomName())),
+                        entry.getItem() != null && Item.REGISTRY.getIdentifier(entry.getItem()) != null ?
+                                Item.REGISTRY.getIdentifier(entry.getItem()).toString() : "minecraft:unknown",
+                        entry.getCount(),
+                        entry.getDamage(),
+                        String.valueOf(slot.getAndIncrement()),
+                        entry.getNbt() != null ? entry.getNbt().toString() : null)).collect(Collectors.toList()));
+
+        return entries;
     }
 }

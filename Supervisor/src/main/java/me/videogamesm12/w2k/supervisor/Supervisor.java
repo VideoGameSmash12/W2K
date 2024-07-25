@@ -28,14 +28,13 @@ import com.google.gson.GsonBuilder;
 import lombok.Getter;
 import me.videogamesm12.w2k.kernel.W2K;
 import me.videogamesm12.w2k.kernel.data.EntityEntry;
+import me.videogamesm12.w2k.kernel.data.InventoryEntry;
 import me.videogamesm12.w2k.kernel.data.MapEntry;
 import me.videogamesm12.w2k.kernel.data.PlayerEntry;
 import me.videogamesm12.w2k.supervisor.api.SVComponent;
 import me.videogamesm12.w2k.supervisor.components.flags.Flags;
 import me.videogamesm12.w2k.supervisor.components.watchdog.Watchdog;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.PlayerListEntry;
 
 import java.io.File;
 import java.io.FileReader;
@@ -158,6 +157,11 @@ public class Supervisor extends Thread
     public List<MapEntry> getLoadedMaps()
     {
         return W2K.getInstance().getDriverManager().getVersionBridge().getLoadedMaps();
+    }
+
+    public List<InventoryEntry> getInventory()
+    {
+        return W2K.getInstance().getDriverManager().getVersionBridge().getInventory();
     }
 
     public void shutdown()

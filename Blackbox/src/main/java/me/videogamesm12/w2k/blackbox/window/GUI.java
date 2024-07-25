@@ -61,6 +61,7 @@ public class GUI extends JFrame
         tabbedPane.addTab("Players", new PlayersTab());
         tabbedPane.addTab("Entities", new EntitiesTab());
         tabbedPane.addTab("Maps", new MapsTab());
+        tabbedPane.addTab("Inventory", new InventoryTab());
         // End of component setup
 
         // Sets up timers
