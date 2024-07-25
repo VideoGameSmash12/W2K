@@ -1,12 +1,10 @@
 package me.videogamesm12.w2k.drivers.v1_8.required;
 
 import com.google.gson.JsonElement;
-import me.videogamesm12.w2k.drivers.v1_8.mixin.accessor.ClientWorldAccessor;
-import me.videogamesm12.w2k.drivers.v1_8.mixin.accessor.DHAccessor;
-import me.videogamesm12.w2k.drivers.v1_8.mixin.accessor.EntityAccessor;
-import me.videogamesm12.w2k.drivers.v1_8.mixin.accessor.IGHAccessor;
+import me.videogamesm12.w2k.drivers.v1_8.mixin.accessor.*;
 import me.videogamesm12.w2k.kernel.W2K;
 import me.videogamesm12.w2k.kernel.data.EntityEntry;
+import me.videogamesm12.w2k.kernel.data.MapEntry;
 import me.videogamesm12.w2k.kernel.data.PlayerEntry;
 import me.videogamesm12.w2k.kernel.driver.base.WDriverMetadata;
 import me.videogamesm12.w2k.kernel.driver.base.WVersionBridgeDriver;
@@ -16,6 +14,7 @@ import net.minecraft.client.ClientBrandRetriever;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.map.MapState;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
@@ -137,5 +136,21 @@ public class W18VersionBridgeDriver implements WVersionBridgeDriver
                         entity.getEntityId(),
                         entity.getUuid()))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<MapEntry> getLoadedMaps()
+    {
+        if (MinecraftClient.getInstance().world == null)
+        {
+            return Collections.emptyList();
+        }
+
+        return ((PersistentStateManagerAccessor) MinecraftClient.getInstance().world.getPersistentStateManager())
+                .getStateMap().entrySet().stream().filter(entry -> entry.getKey().startsWith("map_")).map(entry -> {
+                    final MapState state = ((MapState) entry.getValue());
+                    return new MapEntry(state.id, String.valueOf(state.scale), String.valueOf(state.dimensionId),
+                            state.xCenter, state.zCenter, false, state.colors);
+                }).collect(Collectors.toList());
     }
 }

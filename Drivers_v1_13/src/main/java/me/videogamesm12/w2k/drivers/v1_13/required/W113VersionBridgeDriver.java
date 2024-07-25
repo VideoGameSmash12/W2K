@@ -3,9 +3,12 @@ package me.videogamesm12.w2k.drivers.v1_13.required;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import me.videogamesm12.w2k.drivers.v1_13.mixin.accessor.DHAccessor;
+import me.videogamesm12.w2k.drivers.v1_13.mixin.accessor.EnigmaClass4070Accessor;
 import me.videogamesm12.w2k.drivers.v1_13.mixin.accessor.IGHAccessor;
+import me.videogamesm12.w2k.drivers.v1_13.mixin.accessor.PersistentStateManagerAccessor;
 import me.videogamesm12.w2k.kernel.W2K;
 import me.videogamesm12.w2k.kernel.data.EntityEntry;
+import me.videogamesm12.w2k.kernel.data.MapEntry;
 import me.videogamesm12.w2k.kernel.data.PlayerEntry;
 import me.videogamesm12.w2k.kernel.driver.base.WDriverMetadata;
 import me.videogamesm12.w2k.kernel.driver.base.WVersionBridgeDriver;
@@ -14,9 +17,13 @@ import net.kyori.adventure.text.Component;
 import net.minecraft.client.ClientBrandRetriever;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.EntityType;
+import net.minecraft.item.map.MapState;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.Registry;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -134,5 +141,29 @@ public class W113VersionBridgeDriver implements WVersionBridgeDriver
                         entity.getEntityId(),
                         entity.getUuid()))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<MapEntry> getLoadedMaps()
+    {
+        if (MinecraftClient.getInstance().world == null || MinecraftClient.getInstance().world.method_16399() == null)
+        {
+            return Collections.emptyList();
+        }
+
+        final List<MapEntry> mapStates = new ArrayList<>();
+
+        ((EnigmaClass4070Accessor) MinecraftClient.getInstance().world.method_16399()).getPersistentStateManagers()
+                .values().stream().map(manager -> ((PersistentStateManagerAccessor) manager).getStateMap().entrySet()
+                        .stream().filter(entry -> entry.getKey().startsWith("map_")).map(entry ->
+                        {
+                            final MapState state = (MapState) entry.getValue();
+                            final Identifier world = Registry.DIMENSION_TYPE.getId(state.field_19747);
+                            return new MapEntry(state.method_17914(), String.valueOf(state.scale), world != null ?
+                                    world.toString() : "minecraft:unknown", state.xCenter, state.zCenter, false,
+                                    state.colors);
+                        }).collect(Collectors.toList())).forEach(mapStates::addAll);
+
+        return mapStates;
     }
 }

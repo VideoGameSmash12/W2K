@@ -28,6 +28,7 @@ import com.google.gson.GsonBuilder;
 import lombok.Getter;
 import me.videogamesm12.w2k.kernel.W2K;
 import me.videogamesm12.w2k.kernel.data.EntityEntry;
+import me.videogamesm12.w2k.kernel.data.MapEntry;
 import me.videogamesm12.w2k.kernel.data.PlayerEntry;
 import me.videogamesm12.w2k.supervisor.api.SVComponent;
 import me.videogamesm12.w2k.supervisor.components.flags.Flags;
@@ -152,6 +153,11 @@ public class Supervisor extends Thread
     public List<EntityEntry> getNearbyEntities()
     {
         return W2K.getInstance().getDriverManager().getVersionBridge().getNearbyEntities();
+    }
+
+    public List<MapEntry> getLoadedMaps()
+    {
+        return W2K.getInstance().getDriverManager().getVersionBridge().getLoadedMaps();
     }
 
     public void shutdown()

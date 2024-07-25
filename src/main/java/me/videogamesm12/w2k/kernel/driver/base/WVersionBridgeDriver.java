@@ -2,6 +2,7 @@ package me.videogamesm12.w2k.kernel.driver.base;
 
 import com.google.gson.JsonElement;
 import me.videogamesm12.w2k.kernel.data.EntityEntry;
+import me.videogamesm12.w2k.kernel.data.MapEntry;
 import me.videogamesm12.w2k.kernel.data.PlayerEntry;
 import net.kyori.adventure.text.Component;
 
@@ -26,4 +27,6 @@ public interface WVersionBridgeDriver extends WDriver
     List<PlayerEntry> getOnlinePlayers();
 
     List<EntityEntry> getNearbyEntities();
+
+    List<MapEntry> getLoadedMaps();
 }

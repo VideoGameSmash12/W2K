@@ -4,6 +4,7 @@
   "package": "me.videogamesm12.w2k.drivers.v1_17.mixin",
   "compatibilityLevel": "JAVA_16",
   "client": [
+    "accessor.ClientWorldAccessor",
     "accessor.DHAccessor",
     "accessor.IGHAccessor",
     "injector.BlockEntityRendererMixin",

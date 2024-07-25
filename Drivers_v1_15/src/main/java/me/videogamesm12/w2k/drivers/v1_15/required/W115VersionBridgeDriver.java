@@ -1,10 +1,12 @@
 package me.videogamesm12.w2k.drivers.v1_15.required;
 
 import com.google.gson.JsonElement;
+import me.videogamesm12.w2k.drivers.v1_15.mixin.accessor.ClientWorldAccessor;
 import me.videogamesm12.w2k.drivers.v1_15.mixin.accessor.DHAccessor;
 import me.videogamesm12.w2k.drivers.v1_15.mixin.accessor.IGHAccessor;
 import me.videogamesm12.w2k.kernel.W2K;
 import me.videogamesm12.w2k.kernel.data.EntityEntry;
+import me.videogamesm12.w2k.kernel.data.MapEntry;
 import me.videogamesm12.w2k.kernel.data.PlayerEntry;
 import me.videogamesm12.w2k.kernel.driver.base.WDriverMetadata;
 import me.videogamesm12.w2k.kernel.driver.base.WVersionBridgeDriver;
@@ -13,6 +15,7 @@ import net.kyori.adventure.text.Component;
 import net.minecraft.client.ClientBrandRetriever;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.EntityType;
+import net.minecraft.item.map.MapState;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 
@@ -130,5 +133,22 @@ public class W115VersionBridgeDriver implements WVersionBridgeDriver
                         entity.getEntityId(),
                         entity.getUuid()))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<MapEntry> getLoadedMaps()
+    {
+        if (MinecraftClient.getInstance().world == null)
+        {
+            return Collections.emptyList();
+        }
+
+        return ((ClientWorldAccessor) MinecraftClient.getInstance().world).getMapStates().entrySet().stream()
+                .map(entry ->
+                {
+                    final MapState map = entry.getValue();
+                    return new MapEntry(entry.getKey(), String.valueOf(map.scale), map.dimension.toString(),
+                            map.xCenter, map.zCenter, map.locked, map.colors);
+                }).collect(Collectors.toList());
     }
 }
