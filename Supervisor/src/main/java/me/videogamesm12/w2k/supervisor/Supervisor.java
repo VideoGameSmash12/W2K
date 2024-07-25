@@ -32,6 +32,7 @@ import me.videogamesm12.w2k.kernel.data.InventoryEntry;
 import me.videogamesm12.w2k.kernel.data.MapEntry;
 import me.videogamesm12.w2k.kernel.data.PlayerEntry;
 import me.videogamesm12.w2k.supervisor.api.SVComponent;
+import me.videogamesm12.w2k.supervisor.components.fantasia.Fantasia;
 import me.videogamesm12.w2k.supervisor.components.flags.Flags;
 import me.videogamesm12.w2k.supervisor.components.watchdog.Watchdog;
 import net.fabricmc.loader.api.FabricLoader;
@@ -83,7 +84,7 @@ public class Supervisor extends Thread
         config = loadConfiguration();
         //--
         W2K.getLogger().info("Setting up components...");
-        //components.add(new Fantasia());
+        components.add(new Fantasia());
         components.add(new Watchdog());
         components.forEach(SVComponent::setup);
         W2K.getLogger().info("Supervisor components successfully set up.");
@@ -91,7 +92,7 @@ public class Supervisor extends Thread
 
     public Configuration loadConfiguration()
     {
-        File file = new File(FabricLoader.getInstance().getConfigDir().toFile(), "wnt-supervisor.json");
+        File file = new File(FabricLoader.getInstance().getConfigDir().toFile(), "w2k-supervisor.json");
 
         if (file.exists())
         {
@@ -113,7 +114,7 @@ public class Supervisor extends Thread
 
     public void saveConfiguration()
     {
-        File file = new File(FabricLoader.getInstance().getConfigDir().toFile(), "wnt-supervisor.json");
+        File file = new File(FabricLoader.getInstance().getConfigDir().toFile(), "w2k-supervisor.json");
         try (FileWriter writer = new FileWriter(file))
         {
             writer.write(new GsonBuilder().setPrettyPrinting().create().toJson(config));
