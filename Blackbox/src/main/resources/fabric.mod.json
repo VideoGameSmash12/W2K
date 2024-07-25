@@ -20,7 +20,8 @@
       "me.videogamesm12.w2k.blackbox.theming.inbuilt.IBThemeProvider",
       "me.videogamesm12.w2k.blackbox.theming.flatlaf.FThemeProvider",
       "me.videogamesm12.w2k.blackbox.theming.custom.flatlaf.CFThemeProvider",
-      "me.videogamesm12.w2k.blackbox.theming.custom.intellij.CIThemeProvider"
+      "me.videogamesm12.w2k.blackbox.theming.custom.intellij.CIThemeProvider",
+      "me.videogamesm12.w2k.blackbox.theming.custom.synth.CSThemeProvider"
     ]
   },
   "depends": {
