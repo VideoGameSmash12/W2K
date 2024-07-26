@@ -46,11 +46,6 @@ public class EnhancedMapTableModel extends AbstractTableModel implements Dynamic
     @Override
     public void update()
     {
-        if (MinecraftClient.getInstance().world == null)
-        {
-            return;
-        }
-
         rows.clear();
 
         rows.addAll(Supervisor.getInstance().getLoadedMaps().stream().map(MapEntry::toTableRow).collect(Collectors.toList()));

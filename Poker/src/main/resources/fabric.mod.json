@@ -1,20 +1,20 @@
 {
   "schemaVersion": 1,
-  "id": "w2k-poker",
+  "id": "w2k-integrator",
   "version": "${version}",
-  "name": "Poker",
-  "description": "Hooks for various mods to add functionality to W2K",
+  "name": "Integrator",
+  "description": "Integrates various mods into W2K",
   "authors": [
     "videogamesm12"
   ],
   "contact": {},
   "license": "MIT",
-  "icon": "assets/w2k-poker/icon.png",
+  "icon": "assets/w2k-integrator/icon.png",
   "environment": "client",
   "entrypoints": {
   },
   "mixins": [
-    "w2k.poker.mixin.json"
+    "w2k.integrator.mixin.json"
   ],
   "depends": {
     "w2k-blackbox": "*"
