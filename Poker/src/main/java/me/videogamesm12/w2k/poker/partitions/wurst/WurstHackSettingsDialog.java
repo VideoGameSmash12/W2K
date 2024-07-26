@@ -94,8 +94,14 @@ public class WurstHackSettingsDialog extends JDialog
                 final JButton button = (JButton) settingComponent;
 
                 button.setBackground(color.getColor());
-                button.addActionListener(e ->
-                        color.setColor(JColorChooser.showDialog(this, "Choose a color", color.getColor())));
+                button.addActionListener(e -> {
+                    Color newColor = JColorChooser.showDialog(this, "Choose a color", color.getColor());
+                    if (newColor != null)
+                    {
+                        button.setBackground(newColor);
+                        color.setColor(newColor);
+                    }
+                });
                 break;
             }
             case "EnumSetting":
@@ -135,7 +141,7 @@ public class WurstHackSettingsDialog extends JDialog
                     {
                         Setting casted = textFieldClass.cast(setting);
                         Method getValueMethod = casted.getClass().getMethod("getValue");
-                        Method setValueMethod = casted.getClass().getMethod("setValue");
+                        Method setValueMethod = casted.getClass().getMethod("setValue", String.class);
 
                         String value = (String) getValueMethod.invoke(casted);
                         settingComponent = new JTextField(value);

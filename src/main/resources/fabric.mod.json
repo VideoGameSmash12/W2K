@@ -20,5 +20,8 @@
   },
   "depends": {
     "minecraft": "*"
+  },
+  "breaks": {
+    "wnt": "*"
   }
 }

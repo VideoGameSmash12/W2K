@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "id": "w2k-drivers-v1_20_1",
+  "version": "${version}",
+  "name": "Trails & Drivers",
+  "description": "Minecraft 1.20 - 1.20.1 drivers for W2K",
+  "authors": [
+    "videogamesm12"
+  ],
+  "contact": {
+    "repo": "https://github.com/videogamesm12/W2K"
+  },
+  "license": "MIT",
+  "icon": "assets/w2k-drivers-v1_20_1/icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "main": [
+      "me.videogamesm12.w2k.drivers.v1_20_1.W2K"
+    ],
+    "w2k-event-passthru-driver": [
+      "me.videogamesm12.w2k.drivers.v1_20_1.required.W120EventPassthruDriver"
+    ],
+    "w2k-version-bridge-driver": [
+      "me.videogamesm12.w2k.drivers.v1_20_1.required.W120VersionBridgeDriver"
+    ],
+    "w2k-command-wrapper-driver": [
+      "me.videogamesm12.w2k.drivers.v1_20_1.required.W120CommandDriver"
+    ]
+  },
+  "mixins": [
+    "w2k.drivers.1_20_1.mixins.json"
+  ],
+  "depends": {
+    "minecraft": ["1.20", "1.20.1"]
+  },
+  "custom": {
+    "modmenu": {
+      "badges": ["library"],
+      "parent": "w2k"
+    }
+  }
+}
