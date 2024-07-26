@@ -23,6 +23,7 @@
 package me.videogamesm12.w2k.supervisor;
 
 import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import lombok.Getter;
@@ -31,6 +32,7 @@ import me.videogamesm12.w2k.kernel.data.EntityEntry;
 import me.videogamesm12.w2k.kernel.data.InventoryEntry;
 import me.videogamesm12.w2k.kernel.data.MapEntry;
 import me.videogamesm12.w2k.kernel.data.PlayerEntry;
+import me.videogamesm12.w2k.kernel.event.lifecycle.ClientStartedEvent;
 import me.videogamesm12.w2k.supervisor.api.SVComponent;
 import me.videogamesm12.w2k.supervisor.components.fantasia.Fantasia;
 import me.videogamesm12.w2k.supervisor.components.flags.Flags;
@@ -77,6 +79,7 @@ public class Supervisor extends Thread
     @Override
     public void run()
     {
+        W2K.getEventBus().register(this);
         W2K.getLogger().info("Setting up the Supervisor...");
         instance = this;
         //--
@@ -88,6 +91,12 @@ public class Supervisor extends Thread
         components.add(new Watchdog());
         components.forEach(SVComponent::setup);
         W2K.getLogger().info("Supervisor components successfully set up.");
+    }
+
+    @Subscribe
+    public void onClientStarted(ClientStartedEvent event)
+    {
+        flags.setGameStartedYet(true);
     }
 
     public Configuration loadConfiguration()

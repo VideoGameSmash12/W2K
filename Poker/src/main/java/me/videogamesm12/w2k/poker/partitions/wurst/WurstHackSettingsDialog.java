@@ -5,9 +5,7 @@ import net.wurstclient.hack.Hack;
 import net.wurstclient.settings.*;
 
 import javax.swing.*;
-import javax.swing.filechooser.FileFilter;
 import java.awt.*;
-import java.io.File;
 import java.lang.reflect.Method;
 import java.util.Map;
 

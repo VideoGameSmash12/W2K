@@ -23,22 +23,29 @@
 package me.videogamesm12.w2k.poker.mixins.wurst;
 
 import me.videogamesm12.w2k.blackbox.window.menu.W2KMenu;
+import me.videogamesm12.w2k.kernel.Experiments;
 import me.videogamesm12.w2k.kernel.W2K;
 import me.videogamesm12.w2k.poker.core.gui.PModCategoryMenu;
 import me.videogamesm12.w2k.poker.core.gui.PModMenu;
+import me.videogamesm12.w2k.poker.partitions.wurst.WurstAltManagerDialog;
 import me.videogamesm12.w2k.poker.partitions.wurst.WurstHackMenu;
 import net.wurstclient.Category;
 import net.wurstclient.WurstClient;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import javax.swing.*;
 import java.util.Arrays;
 
 @Mixin(WurstClient.class)
 public class WurstClientMixin
 {
+    @Unique
+    private WurstAltManagerDialog altManagerDialog = null;
+
     @Inject(method = "initialize", at = @At(value = "INVOKE", target = "Lnet/wurstclient/altmanager/AltManager;<init>(Ljava/nio/file/Path;Ljava/nio/file/Path;)V", shift = At.Shift.AFTER), remap = false)
     public void injectInitialize(CallbackInfo ci)
     {
@@ -60,6 +67,25 @@ public class WurstClientMixin
                     .forEach(hack -> categoryMenu.addModule(new WurstHackMenu(hack)));
             menu.addSubMenu(categoryMenu);
         });
+
+        if (Experiments.experimentEnabled(Experiments.POKER_WURST_ALT_MANAGER))
+        {
+            // Add a separator
+            menu.addSeparator();
+
+            // Add the Alt Manager option
+            final JMenuItem altManager = new JMenuItem("Alt Manager");
+            altManager.addActionListener(e ->
+            {
+                if (altManagerDialog == null)
+                {
+                    altManagerDialog = new WurstAltManagerDialog();
+                }
+
+                altManagerDialog.setVisible(true);
+            });
+            menu.add(altManager);
+        }
 
         // Adds the final product
         W2KMenu.queueModMenu(menu);

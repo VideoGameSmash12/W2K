@@ -25,7 +25,6 @@ package me.videogamesm12.w2k.supervisor;
 import lombok.Getter;
 import lombok.Setter;
 import me.videogamesm12.w2k.supervisor.components.fantasia.ConnectionType;
-//import me.videogamesm12.wnt.supervisor.components.fantasia.ConnectionType;
 
 @Getter
 public class Configuration

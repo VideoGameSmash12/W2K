@@ -25,6 +25,8 @@ public interface WVersionBridgeDriver extends WDriver
 
     String textToString(JsonElement text);
 
+    String getCurrentUsername();
+
     List<PlayerEntry> getOnlinePlayers();
 
     List<EntityEntry> getNearbyEntities();

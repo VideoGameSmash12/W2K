@@ -108,6 +108,12 @@ public class W119VersionBridgeDriver implements WVersionBridgeDriver
     }
 
     @Override
+    public String getCurrentUsername()
+    {
+        return MinecraftClient.getInstance().getSession().getUsername();
+    }
+
+    @Override
     public List<PlayerEntry> getOnlinePlayers()
     {
         if (MinecraftClient.getInstance().getNetworkHandler() == null)

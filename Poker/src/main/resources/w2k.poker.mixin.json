@@ -5,6 +5,7 @@
   "plugin": "me.videogamesm12.w2k.poker.PokerMixinPlugin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
+    "wurst.AltManagerMixin",
     "wurst.WurstClientMixin",
     "wurst.WurstHackMixin"
   ],
