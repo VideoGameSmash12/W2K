@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "id": "w2k-poker",
+  "version": "${version}",
+  "name": "Poker",
+  "description": "Hooks for various mods to add functionality to W2K",
+  "authors": [
+    "videogamesm12"
+  ],
+  "contact": {},
+  "license": "MIT",
+  "icon": "assets/w2k-poker/icon.png",
+  "environment": "client",
+  "entrypoints": {
+  },
+  "mixins": [
+    "w2k.poker.mixin.json"
+  ],
+  "depends": {
+    "w2k-blackbox": "*"
+  },
+  "custom": {
+    "modmenu": {
+      "parent": "w2k"
+    }
+  }
+}

@@ -26,7 +26,9 @@ public class W2KMenu extends JMenu implements Dynamic
     {
         for (int i = 0; i < modMenus.size(); i++)
         {
-            hooksMenu.add(modMenus.poll());
+            ModMenu<?> modMenu = modMenus.poll();
+            hooksMenu.add(modMenu);
+            SwingUtilities.updateComponentTreeUI(modMenu);
         }
     }
 
