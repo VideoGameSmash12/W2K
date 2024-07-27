@@ -20,6 +20,8 @@ public interface WVersionBridgeDriver extends WDriver
 
     void displayMessage(Component text);
 
+    void closeCurrentScreen();
+
     String textToString(JsonElement text);
 
     String getCurrentUsername();

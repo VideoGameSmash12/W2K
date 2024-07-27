@@ -103,6 +103,12 @@ public class W1206VersionBridgeDriver implements WVersionBridgeDriver
     }
 
     @Override
+    public void closeCurrentScreen()
+    {
+        MinecraftClient.getInstance().setScreen(null);
+    }
+
+    @Override
     public String textToString(JsonElement text)
     {
         final Text parsed = Text.Serialization.fromJsonTree(text, wrapperLookup);

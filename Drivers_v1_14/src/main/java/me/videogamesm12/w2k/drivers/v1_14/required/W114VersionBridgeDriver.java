@@ -94,6 +94,12 @@ public class W114VersionBridgeDriver implements WVersionBridgeDriver
     }
 
     @Override
+    public void closeCurrentScreen()
+    {
+        MinecraftClient.getInstance().openScreen(null);
+    }
+
+    @Override
     public String textToString(JsonElement text)
     {
         final Text parsed = Text.Serializer.fromJson(text);

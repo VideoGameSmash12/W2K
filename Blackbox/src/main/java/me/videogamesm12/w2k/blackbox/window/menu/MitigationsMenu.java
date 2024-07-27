@@ -46,6 +46,11 @@ public class MitigationsMenu extends JMenu
         });
         menu.add(disconnect);
         //--
+        final JMenuItem closeScreen = new JMenuItem("Close Current Screen");
+        closeScreen.setToolTipText("Closes whatever screen is currently open in-game.");
+        closeScreen.addActionListener((e) -> Supervisor.getInstance().closeCurrentScreen());
+        menu.add(closeScreen);
+        //--
         final JMenuItem shutdownSafe = new JMenuItem("Shutdown");
         shutdownSafe.setToolTipText("Safely closes the game.");
         shutdownSafe.addActionListener((e) -> Supervisor.getInstance().shutdownSafely());

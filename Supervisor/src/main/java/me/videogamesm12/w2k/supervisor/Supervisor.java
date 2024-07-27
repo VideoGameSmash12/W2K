@@ -176,6 +176,11 @@ public class Supervisor extends Thread
         return W2K.getInstance().getDriverManager().getVersionBridge().getInventory();
     }
 
+    public void closeCurrentScreen()
+    {
+        W2K.getInstance().getDriverManager().getVersionBridge().closeCurrentScreen();
+    }
+
     public void shutdown()
     {
         saveConfiguration();

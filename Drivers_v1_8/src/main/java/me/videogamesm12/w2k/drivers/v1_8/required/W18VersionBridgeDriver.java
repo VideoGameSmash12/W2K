@@ -9,7 +9,6 @@ import me.videogamesm12.w2k.kernel.driver.base.WVersionBridgeDriver;
 import me.videogamesm12.w2k.kernel.util.ComponentUtils;
 import net.kyori.adventure.text.Component;
 import net.minecraft.block.Block;
-import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.client.ClientBrandRetriever;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.player.PlayerEntity;
@@ -88,6 +87,12 @@ public class W18VersionBridgeDriver implements WVersionBridgeDriver
     {
         MinecraftClient.getInstance().inGameHud.getChatHud().addMessage(
                 Text.Serializer.deserialize(ComponentUtils.serializeComponentAsLegacy(text).toString()));
+    }
+
+    @Override
+    public void closeCurrentScreen()
+    {
+        MinecraftClient.getInstance().setScreen(null);
     }
 
     @Override
