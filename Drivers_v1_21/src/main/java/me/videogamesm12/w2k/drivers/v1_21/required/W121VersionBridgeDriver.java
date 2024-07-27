@@ -5,15 +5,14 @@ import lombok.Getter;
 import me.videogamesm12.w2k.drivers.v1_21.mixin.accessor.ClientWorldAccessor;
 import me.videogamesm12.w2k.drivers.v1_21.mixin.accessor.DHAccessor;
 import me.videogamesm12.w2k.drivers.v1_21.mixin.accessor.IGHAccessor;
+import me.videogamesm12.w2k.drivers.v1_21.mixin.accessor.WorldAccessor;
 import me.videogamesm12.w2k.kernel.W2K;
-import me.videogamesm12.w2k.kernel.data.EntityEntry;
-import me.videogamesm12.w2k.kernel.data.InventoryEntry;
-import me.videogamesm12.w2k.kernel.data.MapEntry;
-import me.videogamesm12.w2k.kernel.data.PlayerEntry;
+import me.videogamesm12.w2k.kernel.data.*;
 import me.videogamesm12.w2k.kernel.driver.base.WDriverMetadata;
 import me.videogamesm12.w2k.kernel.driver.base.WVersionBridgeDriver;
 import me.videogamesm12.w2k.kernel.util.ComponentUtils;
 import net.kyori.adventure.text.Component;
+import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.client.ClientBrandRetriever;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.component.DataComponentTypes;
@@ -21,6 +20,7 @@ import net.minecraft.component.type.NbtComponent;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.map.MapState;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.BuiltinRegistries;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.RegistryWrapper;
@@ -29,6 +29,7 @@ import net.minecraft.text.Text;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -173,6 +174,7 @@ public class W121VersionBridgeDriver implements WVersionBridgeDriver
                 }).collect(Collectors.toList());
     }
 
+
     @Override
     public List<InventoryEntry> getInventory()
     {
@@ -191,37 +193,67 @@ public class W121VersionBridgeDriver implements WVersionBridgeDriver
         entries.addAll(inventory.main.stream().filter(entry -> {
             slot.getAndIncrement();
             return !entry.isEmpty();
-        }).map(entry ->
-                new InventoryEntry(ComponentUtils.stringToElement(Text.Serialization.toJsonString(entry.getName(),
-                        wrapperLookup)),
-                        entry.getItem() != null ? Registries.ITEM.getId(entry.getItem()).toString() : "minecraft:unknown",
-                        entry.getCount(),
-                        entry.getDamage(),
-                        String.valueOf(slot.get()),
-                        entry.getOrDefault(DataComponentTypes.CUSTOM_DATA, NbtComponent.DEFAULT).toString())).toList());
+        }).map(entry -> {
+            final NbtComponent nbt = entry.getOrDefault(DataComponentTypes.CUSTOM_DATA, NbtComponent.DEFAULT);
+            return new InventoryEntry(ComponentUtils.stringToElement(Text.Serialization.toJsonString(entry.getName(),
+                    wrapperLookup)),
+                    entry.getItem() != null ? Registries.ITEM.getId(entry.getItem()).toString() : "minecraft:unknown",
+                    entry.getCount(),
+                    entry.getDamage(),
+                    String.valueOf(slot.get()),
+                    nbt.isEmpty() ? null : nbt.toString());
+        }).toList());
 
         entries.addAll(inventory.armor.stream().filter(entry -> {
             slot.getAndIncrement();
             return !entry.isEmpty();
-        }).map(entry -> new InventoryEntry(ComponentUtils.stringToElement(Text.Serialization.toJsonString(entry.getName(),
-                wrapperLookup)),
-                entry.getItem() != null ? Registries.ITEM.getId(entry.getItem()).toString() : "minecraft:unknown",
-                entry.getCount(),
-                entry.getDamage(),
-                String.valueOf(slot.getAndIncrement()),
-                entry.getOrDefault(DataComponentTypes.CUSTOM_DATA, NbtComponent.DEFAULT).toString())).toList());
+        }).map(entry ->
+        {
+            final NbtComponent nbt = entry.getOrDefault(DataComponentTypes.CUSTOM_DATA, NbtComponent.DEFAULT);
+            return new InventoryEntry(ComponentUtils.stringToElement(Text.Serialization.toJsonString(entry.getName(),
+                    wrapperLookup)),
+                    entry.getItem() != null ? Registries.ITEM.getId(entry.getItem()).toString() : "minecraft:unknown",
+                    entry.getCount(),
+                    entry.getDamage(),
+                    String.valueOf(slot.getAndIncrement()),
+                    nbt.isEmpty() ? null : nbt.toString());
+        }).toList());
 
         entries.addAll(inventory.offHand.stream().filter(entry -> {
             slot.getAndIncrement();
             return !entry.isEmpty();
-        }).map(entry -> new InventoryEntry(ComponentUtils.stringToElement(Text.Serialization.toJsonString(entry.getName(),
-                wrapperLookup)),
-                entry.getItem() != null ? Registries.ITEM.getId(entry.getItem()).toString() : "minecraft:unknown",
-                entry.getCount(),
-                entry.getDamage(),
-                String.valueOf(slot.getAndIncrement()),
-                entry.getOrDefault(DataComponentTypes.CUSTOM_DATA, NbtComponent.DEFAULT).toString())).toList());
+        }).map(entry ->
+        {
+            final NbtComponent nbt = entry.getOrDefault(DataComponentTypes.CUSTOM_DATA, NbtComponent.DEFAULT);
+            return new InventoryEntry(ComponentUtils.stringToElement(Text.Serialization.toJsonString(entry.getName(),
+                    wrapperLookup)),
+                    entry.getItem() != null ? Registries.ITEM.getId(entry.getItem()).toString() : "minecraft:unknown",
+                    entry.getCount(),
+                    entry.getDamage(),
+                    String.valueOf(slot.getAndIncrement()),
+                    nbt.isEmpty() ? null : nbt.toString());
+        }).toList());
 
         return entries;
+    }
+
+    @Override
+    public List<TileEntry> getNearbyTileEntities()
+    {
+        if (MinecraftClient.getInstance().world == null)
+        {
+            return Collections.emptyList();
+        }
+
+        return ((WorldAccessor) MinecraftClient.getInstance().world).getBlockEntityTickers().stream().filter(ticker -> !ticker.isRemoved())
+                .filter(ticker -> MinecraftClient.getInstance().world.getBlockEntity(ticker.getPos()) != null).map(ticker -> {
+                    final BlockEntity tileEntity = MinecraftClient.getInstance().world.getBlockEntity(ticker.getPos());
+                    NbtCompound nbt = Objects.requireNonNull(tileEntity).toInitialChunkDataNbt(wrapperLookup);
+                    return new TileEntry(Objects.requireNonNull(Registries.BLOCK_ENTITY_TYPE.getId(Objects.requireNonNull(tileEntity).getType())).toString(),
+                            tileEntity.getPos().getX(),
+                            tileEntity.getPos().getY(),
+                            tileEntity.getPos().getZ(),
+                            nbt.isEmpty() ? null : nbt.toString());
+                }).toList();
     }
 }

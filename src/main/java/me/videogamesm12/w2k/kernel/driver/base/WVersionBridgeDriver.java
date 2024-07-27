@@ -1,10 +1,7 @@
 package me.videogamesm12.w2k.kernel.driver.base;
 
 import com.google.gson.JsonElement;
-import me.videogamesm12.w2k.kernel.data.EntityEntry;
-import me.videogamesm12.w2k.kernel.data.InventoryEntry;
-import me.videogamesm12.w2k.kernel.data.MapEntry;
-import me.videogamesm12.w2k.kernel.data.PlayerEntry;
+import me.videogamesm12.w2k.kernel.data.*;
 import net.kyori.adventure.text.Component;
 
 import java.util.List;
@@ -34,4 +31,6 @@ public interface WVersionBridgeDriver extends WDriver
     List<MapEntry> getLoadedMaps();
 
     List<InventoryEntry> getInventory();
+
+    List<TileEntry> getNearbyTileEntities();
 }

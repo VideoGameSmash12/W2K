@@ -6,14 +6,12 @@ import me.videogamesm12.w2k.drivers.v1_12.mixin.accessor.DHAccessor;
 import me.videogamesm12.w2k.drivers.v1_12.mixin.accessor.IGHAccessor;
 import me.videogamesm12.w2k.drivers.v1_12.mixin.accessor.PersistentStateManagerAccessor;
 import me.videogamesm12.w2k.kernel.W2K;
-import me.videogamesm12.w2k.kernel.data.EntityEntry;
-import me.videogamesm12.w2k.kernel.data.InventoryEntry;
-import me.videogamesm12.w2k.kernel.data.MapEntry;
-import me.videogamesm12.w2k.kernel.data.PlayerEntry;
+import me.videogamesm12.w2k.kernel.data.*;
 import me.videogamesm12.w2k.kernel.driver.base.WDriverMetadata;
 import me.videogamesm12.w2k.kernel.driver.base.WVersionBridgeDriver;
 import me.videogamesm12.w2k.kernel.util.ComponentUtils;
 import net.kyori.adventure.text.Component;
+import net.minecraft.block.Block;
 import net.minecraft.client.ClientBrandRetriever;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.EntityType;
@@ -21,6 +19,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.map.MapState;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
@@ -204,5 +203,26 @@ public class W112VersionBridgeDriver implements WVersionBridgeDriver
                         entry.getNbt() != null ? entry.getNbt().toString() : null)).collect(Collectors.toList()));
 
         return entries;
+    }
+
+    @Override
+    public List<TileEntry> getNearbyTileEntities()
+    {
+        if (MinecraftClient.getInstance().world == null)
+        {
+            return Collections.emptyList();
+        }
+
+        return MinecraftClient.getInstance().world.tickingBlockEntities.stream().map(tile ->
+        {
+            final NbtCompound nbt = new NbtCompound();
+            tile.toNbt(nbt);
+
+            return new TileEntry(Block.REGISTRY.getIdentifier(tile.getBlock()).toString(),
+                    tile.getPos().getX(),
+                    tile.getPos().getY(),
+                    tile.getPos().getZ(),
+                    nbt.toString());
+        }).collect(Collectors.toList());
     }
 }

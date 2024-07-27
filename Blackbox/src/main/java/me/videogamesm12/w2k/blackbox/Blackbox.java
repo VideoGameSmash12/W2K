@@ -1,5 +1,6 @@
 package me.videogamesm12.w2k.blackbox;
 
+import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import lombok.Getter;
 import me.videogamesm12.w2k.blackbox.command.BlackboxCmd;
@@ -26,6 +27,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Blackbox extends Thread
 {
+    @Getter
+    private static final EventBus eventBus = new EventBus();
     @Getter
     private static Blackbox instance;
     //--

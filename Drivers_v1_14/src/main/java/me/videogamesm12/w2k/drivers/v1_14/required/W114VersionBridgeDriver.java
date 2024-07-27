@@ -5,10 +5,7 @@ import me.videogamesm12.w2k.drivers.v1_14.mixin.accessor.ClientWorldAccessor;
 import me.videogamesm12.w2k.drivers.v1_14.mixin.accessor.DHAccessor;
 import me.videogamesm12.w2k.drivers.v1_14.mixin.accessor.IGHAccessor;
 import me.videogamesm12.w2k.kernel.W2K;
-import me.videogamesm12.w2k.kernel.data.EntityEntry;
-import me.videogamesm12.w2k.kernel.data.InventoryEntry;
-import me.videogamesm12.w2k.kernel.data.MapEntry;
-import me.videogamesm12.w2k.kernel.data.PlayerEntry;
+import me.videogamesm12.w2k.kernel.data.*;
 import me.videogamesm12.w2k.kernel.driver.base.WDriverMetadata;
 import me.videogamesm12.w2k.kernel.driver.base.WVersionBridgeDriver;
 import me.videogamesm12.w2k.kernel.util.ComponentUtils;
@@ -18,6 +15,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.map.MapState;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.util.registry.Registry;
@@ -25,6 +23,7 @@ import net.minecraft.util.registry.Registry;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -200,5 +199,26 @@ public class W114VersionBridgeDriver implements WVersionBridgeDriver
                         entry.getTag() != null ? entry.getTag().toString() : null)).collect(Collectors.toList()));
 
         return entries;
+    }
+
+    @Override
+    public List<TileEntry> getNearbyTileEntities()
+    {
+        if (MinecraftClient.getInstance().world == null)
+        {
+            return Collections.emptyList();
+        }
+
+        return MinecraftClient.getInstance().world.tickingBlockEntities.stream().map(tile ->
+        {
+            final CompoundTag nbt = new CompoundTag();
+            tile.toTag(nbt);
+
+            return new TileEntry(Objects.requireNonNull(Registry.BLOCK.getId(tile.getCachedState().getBlock())).toString(),
+                    tile.getPos().getX(),
+                    tile.getPos().getY(),
+                    tile.getPos().getZ(),
+                    nbt.toString());
+        }).collect(Collectors.toList());
     }
 }
