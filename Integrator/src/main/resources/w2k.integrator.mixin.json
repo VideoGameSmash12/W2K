@@ -5,6 +5,7 @@
   "plugin": "me.videogamesm12.w2k.integrator.IntegratorMixinPlugin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
+    "meteor_client.MeteorModuleMixin",
     "wurst.AltManagerMixin",
     "wurst.WurstClientMixin",
     "wurst.WurstHackMixin"
