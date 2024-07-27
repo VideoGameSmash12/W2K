@@ -6,6 +6,10 @@ repositories {
     maven { url 'https://jitpack.io/' }
     maven { url = "https://maven.meteordev.org/releases" }
     maven { url = "https://maven.meteordev.org/snapshots" }
+    exclusiveContent {
+        forRepository { maven { url = "https://api.modrinth.com/maven" } }
+        filter { includeGroup "maven.modrinth" }
+    }
 }
 
 dependencies {
@@ -18,4 +22,6 @@ dependencies {
     modApi "com.github.VideoGameSmash12:Wurst7:master"
     // Meteor
     modApi "meteordevelopment:meteor-client:0.5.8-SNAPSHOT"
+    // ReplayMod
+    modApi "maven.modrinth:replaymod:1.14.4-2.6.15"
 }

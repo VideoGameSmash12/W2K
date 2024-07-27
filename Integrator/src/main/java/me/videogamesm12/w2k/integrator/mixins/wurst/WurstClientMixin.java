@@ -60,6 +60,9 @@ public class WurstClientMixin
         // Build a menu
         PModMenu<WurstClient> menu = new PModMenu<>("Wurst", WurstClient.INSTANCE);
 
+        // Add the icon
+        menu.addModIconIfPresent("wurst");
+
         // Adds the modules from all the categories as their own separate menus
         Arrays.stream(Category.values()).forEach(category -> {
             PModCategoryMenu categoryMenu = new PModCategoryMenu(category.getName());

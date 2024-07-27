@@ -1,0 +1,16 @@
+{
+  "replaymod.gui.settings.recordingpath": "Recording Path",
+  "replaymod.gui.settings.cachepath": "Cache Path",
+  "replaymod.gui.settings.autopostprocess": "Automatic Post-Processing",
+  "replaymod.gui.settings.renamedialog": "Show Rename Dialog",
+  "replaymod.gui.settings.showserverips": "Show Server IPs",
+  "replaymod.gui.settings.legacymainmenubutton": "Legacy Main Menu Button",
+  "replaymod.gui.settings.mainmenubutton": "Main Menu Button",
+  "replaymod.gui.settings.renderpath": "Render Path",
+  "replaymod.gui.settings.skippostrendergui": "Skip Post-Render GUI",
+  "replaymod.gui.settings.frametimefromworldtime": "Frame Time from World Time",
+  "replaymod.gui.settings.autosync": "Auto Sync",
+  "replaymod.gui.settings.timelinelength": "Timeline Length",
+  "replaymod.gui.settings.askforopeneye": "Ask for OpenEye",
+  "replaymod.gui.settings.skippostscreenshotgui": "Skip Post-Screenshot GUI"
+}

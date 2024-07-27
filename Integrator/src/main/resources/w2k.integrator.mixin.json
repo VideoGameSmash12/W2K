@@ -6,6 +6,11 @@
   "compatibilityLevel": "JAVA_8",
   "mixins": [
     "meteor_client.MeteorModuleMixin",
+    "replaymod.ConnectionEventHandlerAccessor",
+    "replaymod.GuiRecordingControlsAccessor",
+    "replaymod.GuiRecordingControlsMixin",
+    "replaymod.PacketListenerMixin",
+    "replaymod.ReplayModMixin",
     "wurst.AltManagerMixin",
     "wurst.WurstClientMixin",
     "wurst.WurstHackMixin"

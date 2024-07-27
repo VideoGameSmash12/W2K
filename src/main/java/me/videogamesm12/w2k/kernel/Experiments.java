@@ -15,6 +15,7 @@ public enum Experiments
     DEFAULT_LAF_BASED_ON_SYSTEM_CONFIG,
     EXPERIMENTS_EXISTENCE_ACKNOWLEDGED,
     SUPERVISOR_CATCHES_CRASHES,
+    INTEGRATOR_MOD_ICONS,
     INTEGRATOR_WURST_ALT_MANAGER;
 
     private static List<Experiments> enabled = null;

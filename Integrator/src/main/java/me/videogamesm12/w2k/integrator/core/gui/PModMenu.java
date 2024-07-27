@@ -23,8 +23,15 @@
 package me.videogamesm12.w2k.integrator.core.gui;
 
 import me.videogamesm12.w2k.blackbox.window.menu.w2k.ModMenu;
+import me.videogamesm12.w2k.kernel.Experiments;
+import net.fabricmc.loader.api.FabricLoader;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
+import java.awt.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Objects;
 
 public class PModMenu<T> extends ModMenu<T>
 {
@@ -49,6 +56,26 @@ public class PModMenu<T> extends ModMenu<T>
             JMenu asMenu = (JMenu) subMenu;
 
             add(asMenu);
+        }
+    }
+
+    public void addModIconIfPresent(String id)
+    {
+        if (Experiments.experimentEnabled(Experiments.INTEGRATOR_MOD_ICONS))
+        {
+            FabricLoader.getInstance().getModContainer(id).flatMap(container -> container.getMetadata().getIconPath(128)).ifPresent(path ->
+            {
+                try (InputStream stream = getModInstance().getClass().getClassLoader().getResourceAsStream(path))
+                {
+                    if (stream != null)
+                    {
+                        setIcon(new ImageIcon(ImageIO.read(stream).getScaledInstance(24, 24, Image.SCALE_FAST)));
+                    }
+                }
+                catch (IOException ignored)
+                {
+                }
+            });
         }
     }
 }
