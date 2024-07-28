@@ -1,7 +1,7 @@
 package me.videogamesm12.w2k.kernel.commands;
 
+import me.videogamesm12.w2k.kernel.experiment.Experiment;
 import me.videogamesm12.w2k.kernel.experiment.ExperimentManager;
-import me.videogamesm12.w2k.kernel.experiment.Experiments;
 import me.videogamesm12.w2k.kernel.command.Parameters;
 import me.videogamesm12.w2k.kernel.command.WCommand;
 import net.kyori.adventure.text.Component;
@@ -24,7 +24,7 @@ public class ExperimentsCmd extends WCommand
     {
         if (args.length == 0 || args.length == 1 && args[0].equalsIgnoreCase("details"))
         {
-            List<Experiments> enabled = ExperimentManager.getEnabledExperiments();
+            List<Experiment> enabled = ExperimentManager.getEnabledExperiments();
 
             if (enabled.isEmpty())
             {
@@ -45,7 +45,7 @@ public class ExperimentsCmd extends WCommand
                 // "Disabled: A, B, C"
                 msg(Component.translatable("w2k.command.experiments.disabled_list",
                         Component.join(JoinConfiguration.commas(true),
-                                Arrays.stream(Experiments.values()).filter(ex -> !enabled.contains(ex))
+                                Arrays.stream(Experiment.values()).filter(ex -> !enabled.contains(ex))
                                         .map(experiment -> Component.text(experiment.name()).color(NamedTextColor.RED))
                                         .collect(Collectors.toList()))).colorIfAbsent(NamedTextColor.GRAY));
             }
@@ -71,11 +71,11 @@ public class ExperimentsCmd extends WCommand
         }
         else if (args.length == 1 && args[0].equalsIgnoreCase("list"))
         {
-            // All Experiments:
+            // All Experiment:
             msg(Component.translatable("w2k.command.experiments.all_experiments").decorate(TextDecoration.BOLD));
 
             // A, B, C
-            msg(Component.join(JoinConfiguration.commas(true), Arrays.stream(Experiments.values())
+            msg(Component.join(JoinConfiguration.commas(true), Arrays.stream(Experiment.values())
                     .map(experiment -> Component.text(experiment.name()).color(ExperimentManager.isExperimentEnabled(experiment)
                             ? NamedTextColor.GREEN : NamedTextColor.RED).hoverEvent(HoverEvent.showText(
                                     Component.translatable("w2k.command.experiments.click_for_more_information")))
@@ -86,11 +86,11 @@ public class ExperimentsCmd extends WCommand
         }
         else if (args.length == 2)
         {
-            final Optional<Experiments> optional = Experiments.findExperiment(args[1]);
+            final Optional<Experiment> optional = Experiment.findExperiment(args[1]);
 
             if (optional.isPresent())
             {
-                Experiments experiment = optional.get();
+                Experiment experiment = optional.get();
 
                 switch (args[0].toLowerCase())
                 {

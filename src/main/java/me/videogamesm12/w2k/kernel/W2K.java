@@ -8,7 +8,6 @@ import me.videogamesm12.w2k.kernel.commands.ExperimentsCmd;
 import me.videogamesm12.w2k.kernel.commands.W2KCmd;
 import me.videogamesm12.w2k.kernel.driver.WDriverManager;
 import me.videogamesm12.w2k.kernel.experiment.ExperimentManager;
-import me.videogamesm12.w2k.kernel.experiment.Experiments;
 import net.fabricmc.api.ModInitializer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -50,10 +49,10 @@ public class W2K implements ModInitializer
         commandManager.registerCommand(W2KCmd.class);
         commandManager.registerCommand(ExperimentsCmd.class);
 
-        // Experiments
+        // Experiment
         if (!ExperimentManager.getEnabledExperiments().isEmpty())
         {
-            logger.warn("[!] Experiments have been enabled. Expect some instability. List of enabled experiments:");
+            logger.warn("[!] Experiment have been enabled. Expect some instability. List of enabled experiments:");
             ExperimentManager.getEnabledExperiments().forEach(experiment -> logger.warn("[!]  - {}", experiment.name()));
         }
     }

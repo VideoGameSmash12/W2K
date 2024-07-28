@@ -24,7 +24,7 @@ package me.videogamesm12.w2k.integrator.core.gui;
 
 import me.videogamesm12.w2k.blackbox.window.menu.w2k.ModMenu;
 import me.videogamesm12.w2k.kernel.experiment.ExperimentManager;
-import me.videogamesm12.w2k.kernel.experiment.Experiments;
+import me.videogamesm12.w2k.kernel.experiment.Experiment;
 import net.fabricmc.loader.api.FabricLoader;
 
 import javax.imageio.ImageIO;
@@ -61,7 +61,7 @@ public class PModMenu<T> extends ModMenu<T>
 
     public void addModIconIfPresent(String id)
     {
-        if (ExperimentManager.isExperimentEnabled(Experiments.INTEGRATOR_MOD_ICONS))
+        if (ExperimentManager.isExperimentEnabled(Experiment.INTEGRATOR_MOD_ICONS))
         {
             FabricLoader.getInstance().getModContainer(id).flatMap(container -> container.getMetadata().getIconPath(128)).ifPresent(path ->
             {

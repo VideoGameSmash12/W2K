@@ -6,7 +6,7 @@ import lombok.Getter;
 import me.videogamesm12.w2k.blackbox.command.BlackboxCmd;
 import me.videogamesm12.w2k.blackbox.window.tool.crashpad.Crashpad;
 import me.videogamesm12.w2k.kernel.experiment.ExperimentManager;
-import me.videogamesm12.w2k.kernel.experiment.Experiments;
+import me.videogamesm12.w2k.kernel.experiment.Experiment;
 import me.videogamesm12.w2k.kernel.W2K;
 import me.videogamesm12.w2k.kernel.event.lifecycle.ClientCrashedEvent;
 import me.videogamesm12.w2k.kernel.event.lifecycle.ClientStartedEvent;
@@ -66,7 +66,7 @@ public class Blackbox extends Thread
         ThemeRegistry.setupThemes();
         try
         {
-            if (ExperimentManager.isExperimentEnabled(Experiments.BLACKBOX_COMMAND_LINE_LAF_OVERRIDE)
+            if (ExperimentManager.isExperimentEnabled(Experiment.BLACKBOX_COMMAND_LINE_LAF_OVERRIDE)
                     && System.getProperty("me.videogamesm12.w2k.blackbox_theme") != null)
             {
                 config.setTheme(System.getProperty("me.videogamesm12.w2k.blackbox_theme"));

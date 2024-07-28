@@ -30,6 +30,7 @@ import lombok.Getter;
 import me.videogamesm12.w2k.kernel.W2K;
 import me.videogamesm12.w2k.kernel.data.*;
 import me.videogamesm12.w2k.kernel.event.lifecycle.ClientStartedEvent;
+import me.videogamesm12.w2k.kernel.event.lifecycle.ClientStoppedEvent;
 import me.videogamesm12.w2k.supervisor.api.SVComponent;
 import me.videogamesm12.w2k.supervisor.components.fantasia.Fantasia;
 import me.videogamesm12.w2k.supervisor.components.flags.Flags;
@@ -94,6 +95,12 @@ public class Supervisor extends Thread
     public void onClientStarted(ClientStartedEvent event)
     {
         flags.setGameStartedYet(true);
+    }
+
+    @Subscribe
+    public void onClientStopped(ClientStoppedEvent event)
+    {
+        shutdown();
     }
 
     public Configuration loadConfiguration()

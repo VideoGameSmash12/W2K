@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 
 public class ExperimentManager
 {
-    private static final Map<Experiments, Boolean> enabledExperimentMap = new HashMap<>();
+    private static final Map<Experiment, Boolean> enabledExperimentMap = new HashMap<>();
 
     static
     {
@@ -17,22 +17,22 @@ public class ExperimentManager
         //  under select conditions (such as the user's operating system, game version, external mod configuration, etc.)
         //  but we'll deal with that when the need arises.
         final String[] enabled = System.getProperty("me.videogamesm12.w2k.enabled_experiments", "").split(",");
-        Arrays.stream(Experiments.values()).forEach(entry -> enabledExperimentMap.put(entry, Arrays.stream(enabled)
-                .anyMatch(requested -> requested.equalsIgnoreCase(entry.name()))));
+        Arrays.stream(Experiment.values()).forEach(entry -> enabledExperimentMap.put(entry, Arrays.stream(enabled)
+                .anyMatch(requested -> requested.equalsIgnoreCase(entry.name())) && entry.isAvailable()));
     }
 
-    public static boolean isExperimentEnabled(Experiments experiment)
+    public static boolean isExperimentEnabled(Experiment experiment)
     {
         return enabledExperimentMap.get(experiment);
     }
 
-    public static List<Experiments> getEnabledExperiments()
+    public static List<Experiment> getEnabledExperiments()
     {
         return enabledExperimentMap.entrySet().stream().filter(Map.Entry::getValue).map(Map.Entry::getKey)
                 .collect(Collectors.toList());
     }
 
-    public static boolean enableExperiment(Experiments experiment)
+    public static boolean enableExperiment(Experiment experiment)
     {
         if (experiment.isParameterOnly())
         {
@@ -43,7 +43,7 @@ public class ExperimentManager
         return true;
     }
 
-    public static boolean disableExperiment(Experiments experiment)
+    public static boolean disableExperiment(Experiment experiment)
     {
         if (experiment.isParameterOnly())
         {
