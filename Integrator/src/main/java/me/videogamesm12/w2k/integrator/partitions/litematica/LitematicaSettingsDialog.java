@@ -5,8 +5,6 @@ import fi.dy.masa.malilib.config.IConfigBase;
 import fi.dy.masa.malilib.config.options.*;
 import fi.dy.masa.malilib.util.Color4f;
 import me.videogamesm12.w2k.blackbox.Blackbox;
-import me.videogamesm12.w2k.kernel.W2K;
-import net.kyori.adventure.text.Component;
 
 import javax.swing.*;
 import java.awt.*;

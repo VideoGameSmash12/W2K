@@ -10,7 +10,7 @@ public class ExperimentsMenu extends JMenu
 {
     public ExperimentsMenu()
     {
-        super("Experiment");
+        super("Experiments");
 
         Arrays.stream(Experiment.values()).forEach(experiment ->
         {
