@@ -22,10 +22,13 @@
 
 package me.videogamesm12.w2k.blackbox.window.menu.w2k;
 
+import lombok.Getter;
+
 import javax.swing.*;
 
 public abstract class ModMenu<T> extends JMenu
 {
+    @Getter
     private final Class<T> modClass;
 
     public ModMenu(String name, Class<T> mClass)

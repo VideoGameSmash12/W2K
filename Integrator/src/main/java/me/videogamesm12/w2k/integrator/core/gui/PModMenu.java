@@ -43,6 +43,12 @@ public class PModMenu<T> extends ModMenu<T>
         this.instance = instance;
     }
 
+    public PModMenu(String name, Class<T> clazz)
+    {
+        super(name, clazz);
+        this.instance = null;
+    }
+
     @Override
     public T getModInstance()
     {
@@ -65,7 +71,7 @@ public class PModMenu<T> extends ModMenu<T>
         {
             FabricLoader.getInstance().getModContainer(id).flatMap(container -> container.getMetadata().getIconPath(128)).ifPresent(path ->
             {
-                try (InputStream stream = getModInstance().getClass().getClassLoader().getResourceAsStream(path))
+                try (InputStream stream = getModClass().getClassLoader().getResourceAsStream(path))
                 {
                     if (stream != null)
                     {
