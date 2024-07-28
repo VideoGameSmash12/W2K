@@ -12,5 +12,10 @@
   "replaymod.gui.settings.autosync": "Auto Sync",
   "replaymod.gui.settings.timelinelength": "Timeline Length",
   "replaymod.gui.settings.askforopeneye": "Ask for OpenEye",
-  "replaymod.gui.settings.skippostscreenshotgui": "Skip Post-Screenshot GUI"
+  "replaymod.gui.settings.skippostscreenshotgui": "Skip Post-Screenshot GUI",
+
+  "w2k.experiment.integrator_mod_icons.name": "Mod Icons in the Blackbox Hooks Menu",
+  "w2k.experiment.integrator_mod_icons.description": "Add icons belonging to hooks menus for mods integrated into the Blackbox with Integrator.",
+  "w2k.experiment.integrator_wurst_alt_manager.name": "Wurst Alt Manager GUI",
+  "w2k.experiment.integrator_wurst_alt_manager.description": "Add an option to view and interact with Wurst's Alt Manager with a new GUI. Requires Wurst Client."
 }

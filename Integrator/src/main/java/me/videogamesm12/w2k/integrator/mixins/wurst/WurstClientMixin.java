@@ -23,7 +23,8 @@
 package me.videogamesm12.w2k.integrator.mixins.wurst;
 
 import me.videogamesm12.w2k.blackbox.window.menu.W2KMenu;
-import me.videogamesm12.w2k.kernel.Experiments;
+import me.videogamesm12.w2k.kernel.experiment.ExperimentManager;
+import me.videogamesm12.w2k.kernel.experiment.Experiments;
 import me.videogamesm12.w2k.kernel.W2K;
 import me.videogamesm12.w2k.integrator.core.gui.PModCategoryMenu;
 import me.videogamesm12.w2k.integrator.core.gui.PModMenu;
@@ -71,7 +72,7 @@ public class WurstClientMixin
             menu.addSubMenu(categoryMenu);
         });
 
-        if (Experiments.experimentEnabled(Experiments.INTEGRATOR_WURST_ALT_MANAGER))
+        if (ExperimentManager.isExperimentEnabled(Experiments.INTEGRATOR_WURST_ALT_MANAGER))
         {
             // Add a separator
             menu.addSeparator();

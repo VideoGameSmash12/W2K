@@ -6,7 +6,8 @@ import com.sun.jna.platform.win32.Advapi32Util;
 import com.sun.jna.platform.win32.WinReg;
 import lombok.Getter;
 import lombok.Setter;
-import me.videogamesm12.w2k.kernel.Experiments;
+import me.videogamesm12.w2k.kernel.experiment.ExperimentManager;
+import me.videogamesm12.w2k.kernel.experiment.Experiments;
 import me.videogamesm12.w2k.kernel.W2K;
 import me.videogamesm12.w2k.kernel.util.SysUtils;
 import net.fabricmc.loader.api.FabricLoader;
@@ -24,7 +25,7 @@ public class Configuration
     private boolean systemTrayEnabled = true;
     private boolean ignoringFreezesDuringStartup = true;
     private boolean autoRefreshEnabled = true;
-    private String theme = Experiments.experimentEnabled(Experiments.DEFAULT_LAF_BASED_ON_SYSTEM_CONFIG) ? getDefaultTheme() : "DARK";
+    private String theme = ExperimentManager.isExperimentEnabled(Experiments.BLACKBOX_DEFAULT_LAF_BASED_ON_SYSTEM_CONFIG) ? getDefaultTheme() : "DARK";
     private int width = 420;
     private int height = 560;
 

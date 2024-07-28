@@ -1,6 +1,7 @@
 package me.videogamesm12.w2k.drivers.v1_21.mixin.injector;
 
-import me.videogamesm12.w2k.kernel.Experiments;
+import me.videogamesm12.w2k.kernel.experiment.ExperimentManager;
+import me.videogamesm12.w2k.kernel.experiment.Experiments;
 import me.videogamesm12.w2k.kernel.W2K;
 import me.videogamesm12.w2k.kernel.event.lifecycle.ClientCrashedEvent;
 import me.videogamesm12.w2k.supervisor.Supervisor;
@@ -77,7 +78,7 @@ public class MinecraftClientMixin
     @Inject(method = "printCrashReport(Lnet/minecraft/client/MinecraftClient;Ljava/io/File;Lnet/minecraft/util/crash/CrashReport;)V", at = @At(value = "INVOKE", target = "Ljava/lang/System;exit(I)V", shift = At.Shift.BEFORE, ordinal = -1), locals = LocalCapture.CAPTURE_FAILHARD)
     private static void catchCrashReport(MinecraftClient client, File runDirectory, CrashReport crashReport, CallbackInfo ci, Path crashReportFolder, Path crashReportFile)
     {
-        if (Experiments.experimentEnabled(Experiments.SUPERVISOR_CATCHES_CRASHES))
+        if (ExperimentManager.isExperimentEnabled(Experiments.SUPERVISOR_CATCHES_CRASHES))
         {
             final ClientCrashedEvent event = new ClientCrashedEvent(MinecraftClient.getInstance(), crashReport.getCause(), crashReportFile.toFile());
 
