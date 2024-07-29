@@ -11,6 +11,8 @@ import me.videogamesm12.w2k.blackbox.window.menu.SettingsMenu;
 import me.videogamesm12.w2k.blackbox.window.menu.ToolsMenu;
 import me.videogamesm12.w2k.blackbox.window.tab.*;
 import me.videogamesm12.w2k.blackbox.window.tool.console.Console;
+import me.videogamesm12.w2k.kernel.experiment.Experiment;
+import me.videogamesm12.w2k.kernel.experiment.ExperimentManager;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -66,6 +68,8 @@ public class GUI extends JFrame
         tabbedPane.addTab("Tile Entities", new TileEntitiesTab());
         tabbedPane.addTab("Maps", new MapsTab());
         tabbedPane.addTab("Inventory", new InventoryTab());
+        if (ExperimentManager.isExperimentEnabled(Experiment.BLACKBOX_RUNTIME_PROPERTIES_TAB))
+            tabbedPane.addTab("Properties", new PropertiesTab());
         // End of component setup
 
         // Sets up timers

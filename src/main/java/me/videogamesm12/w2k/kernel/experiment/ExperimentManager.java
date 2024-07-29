@@ -13,9 +13,6 @@ public class ExperimentManager
     static
     {
         // Read from the command line parameters.
-        // In the future, experiments will optionally include "requirements" to allow for experiments to only be enabled
-        //  under select conditions (such as the user's operating system, game version, external mod configuration, etc.)
-        //  but we'll deal with that when the need arises.
         final String[] enabled = System.getProperty("me.videogamesm12.w2k.enabled_experiments", "").split(",");
         Arrays.stream(Experiment.values()).forEach(entry -> enabledExperimentMap.put(entry, Arrays.stream(enabled)
                 .anyMatch(requested -> requested.equalsIgnoreCase(entry.name())) && entry.isAvailable()));

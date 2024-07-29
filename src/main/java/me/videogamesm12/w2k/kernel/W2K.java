@@ -52,7 +52,7 @@ public class W2K implements ModInitializer
         // Experiment
         if (!ExperimentManager.getEnabledExperiments().isEmpty())
         {
-            logger.warn("[!] Experiment have been enabled. Expect some instability. List of enabled experiments:");
+            logger.warn("[!] Experiments have been enabled. Expect some instability. List of enabled experiments:");
             ExperimentManager.getEnabledExperiments().forEach(experiment -> logger.warn("[!]  - {}", experiment.name()));
         }
     }
