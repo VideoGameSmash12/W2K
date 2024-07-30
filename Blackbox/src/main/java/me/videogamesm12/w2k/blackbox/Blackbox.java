@@ -80,9 +80,8 @@ public class Blackbox extends Thread
             ThemeRegistry.getTheme(IBThemes.METAL.getInternalName()).apply();
         }
 
-        // Non-Linux operating systems open the window and set up the system tray icons earlier than Linux operating systems do.
-        // If it wasn't like this, issues like this would happen:  https://github.com/VideoGameSmash12/WNT/issues/11
-        if (SysUtils.getOperatingSystem() != SysUtils.OperatingSystem.LINUX)
+        // Optional late start-up mode just in case something prevents the client from booting normally
+        if (System.getProperty("me.videogamesm12.w2k.blackbox_late_start", "false").contains("f"))
         {
             startup();
         }
@@ -93,9 +92,8 @@ public class Blackbox extends Thread
     @Subscribe
     public void onClientStarted(ClientStartedEvent event)
     {
-        // Linux operating systems open the window and set up the system tray icons later than non-Linux operating systems do.
-        // If it wasn't like this, issues like this would happen:  https://github.com/VideoGameSmash12/WNT/issues/11
-        if (SysUtils.getOperatingSystem() == SysUtils.OperatingSystem.LINUX)
+        // Late startup mode - Forces the Blackbox to set itself up later on
+        if (!System.getProperty("me.videogamesm12.w2k.blackbox_late_start", "false").contains("f"))
         {
             startup();
         }
@@ -134,7 +132,7 @@ public class Blackbox extends Thread
     public void onClientCrashed(ClientCrashedEvent event)
     {
         int response = JOptionPane.showConfirmDialog(Blackbox.getInstance().getMainWindow(),
-                "Your client crashed. Would you like to view the crash report?", "Uh oh!",
+                "Your client crashed. Would you like to view the crash report?", "Yikes!",
                 JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
 
         if (response == JOptionPane.YES_OPTION)

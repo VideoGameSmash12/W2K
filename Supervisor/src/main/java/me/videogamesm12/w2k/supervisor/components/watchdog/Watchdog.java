@@ -56,17 +56,20 @@ public class Watchdog extends Thread implements SVComponent
 
         freezeDetector.scheduleAtFixedRate(() ->
         {
+            long time = System.currentTimeMillis();
+
             // Has the game even started up yet? Is freeze detection even enabled?
             if (!Supervisor.getInstance().getFlags().isGameStartedYet() ||
-                    !Supervisor.getConfig().getWatchdogSettings().isFreezeDetectionEnabled())
+                    !Supervisor.getConfig().getWatchdogSettings().isFreezeDetectionEnabled()
+                    || LAST_RENDERED_TIME == 0L)
             {
                 return;
             }
 
             // The client hasn't rendered something in 5 seconds. This usually indicates that the game has frozen.
-            if (System.currentTimeMillis() - LAST_RENDERED_TIME >= Supervisor.getConfig().getWatchdogSettings().getFreezeDetectionThreshold())
+            if (time - LAST_RENDERED_TIME >= Supervisor.getConfig().getWatchdogSettings().getFreezeDetectionThreshold())
             {
-                long lastRendered = System.currentTimeMillis() - LAST_RENDERED_TIME;
+                long lastRendered = time - LAST_RENDERED_TIME;
                 W2K.getLogger().warn("The Supervisor has detected a client-side freeze. Last rendered {}ms ago", lastRendered);
                 Supervisor.getEventBus().post(new ClientFreezeEvent(lastRendered));
             }
