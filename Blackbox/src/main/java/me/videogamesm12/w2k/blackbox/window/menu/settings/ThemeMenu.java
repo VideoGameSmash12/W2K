@@ -22,15 +22,14 @@ public class ThemeMenu extends JMenu
 
         ThemeRegistry.getThemeTypes().forEach(type ->
         {
-            JMenuItem label = new JMenuItem("--== " + type.getLabel() + " ==--");
-            label.setEnabled(false);
-            add(label);
+            JMenu menu = new JMenu(type.getLabel());
+            add(menu);
 
             if (ThemeRegistry.getThemes().entrySet().stream().noneMatch(theme -> theme.getValue().getType().getId() == type.getId() && theme.getValue().isSupposedToShow()))
             {
                 JMenuItem emptyItem = new JMenuItem("(none)");
                 emptyItem.setEnabled(false);
-                add(emptyItem);
+                menu.add(emptyItem);
                 return;
             }
 
@@ -53,13 +52,13 @@ public class ThemeMenu extends JMenu
                     theme.apply();
                     theme.getType().update();
                     //--
-                    if (originalTheme.getType().getId() != theme.getType().getId())
+                    if (originalTheme != null && originalTheme.getType().getId() != theme.getType().getId())
                     {
-                        JOptionPane.showMessageDialog(this, "If things end up looking broken, try rebooting your Minecraft client.", "Notice", JOptionPane.INFORMATION_MESSAGE);
+                        JOptionPane.showMessageDialog(this, "Theme changed. If things look broken, you may need to restart your Minecraft client for the changes to take full effect.", "Notice", JOptionPane.INFORMATION_MESSAGE);
                     }
                 });
                 group.add(themeItem);
-                add(themeItem);
+                menu.add(themeItem);
             });
         });
     }

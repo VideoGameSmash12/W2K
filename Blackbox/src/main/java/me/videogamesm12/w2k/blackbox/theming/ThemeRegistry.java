@@ -48,15 +48,22 @@ public class ThemeRegistry
         {
             IThemeProvider themeProvider = container.getEntrypoint();
             //--
-            List<IThemeType> types = themeProvider.getTypes();
-            themeTypes.addAll(types);
-            themeTypeCount.addAndGet(types.size());
-            W2K.getLogger().info("Loaded {} theme types from mod {}", types.size(), container.getProvider().getMetadata().getName());
-            //--
-            Map<String, ITheme> modThemes = themeProvider.getThemes();
-            themes.putAll(modThemes);
-            themeCount.addAndGet(modThemes.size());
-            W2K.getLogger().info("Loaded {} themes from mod {}", modThemes.size(), container.getProvider().getMetadata().getName());
+            try
+            {
+                List<IThemeType> types = themeProvider.getTypes();
+                themeTypes.addAll(types);
+                themeTypeCount.addAndGet(types.size());
+                W2K.getLogger().info("Loaded {} theme types from mod {}", types.size(), container.getProvider().getMetadata().getName());
+                //--
+                Map<String, ITheme> modThemes = themeProvider.getThemes();
+                themes.putAll(modThemes);
+                themeCount.addAndGet(modThemes.size());
+                W2K.getLogger().info("Loaded {} themes from mod {}", modThemes.size(), container.getProvider().getMetadata().getName());
+            }
+            catch (Throwable ex)
+            {
+                W2K.getLogger().error("Failed to register themes from mod {}", container.getProvider().getMetadata().getName(), ex);
+            }
             //--
         });
         W2K.getLogger().info("Loaded {} themes and {} theme types", themeCount.get(), themeTypeCount.get());
@@ -64,13 +71,6 @@ public class ThemeRegistry
 
     public static ITheme getTheme(String id)
     {
-        if (themes.containsKey(id))
-        {
-            return themes.get(id);
-        }
-        else
-        {
-            throw new IllegalArgumentException("Theme not found: " + id);
-        }
+        return themes.getOrDefault(id, null);
     }
 }
