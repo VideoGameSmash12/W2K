@@ -20,6 +20,7 @@
   },
   "mixins": [
     "accessor.EntityAccessor",
-    "accessor.PersistentStateManagerAccessor"
+    "accessor.PersistentStateManagerAccessor",
+    "injector.CrashReportMixin"
   ]
 }

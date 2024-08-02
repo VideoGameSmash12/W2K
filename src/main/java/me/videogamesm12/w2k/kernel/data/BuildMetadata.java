@@ -1,6 +1,7 @@
 package me.videogamesm12.w2k.kernel.data;
 
 import lombok.Builder;
+import lombok.Data;
 import lombok.Getter;
 import me.videogamesm12.w2k.kernel.W2K;
 import net.fabricmc.loader.api.ModContainer;
@@ -17,8 +18,8 @@ import java.util.Properties;
  * <h1>BuildMetadata</h1>
  * <p>Wrapper for git.properties, a file included in builds of W2K.</p>
  */
+@Data
 @Builder
-@Getter
 public class BuildMetadata
 {
     private final String branch;
@@ -33,10 +34,19 @@ public class BuildMetadata
     {
         return "--=== BUILD INFO ===--" + "\r\n"
                 + "Branch: " + branch + "\r\n"
-                + "Commit: " + commitId + "(" + commitIdAbbreviated + ")\r\n"
+                + "Commit: " + commitId + " (" + commitIdAbbreviated + ")\r\n"
                 + "Commit Date: " + commitTime + "\r\n"
                 + "Origin URL: " + originUrl + "\r\n"
                 + "Dirty: " + dirty;
+    }
+
+    public String toCrashReportSection()
+    {
+        return "\tBranch: " + branch + "\r\n"
+                + "\tCommit: " + commitId + " (" + commitIdAbbreviated + ")\r\n"
+                + "\tCommit Date: " + commitTime + "\r\n"
+                + "\tOrigin URL: " + originUrl + "\r\n"
+                + "\tDirty: " + dirty;
     }
 
     public Component toComponent()

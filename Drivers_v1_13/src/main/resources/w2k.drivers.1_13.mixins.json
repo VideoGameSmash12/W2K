@@ -19,6 +19,7 @@
   },
   "mixins": [
     "accessor.EnigmaClass4070Accessor",
-    "accessor.PersistentStateManagerAccessor"
+    "accessor.PersistentStateManagerAccessor",
+    "injector.CrashReportMixin"
   ]
 }

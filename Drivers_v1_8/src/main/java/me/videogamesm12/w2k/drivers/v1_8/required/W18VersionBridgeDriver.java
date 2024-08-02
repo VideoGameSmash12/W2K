@@ -30,7 +30,7 @@ public class W18VersionBridgeDriver implements WVersionBridgeDriver
     @Override
     public void disconnect()
     {
-        if (MinecraftClient.getInstance().getNetworkHandler().getClientConnection() == null)
+        if (MinecraftClient.getInstance().getNetworkHandler() == null)
         {
             throw new IllegalStateException("Not connected to a server");
         }
