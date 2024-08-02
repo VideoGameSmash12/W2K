@@ -18,7 +18,6 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.map.MapState;
 import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
 import net.minecraft.text.Text;
 
 import java.util.ArrayList;
@@ -129,7 +128,10 @@ public class W1194VersionBridgeDriver implements WVersionBridgeDriver
         }
 
         return MinecraftClient.getInstance().getNetworkHandler().getPlayerList().stream().map(entry ->
-                new PlayerEntry(entry.getProfile(), Text.Serializer.toJsonTree(entry.getDisplayName()), entry.getLatency(),
+                new PlayerEntry(entry.getProfile(),
+                        Text.Serializer.toJsonTree(entry.getDisplayName() != null ?
+                                entry.getDisplayName() : Text.literal(entry.getProfile().getName())),
+                        entry.getLatency(),
                         entry.getGameMode() != null ? entry.getGameMode().getName() : "", entry.getModel(),
                         entry.getSkinTexture().toString())).collect(Collectors.toList());
     }
@@ -217,6 +219,7 @@ public class W1194VersionBridgeDriver implements WVersionBridgeDriver
         }
 
         return ((WorldAccessor) MinecraftClient.getInstance().world).getBlockEntityTickers().stream().filter(ticker -> !ticker.isRemoved())
+                .filter(ticker -> ticker.getPos() != null)
                 .filter(ticker -> MinecraftClient.getInstance().world.getBlockEntity(ticker.getPos()) != null).map(ticker -> {
                     final BlockEntity tileEntity = MinecraftClient.getInstance().world.getBlockEntity(ticker.getPos());
                     return new TileEntry(Objects.requireNonNull(Registries.BLOCK_ENTITY_TYPE.getId(Objects.requireNonNull(tileEntity).getType())).toString(),
@@ -224,7 +227,6 @@ public class W1194VersionBridgeDriver implements WVersionBridgeDriver
                             tileEntity.getPos().getY(),
                             tileEntity.getPos().getZ(),
                             tileEntity.toInitialChunkDataNbt().toString());
-
                 }).toList();
     }
 }

@@ -252,6 +252,7 @@ public class W121VersionBridgeDriver implements WVersionBridgeDriver
         }
 
         return ((WorldAccessor) MinecraftClient.getInstance().world).getBlockEntityTickers().stream().filter(ticker -> !ticker.isRemoved())
+                .filter(ticker -> ticker.getPos() != null)
                 .filter(ticker -> MinecraftClient.getInstance().world.getBlockEntity(ticker.getPos()) != null).map(ticker -> {
                     final BlockEntity tileEntity = MinecraftClient.getInstance().world.getBlockEntity(ticker.getPos());
                     NbtCompound nbt = Objects.requireNonNull(tileEntity).toInitialChunkDataNbt(wrapperLookup);

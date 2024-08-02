@@ -128,8 +128,12 @@ public class W1204VersionBridgeDriver implements WVersionBridgeDriver
         }
 
         return MinecraftClient.getInstance().getNetworkHandler().getPlayerList().stream().map(entry ->
-                new PlayerEntry(entry.getProfile(), Text.Serialization.toJsonTree(entry.getDisplayName()), entry.getLatency(),
-                        entry.getGameMode() != null ? entry.getGameMode().getName() : "", entry.getSkinTextures().model().getName(),
+                new PlayerEntry(entry.getProfile(),
+                        Text.Serialization.toJsonTree(entry.getDisplayName() != null ?
+                                entry.getDisplayName() : Text.literal(entry.getProfile().getName())),
+                        entry.getLatency(),
+                        entry.getGameMode() != null ? entry.getGameMode().getName() : "",
+                        entry.getSkinTextures().model().getName(),
                         entry.getSkinTextures().texture().toString())).collect(Collectors.toList());
     }
 
@@ -216,6 +220,7 @@ public class W1204VersionBridgeDriver implements WVersionBridgeDriver
         }
 
         return ((WorldAccessor) MinecraftClient.getInstance().world).getBlockEntityTickers().stream().filter(ticker -> !ticker.isRemoved())
+                .filter(ticker -> ticker.getPos() != null)
                 .filter(ticker -> MinecraftClient.getInstance().world.getBlockEntity(ticker.getPos()) != null).map(ticker -> {
                     final BlockEntity tileEntity = MinecraftClient.getInstance().world.getBlockEntity(ticker.getPos());
                     return new TileEntry(Objects.requireNonNull(Registries.BLOCK_ENTITY_TYPE.getId(Objects.requireNonNull(tileEntity).getType())).toString(),
@@ -223,7 +228,6 @@ public class W1204VersionBridgeDriver implements WVersionBridgeDriver
                             tileEntity.getPos().getY(),
                             tileEntity.getPos().getZ(),
                             tileEntity.toInitialChunkDataNbt().toString());
-
                 }).toList();
     }
 }
