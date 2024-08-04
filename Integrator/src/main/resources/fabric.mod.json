@@ -12,6 +12,9 @@
   "icon": "assets/w2k-integrator/icon.png",
   "environment": "client",
   "entrypoints": {
+    "client": [
+      "me.videogamesm12.w2k.integrator.Integrator"
+    ],
     "meteor": [
       "me.videogamesm12.w2k.integrator.partitions.meteor.MeteorEntrypoint"
     ]

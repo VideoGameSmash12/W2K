@@ -16,7 +16,10 @@ import net.fabricmc.api.ModInitializer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Log4j2
 public class W2K implements ModInitializer
@@ -95,7 +98,18 @@ public class W2K implements ModInitializer
         // Append our loaded commands
         final StringBuilder commandList = new StringBuilder();
         commandList.append("Registered Commands:\n");
-        commandManager.getCommandNames().forEach(command -> commandList.append("\t").append(command).append("\n"));
+        commandManager.getCommands().forEach(command -> commandList.append("\t").append(command.getName())
+                .append(" (class ").append(command.getClass().getName()).append(")\n"));
         event.appendSection("Command Manager", commandList.toString());
+
+        // Append our enabled experiments (if any)
+        if (!ExperimentManager.getEnabledExperiments().isEmpty())
+        {
+            List<String> experimentManager = new ArrayList<>();
+            experimentManager.add("Enabled:");
+            experimentManager.addAll(ExperimentManager.getEnabledExperiments().stream()
+                    .map(experiment -> "\t" + experiment.name()).collect(Collectors.toList()));
+            event.appendSection("Experiment Manager", experimentManager.toArray(new String[0]));
+        }
     }
 }

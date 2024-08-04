@@ -23,9 +23,14 @@
 package me.videogamesm12.w2k.supervisor.components.fantasia;
 
 import lombok.Getter;
+import me.videogamesm12.w2k.supervisor.Supervisor;
 import me.videogamesm12.w2k.supervisor.api.SVComponent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * <h1>Fantasia</h1>
@@ -44,7 +49,7 @@ public class Fantasia implements SVComponent
     @Override
     public String identifier()
     {
-        return "w2k:fantasia";
+        return "Fantasia";
     }
 
     @Override
@@ -61,5 +66,25 @@ public class Fantasia implements SVComponent
     public void shutdown()
     {
         server.shutdown();
+    }
+
+    @Override
+    public List<String> crashReportDetails()
+    {
+        final List<String> lines = new ArrayList<>();
+        lines.add("\tActive Sessions:");
+        if (!server.getSessions().isEmpty())
+        {
+            lines.addAll(server.getSessions().stream()
+                    .map(session -> "\t\t" + session.getConnectionIdentifier()).collect(Collectors.toList()));
+        }
+        else
+        {
+            lines.add("\t\t(none)");
+        }
+        lines.add("\tConfiguration:");
+        Supervisor.getConfig().getFantasiaSettings().getSettings()
+                .forEach((name, value) -> lines.add("\t\t" + name + ": " + value));
+        return lines;
     }
 }

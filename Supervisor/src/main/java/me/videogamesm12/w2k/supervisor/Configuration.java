@@ -26,6 +26,10 @@ import lombok.Getter;
 import lombok.Setter;
 import me.videogamesm12.w2k.supervisor.components.fantasia.ConnectionType;
 
+import java.util.Arrays;
+import java.util.Map;
+import java.util.WeakHashMap;
+
 @Getter
 public class Configuration
 {
@@ -48,6 +52,23 @@ public class Configuration
         private boolean nonLocalConnectionsAllowed;
 
         private boolean runningCommandsFromInGameAllowed;
+
+        public Map<String, Object> getSettings()
+        {
+            final Map<String, Object> map = new WeakHashMap<>();
+            Arrays.stream(getClass().getDeclaredFields()).forEach(field ->
+            {
+                try
+                {
+                    map.put(field.getName(), field.get(this));
+                }
+                catch (IllegalAccessException ignored)
+                {
+                }
+            });
+
+            return map;
+        }
     }
 
     @Getter
@@ -61,6 +82,23 @@ public class Configuration
         private boolean ignoringLightUpdates;
 
         private boolean ignoringParticleSpawns;
+
+        public Map<String, Boolean> getSettings()
+        {
+            final Map<String, Boolean> map = new WeakHashMap<>();
+            Arrays.stream(getClass().getDeclaredFields()).forEach(field ->
+            {
+                try
+                {
+                    map.put(field.getName(), field.getBoolean(this));
+                }
+                catch (IllegalAccessException ignored)
+                {
+                }
+            });
+
+            return map;
+        }
     }
 
     @Getter
@@ -76,6 +114,23 @@ public class Configuration
         private boolean weatherRenderingDisabled;
 
         private boolean worldRenderingDisabled;
+
+        public Map<String, Boolean> getSettings()
+        {
+            final Map<String, Boolean> map = new WeakHashMap<>();
+            Arrays.stream(getClass().getDeclaredFields()).forEach(field ->
+            {
+                try
+                {
+                    map.put(field.getName(), field.getBoolean(this));
+                }
+                catch (IllegalAccessException ignored)
+                {
+                }
+            });
+
+            return map;
+        }
     }
 
     @Getter
@@ -85,5 +140,22 @@ public class Configuration
         private boolean freezeDetectionEnabled = true;
 
         private long freezeDetectionThreshold = 5000;
+
+        public Map<String, Object> getSettings()
+        {
+            final Map<String, Object> map = new WeakHashMap<>();
+            Arrays.stream(getClass().getDeclaredFields()).forEach(field ->
+            {
+                try
+                {
+                    map.put(field.getName(), field.get(this));
+                }
+                catch (IllegalAccessException ignored)
+                {
+                }
+            });
+
+            return map;
+        }
     }
 }

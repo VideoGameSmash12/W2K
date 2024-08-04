@@ -57,6 +57,11 @@ public class WCommandManager
         return new ArrayList<>(commandMap.keySet());
     }
 
+    public List<WCommand> getCommands()
+    {
+        return new ArrayList<>(commandMap.values());
+    }
+
     public WCommand getCommand(String name)
     {
         return commandMap.get(name);

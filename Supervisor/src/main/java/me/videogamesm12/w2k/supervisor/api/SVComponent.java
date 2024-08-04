@@ -22,6 +22,8 @@
 
 package me.videogamesm12.w2k.supervisor.api;
 
+import java.util.List;
+
 /**
  * <h1>SVComponent</h1>
  * <p>A component for the Supervisor.</p>
@@ -33,4 +35,6 @@ public interface SVComponent
     void setup();
 
     void shutdown();
+
+    List<String> crashReportDetails();
 }

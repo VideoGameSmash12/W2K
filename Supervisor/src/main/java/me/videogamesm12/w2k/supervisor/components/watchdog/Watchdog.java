@@ -27,6 +27,8 @@ import me.videogamesm12.w2k.supervisor.Supervisor;
 import me.videogamesm12.w2k.supervisor.api.SVComponent;
 import me.videogamesm12.w2k.supervisor.api.event.ClientFreezeEvent;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -40,7 +42,7 @@ public class Watchdog extends Thread implements SVComponent
     @Override
     public String identifier()
     {
-        return "w2k:watchdog";
+        return "Watchdog";
     }
 
     @Override
@@ -80,5 +82,16 @@ public class Watchdog extends Thread implements SVComponent
     public void shutdown()
     {
         freezeDetector.shutdownNow();
+    }
+
+    @Override
+    public List<String> crashReportDetails()
+    {
+        final List<String> details = new ArrayList<>();
+        details.add("\tLast Rendered: " + LAST_RENDERED_TIME);
+        details.add("\tConfiguration:");
+        Supervisor.getConfig().getWatchdogSettings().getSettings().forEach((name, value) ->
+                details.add("\t\t" + name + ": " + value));
+        return details;
     }
 }

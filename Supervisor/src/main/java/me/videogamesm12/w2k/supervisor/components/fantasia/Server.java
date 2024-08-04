@@ -46,15 +46,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
+@Getter
 public class Server extends Thread
 {
     private final List<ISession> sessions = new ArrayList<>();
-    //--
-    @Getter
-    private IConnectionListener connectionListener;
-    //--
-    @Getter
     private final Map<String, FCommand> commands = new HashMap<>();
+    //--
+    private IConnectionListener connectionListener;
 
     public Server()
     {

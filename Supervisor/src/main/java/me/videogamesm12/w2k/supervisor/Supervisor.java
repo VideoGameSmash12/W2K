@@ -29,6 +29,7 @@ import com.google.gson.GsonBuilder;
 import lombok.Getter;
 import me.videogamesm12.w2k.kernel.W2K;
 import me.videogamesm12.w2k.kernel.data.*;
+import me.videogamesm12.w2k.kernel.event.diagnostics.PopulateCrashReportEvent;
 import me.videogamesm12.w2k.kernel.event.lifecycle.ClientStartedEvent;
 import me.videogamesm12.w2k.kernel.event.lifecycle.ClientStoppedEvent;
 import me.videogamesm12.w2k.supervisor.api.SVComponent;
@@ -101,6 +102,25 @@ public class Supervisor extends Thread
     public void onClientStopped(ClientStoppedEvent event)
     {
         shutdown();
+    }
+
+    @Subscribe
+    public void onCrashReport(PopulateCrashReportEvent event)
+    {
+        final List<String> lines = new ArrayList<>();
+        lines.add("Mitigations:");
+        lines.add("\tRendering:");
+        config.getRenderingSettings().getSettings().forEach((name, value) -> lines.add("\t\t" + name + ": " + value));
+        lines.add("\tNetwork:");
+        config.getNetworkSettings().getSettings().forEach((name, value) -> lines.add("\t\t" + name + ": " + value));
+
+        components.forEach(component ->
+        {
+            lines.add(component.identifier() + ":");
+            lines.addAll(component.crashReportDetails());
+        });
+
+        event.appendSection("Supervisor", lines.toArray(new String[0]));
     }
 
     public Configuration loadConfiguration()

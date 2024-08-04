@@ -8,7 +8,9 @@
     "videogamesm12"
   ],
   "contact": {
-    "repo": "https://github.com/videogamesm12/W2K"
+    "repo": "https://github.com/videogamesm12/W2K",
+    "issues": "https://github.com/videogamesm12/W2K/issues",
+    "sources": "https://github.com/videogamesm12/W2K"
   },
   "license": "MIT",
   "icon": "assets/w2k/icon.png",

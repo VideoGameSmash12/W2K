@@ -23,12 +23,16 @@
 package me.videogamesm12.w2k.integrator;
 
 import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
 import lombok.Getter;
+import me.videogamesm12.w2k.kernel.W2K;
+import me.videogamesm12.w2k.kernel.event.diagnostics.PopulateCrashReportEvent;
+import net.fabricmc.api.ClientModInitializer;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
-public class Integrator
+public class Integrator implements ClientModInitializer
 {
     @Getter
     private static final Map<String, EventBus> eventTransit = new HashMap<>();
@@ -38,5 +42,20 @@ public class Integrator
         if (!eventTransit.containsKey(mod)) eventTransit.put(mod, new EventBus());
 
         return eventTransit.get(mod);
+    }
+
+    @Override
+    public void onInitializeClient()
+    {
+        W2K.getEventBus().register(this);
+    }
+
+    @Subscribe
+    public void onCrashReport(PopulateCrashReportEvent event)
+    {
+        final List<String> section = new ArrayList<>(Collections.singletonList("Integrated Mods:"));
+        section.addAll(eventTransit.keySet().stream().map(name -> "\t" + name.replace("integrator:", ""))
+                .collect(Collectors.toList()));
+        event.appendSection("Integrator", section.toArray(new String[0]));
     }
 }
