@@ -74,7 +74,7 @@ public class TelnetSession extends Thread implements ISession
         }
 
         // Just in case...
-        /*if (!Supervisor.getConfig().getFantasiaSettings().isNonLocalConnectionsAllowed()
+        if (!Supervisor.getConfig().getFantasiaSettings().isNonLocalConnectionsAllowed()
                 && !socket.getInetAddress().equals(InetAddress.getLoopbackAddress()))
         {
             try
@@ -86,7 +86,7 @@ public class TelnetSession extends Thread implements ISession
             catch (Exception ignored)
             {
             }
-        }*/
+        }
 
         Supervisor.getEventBus().post(new SessionStartedEvent(this));
 
