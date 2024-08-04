@@ -74,7 +74,7 @@ public class Configuration
                 {
                     try
                     {
-                        final Process proc = Runtime.getRuntime().exec(new String[] {"defaults", "read", "-g", "AppleInterfaceStyle"});
+                        final Process proc = SysUtils.execute("defaults", "read", "-g", "AppleInterfaceStyle");
                         return proc.waitFor() == 0 ? "MAC_DARK" : "MAC_LIGHT";
                     }
                     catch (Throwable ex)

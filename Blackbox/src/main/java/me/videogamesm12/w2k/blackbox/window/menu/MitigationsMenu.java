@@ -1,5 +1,6 @@
 package me.videogamesm12.w2k.blackbox.window.menu;
 
+import me.videogamesm12.w2k.kernel.util.VersionUtils;
 import me.videogamesm12.w2k.supervisor.Configuration;
 import me.videogamesm12.w2k.supervisor.Supervisor;
 
@@ -85,10 +86,14 @@ public class MitigationsMenu extends JMenu
         explosionSpawning.addActionListener((e) -> network.setIgnoringExplosions(explosionSpawning.isSelected()));
         menu.add(explosionSpawning);
         //--
-        final JCheckBoxMenuItem lightUpdates = new JCheckBoxMenuItem("Ignore light updates", network.isIgnoringLightUpdates());
-        lightUpdates.setToolTipText("Ignores packets for light updates. Combats a known client lag exploit related to this.");
-        lightUpdates.addActionListener((e) -> network.setIgnoringLightUpdates(lightUpdates.isSelected()));
-        menu.add(lightUpdates);
+        // Light update packets were introduced in 1.16, so this mitigation doesn't work on anything older than that
+        if (VersionUtils.isNewerThanOrRunning("1.16.5"))
+        {
+            final JCheckBoxMenuItem lightUpdates = new JCheckBoxMenuItem("Ignore light updates", network.isIgnoringLightUpdates());
+            lightUpdates.setToolTipText("Ignores packets for light updates. Combats a known client lag exploit related to this.");
+            lightUpdates.addActionListener((e) -> network.setIgnoringLightUpdates(lightUpdates.isSelected()));
+            menu.add(lightUpdates);
+        }
         //--
         final JCheckBoxMenuItem particleSpawning = new JCheckBoxMenuItem("Ignore particle spawning", network.isIgnoringParticleSpawns());
         particleSpawning.setToolTipText("Ignores packets for particle spawning.");

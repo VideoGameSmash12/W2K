@@ -102,6 +102,13 @@ public class Blackbox extends Thread
     @Subscribe
     public void onClientStopped(ClientStoppedEvent event)
     {
+        // Set the width and height in the configuration so that the user's preferences are kept
+        if (mainWindow != null)
+        {
+            config.setWidth(mainWindow.getWidth());
+            config.setHeight(mainWindow.getHeight());
+        }
+
         Configuration.save(config);
     }
 
