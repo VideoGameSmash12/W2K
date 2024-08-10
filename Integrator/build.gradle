@@ -18,9 +18,12 @@ dependencies {
 
     implementation project(":Blackbox")
 
+    // Some mods rely on the Fabric API for one reason or another.
+    modApi "net.fabricmc.fabric-api:fabric-api:0.28.5+1.14"
+
     // Wurst
     modApi "com.github.VideoGameSmash12:Wurst7:master"
-    // Meteor
+    // Meteor (and hopefully its derivatives)
     modApi "meteordevelopment:meteor-client:0.5.8-SNAPSHOT"
     // ReplayMod
     modApi "maven.modrinth:replaymod:1.14.4-2.6.15"

@@ -13,10 +13,10 @@ public class MeteorEntrypoint extends MeteorAddon
     public void onInitialize()
     {
         // Create our menu
-        final PModMenu<MeteorClient> menu = new PModMenu<>("Meteor Client", MeteorClient.INSTANCE);
+        final PModMenu<MeteorClient> menu = new PModMenu<>(MeteorClient.NAME, MeteorClient.INSTANCE);
 
         // Sets the mod icon
-        menu.addModIconIfPresent("meteor-client");
+        menu.addModIconIfPresent(MeteorClient.MOD_META.getId());
 
         // Loops through the categories in memory
         Modules.loopCategories().forEach(category ->

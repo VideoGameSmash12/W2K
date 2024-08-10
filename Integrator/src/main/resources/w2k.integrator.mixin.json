@@ -5,6 +5,8 @@
   "plugin": "me.videogamesm12.w2k.integrator.IntegratorMixinPlugin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
+    "asteroid.AsteroidModuleMixin",
+    "asteroid.AsteroidModuleMixin",
     "bleachhack.BleachHackMixin",
     "bleachhack.BleachHackModuleMixin",
     "litematica.LitematicaMixin",
