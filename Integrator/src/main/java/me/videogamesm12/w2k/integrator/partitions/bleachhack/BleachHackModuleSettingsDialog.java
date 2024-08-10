@@ -25,6 +25,14 @@ public class BleachHackModuleSettingsDialog extends JDialog
 
         for (ModuleSetting<?> entry : module.getSettings())
         {
+            // Key bindings are not supported at this moment in time as AWT/Swing, LWJGL, and GLFW all have different
+            //  internal codes for keys and are thus not compatible. I don't want to have to juggle these and risk
+            //  causing compatibility issues. Screw that.
+            if (entry instanceof SettingKey)
+            {
+                continue;
+            }
+
             final JLabel settingLabel = new JLabel(entry.getName());
             final JComponent settingComponent = getSettingComponent(entry);
 

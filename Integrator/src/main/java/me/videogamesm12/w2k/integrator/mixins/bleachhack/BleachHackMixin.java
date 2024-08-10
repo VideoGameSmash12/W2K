@@ -32,8 +32,13 @@ public class BleachHackMixin
                 + "recreate a crash in an environment without W2K, you should instead report the issue on W2K's GitHub "
                 + "at https://github.com/VideoGameSmash12/W2K/issues.");
 
+        // Creates the menu
         final PModMenu<BleachHack> menu = new PModMenu<>("BleachHack", BleachHack.getInstance());
 
+        // Adds the mod icon
+        menu.addModIconIfPresent("bleachhack");
+
+        // Adds all of the BleachHack modules to the menu
         Arrays.stream(ModuleCategory.values()).forEach(category ->
         {
             PModCategoryMenu cMenu = new PModCategoryMenu(StringUtils.capitalize(category.name().toLowerCase()));
@@ -41,11 +46,15 @@ public class BleachHackMixin
             menu.addSubMenu(cMenu);
         });
 
+        // Adds separator for non-module shenanigans
         menu.addSeparator();
+
+        // Adds menu option for Settings
         final JMenuItem settingsMenuItem = new JMenuItem("Settings");
         settingsMenuItem.addActionListener((e) -> new BleachHackSettingsDialog().setVisible(true));
         menu.add(settingsMenuItem);
 
+        // Queues the menu for the Blackbox
         W2KMenu.queueModMenu(menu);
     }
 }
