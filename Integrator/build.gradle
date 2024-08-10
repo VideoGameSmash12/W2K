@@ -27,4 +27,6 @@ dependencies {
     // Litematica
     modApi "maven.modrinth:litematica:0.9.0"
     modApi "maven.modrinth:malilib:HljUtdhE"
+    // BleachHack
+    modApi "com.github.VideoGameSmash12:BleachHack:0ff238ad09c6dbe9ac31e6d8c0806f5160e57ed9"
 }
