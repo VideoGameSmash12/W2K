@@ -2,6 +2,7 @@ package me.videogamesm12.w2k.kernel.util;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import me.videogamesm12.w2k.kernel.W2K;
 import net.fabricmc.loader.api.SemanticVersion;
 import net.fabricmc.loader.api.VersionParsingException;
 
@@ -28,6 +29,11 @@ public class SysUtils
     public static Process execute(String... args) throws IOException, InterruptedException
     {
         return Runtime.getRuntime().exec(args);
+    }
+
+    public static boolean isUsingWayland()
+    {
+        return System.getenv("XDG_SESSION_TYPE").equalsIgnoreCase("wayland");
     }
 
     public enum OperatingSystem

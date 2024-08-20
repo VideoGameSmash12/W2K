@@ -39,17 +39,18 @@ public class Entrypoints implements PreLaunchEntrypoint, ClientModInitializer
 
         System.setProperty("java.awt.headless", "false");
 
-        // Mitigates an issue in which doing certain tasks with the Blackbox on Linux causes X errors
-        if (SysUtils.getOperatingSystem() == SysUtils.OperatingSystem.LINUX &&
+        // Mitigates an issue in which doing certain tasks with the Blackbox on Linux in X11 causes X errors
+        if (SysUtils.getOperatingSystem() == SysUtils.OperatingSystem.LINUX && !SysUtils.isUsingWayland() &&
                 System.getProperty("me.videogamesm12.w2k.use_x11_pipeline_for_blackbox", "false").contains("f"))
         {
-            logger.info("Greetings from W2K's developer - Linux users have reported that for whatever reason, the "
-                    + "Blackbox causes strange X errors (and presumably a JVM crash) to occur after various unrelated "
-                    + "events happen. To counter this, we're changing the Java2D pipeline from X11 to OpenGL.");
-            logger.info("This may cause a performance drop in the Blackbox when for example trying to resize the "
-                    + "window. If you find this unacceptable and want to sacrifice stability for the sake of speed, "
-                    + "set the JVM command line property \"me.videogamesm12.w2k.use_x11_pipeline_for_blackbox\" to "
-                    + "\"true\".");
+            logger.info("Greetings from W2K's developer - We are switching over the pipeline used by Java2D from the "
+                    + "X11 pipeline to the OpenGL pipeline to work around stability issues in which the Blackbox "
+                    + "may cause the X server to throw an error and kill the JVM.");
+            logger.info("This may cause a performance drop overall when interacting with the Blackbox in certain ways "
+                    + "like trying to resize the window. If you find this unacceptable or are experiencing issues you "
+                    + "think are caused by this, you can e  ither set the JVM command line property "
+                    + "\"me.videogamesm12.w2k.dont_use_x11_workaround\" to \"true\" (which puts your client at risk of "
+                    + "stability issues) or switch from using X11 to Wayland (and by extension, XWayland) instead.");
             System.setProperty("sun.java2d.opengl", "true");
         }
     }
