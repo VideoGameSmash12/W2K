@@ -48,7 +48,7 @@ public class Entrypoints implements PreLaunchEntrypoint, ClientModInitializer
                     + "may cause the X server to throw an error and kill the JVM.");
             logger.info("This may cause a performance drop overall when interacting with the Blackbox in certain ways "
                     + "like trying to resize the window. If you find this unacceptable or are experiencing issues you "
-                    + "think are caused by this, you can e  ither set the JVM command line property "
+                    + "think are caused by this, you can either set the JVM command line property "
                     + "\"me.videogamesm12.w2k.dont_use_x11_workaround\" to \"true\" (which puts your client at risk of "
                     + "stability issues) or switch from using X11 to Wayland (and by extension, XWayland) instead.");
             System.setProperty("sun.java2d.opengl", "true");
