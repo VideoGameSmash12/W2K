@@ -1,8 +1,10 @@
 package me.videogamesm12.w2k.kernel.experiment;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
+@Getter
 public class Condition
 {
     private final String label;

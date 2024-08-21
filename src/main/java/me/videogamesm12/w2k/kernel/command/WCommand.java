@@ -7,6 +7,10 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
+/**
+ * <h1>WCommand</h1>
+ * <p>A version-agnostic client command class.</p>
+ */
 @Getter
 public abstract class WCommand
 {

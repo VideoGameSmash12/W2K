@@ -6,6 +6,10 @@ import lombok.RequiredArgsConstructor;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * <h1>MapEntry</h1>
+ * <p>Version-agnostic wrapper for MapState.</p>
+ */
 @Getter
 @RequiredArgsConstructor
 public final class MapEntry

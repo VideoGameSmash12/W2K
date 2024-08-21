@@ -8,6 +8,10 @@ import me.videogamesm12.w2k.kernel.W2K;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * <h1>InventoryEntry</h1>
+ * <p>Version-agnostic wrapper for ItemStack.</p>
+ */
 @Getter
 @RequiredArgsConstructor
 public class InventoryEntry

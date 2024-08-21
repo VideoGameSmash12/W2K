@@ -2,14 +2,21 @@ package me.videogamesm12.w2k.kernel.util;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import me.videogamesm12.w2k.kernel.W2K;
 import net.fabricmc.loader.api.SemanticVersion;
 import net.fabricmc.loader.api.VersionParsingException;
 
 import java.io.IOException;
 
+/**
+ * <h1>SysUtils</h1>
+ * <p>Utility class for interacting with the user's system directly.</p>
+ */
 public class SysUtils
 {
+    /**
+     * Gets the current operating system.
+     * @return  An instance of {@link OperatingSystem} based on the user's current configuration.
+     */
     public static OperatingSystem getOperatingSystem()
     {
         final String os = System.getProperty("os.name").toLowerCase();
@@ -21,16 +28,30 @@ public class SysUtils
         else return OperatingSystem.OTHER;
     }
 
+    /**
+     * Gets the current operating system version.
+     * @return  An instance of {@link OperatingSystemVersion} based on the user's current configuration.
+     */
     public static OperatingSystemVersion getOperatingSystemVersion()
     {
         return OperatingSystemVersion.fromString(System.getProperty("os.version").toLowerCase());
     }
 
-    public static Process execute(String... args) throws IOException, InterruptedException
+    /**
+     * Executes a command on the system.
+     * @param args          A series of strings to use for the command.
+     * @return              {@link Process}
+     * @throws IOException  If an IO exception occurs while executing the process.
+     */
+    public static Process execute(String... args) throws IOException
     {
         return Runtime.getRuntime().exec(args);
     }
 
+    /**
+     * Returns whether the user is currently using the Wayland Window Manager.
+     * @return  True if the {@code XDG_SESSION_TYPE} environment variable is set to "wayland".
+     */
     public static boolean isUsingWayland()
     {
         return System.getenv("XDG_SESSION_TYPE").equalsIgnoreCase("wayland");
@@ -45,6 +66,10 @@ public class SysUtils
         OTHER
     }
 
+    /**
+     * <h2>OperatingSystemVersion</h2>
+     * <p>Wrapper class for an operating system version.</p>
+     */
     @RequiredArgsConstructor
     @Getter
     public static class OperatingSystemVersion

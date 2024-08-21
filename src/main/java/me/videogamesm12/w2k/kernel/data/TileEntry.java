@@ -6,6 +6,10 @@ import lombok.RequiredArgsConstructor;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * <h1>TileEntry</h1>
+ * <p>Version-agnostic wrapper for BlockEntity.</p>
+ */
 @RequiredArgsConstructor
 @Getter
 public class TileEntry

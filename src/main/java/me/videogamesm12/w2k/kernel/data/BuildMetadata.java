@@ -78,7 +78,7 @@ public class BuildMetadata
         final Properties properties = new Properties();
         try
         {
-            properties.load(W2K.class.getClassLoader().getResourceAsStream("git.properties"));
+            properties.load(modClass.getClassLoader().getResourceAsStream("git.properties"));
 
             return BuildMetadata.builder()
                     .branch(properties.getProperty("git.branch"))

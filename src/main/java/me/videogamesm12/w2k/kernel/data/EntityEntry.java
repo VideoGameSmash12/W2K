@@ -9,6 +9,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * <h1>EntityEntry</h1>
+ * <p>Version-agnostic wrapper for Entity.</p>
+ */
 @RequiredArgsConstructor
 @Getter
 public class EntityEntry
