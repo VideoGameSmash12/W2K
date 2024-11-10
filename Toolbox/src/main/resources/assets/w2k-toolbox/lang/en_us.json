@@ -8,5 +8,7 @@
   "w2k.toolbox.ashcon.result.uuid": "%s's UUID is %s.",
   "w2k.toolbox.dump.error": "An unrecoverable error occurred during the dump. Check the logs for more information.",
   "w2k.toolbox.dump.starting.entities": "Dumping entities...",
-  "w2k.toolbox.dump.success.entities": "Entity dump complete (%1$s successful, %2$s failed)."
+  "w2k.toolbox.dump.starting.tiles": "Dumping tile entities...",
+  "w2k.toolbox.dump.success.entities": "Entity dump complete (%1$s successful, %2$s failed).",
+  "w2k.toolbox.dump.success.tiles": "Tile entity dump complete (%1$s successful, %2$s failed, %3$s ignored)."
 }

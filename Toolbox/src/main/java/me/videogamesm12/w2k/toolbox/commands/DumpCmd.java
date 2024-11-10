@@ -7,7 +7,7 @@ import me.videogamesm12.w2k.toolbox.util.DumpUtil;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 
-@Parameters(name = "dump", usage = "/dump <entities> [parallel]")
+@Parameters(name = "dump", usage = "/dump <entities | tiles> [parallel]")
 public class DumpCmd extends WCommand
 {
 	@Override
@@ -22,6 +22,28 @@ public class DumpCmd extends WCommand
 
 		switch (args[0].toLowerCase())
 		{
+			case "tiles":
+			{
+				msg(Component.translatable("w2k.toolbox.dump.starting.tiles", NamedTextColor.GRAY));
+				DumpUtil.performTileEntityDump(parallel).whenComplete((results, throwable) ->
+				{
+					if (throwable != null)
+					{
+						W2K.getLogger().error("Stacktrace:", throwable);
+						msg(Component.translatable("w2k.toolbox.dump.error"));
+						return;
+					}
+
+					String[] complete = (String[]) results[0];
+					String[] failed = (String[]) results[1];
+					String[] ignored = (String[]) results[2];
+
+					msg(Component.translatable("w2k.toolbox.dump.success.tiles",
+							complete.length == 0 ? NamedTextColor.RED : failed.length == 0 ? NamedTextColor.GREEN : NamedTextColor.YELLOW,
+							Component.text(complete.length), Component.text(failed.length), Component.text(ignored.length)));
+				});
+				break;
+			}
 			case "entities":
 			{
 				msg(Component.translatable("w2k.toolbox.dump.starting.entities", NamedTextColor.GRAY));

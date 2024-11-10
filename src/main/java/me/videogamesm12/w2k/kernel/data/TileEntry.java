@@ -28,4 +28,10 @@ public class TileEntry
     {
         return Arrays.asList(type, String.format("%s, %s, %s", x, y, z), data);
     }
+
+    @Override
+    public String toString()
+    {
+        return type + " at " + String.format("%d, %d, %d", x, y, z);
+    }
 }
