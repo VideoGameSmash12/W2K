@@ -1,9 +1,9 @@
-package me.videogamesm12.w2k.drivers.v1_20_6.mixin.injector;
+package me.videogamesm12.w2k.drivers.v1_21_2.mixin.injector;
 
 import com.google.gson.JsonElement;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
-import me.videogamesm12.w2k.drivers.v1_20_6.required.W1206VersionBridgeDriver;
+import me.videogamesm12.w2k.drivers.v1_21_2.required.W1212VersionBridgeDriver;
 import me.videogamesm12.w2k.kernel.util.ComponentUtils;
 import me.videogamesm12.w2k.supervisor.Supervisor;
 import me.videogamesm12.w2k.supervisor.api.event.ChatMessageEvent;
@@ -26,7 +26,7 @@ public class ChatHudMixin
     {
         // Encode the Text as JSON using internal shenanigans. If it fails, then we try stripping it of any additional
         //  formatting and trying that.
-        DataResult<JsonElement> regular = TextCodecs.CODEC.encodeStart(W1206VersionBridgeDriver.getWrapperLookup()
+        DataResult<JsonElement> regular = TextCodecs.CODEC.encodeStart(W1212VersionBridgeDriver.getWrapperLookup()
                 .getOps(JsonOps.INSTANCE), message);
         regular.ifSuccess(element -> Supervisor.getEventBus().post(new ChatMessageEvent(element)));
         regular.ifError(error -> Supervisor.getEventBus().post(new ChatMessageEvent(

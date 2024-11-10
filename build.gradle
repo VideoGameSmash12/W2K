@@ -1,6 +1,6 @@
 plugins {
-    id 'fabric-loom' version '1.7-SNAPSHOT'
-    id "legacy-looming" version "1.7-SNAPSHOT" // Version must be the same as fabric-loom's
+    id 'fabric-loom' version '1.8-SNAPSHOT'
+    id "legacy-looming" version "1.8-SNAPSHOT" // Version must be the same as fabric-loom's
     id 'com.gorylenko.gradle-git-properties' version '2.4.2'
     id 'maven-publish'
 }

@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
-  "id": "w2k-drivers-v1_21",
+  "id": "w2k-drivers-v1_21_2",
   "version": "${version}",
-  "name": "Tricky Drivers",
-  "description": "Minecraft 1.21 to 1.21.1 drivers for W2K",
+  "name": "Trickier Drivers",
+  "description": "Minecraft 1.21.2 to 1.21.3 drivers for W2K",
   "authors": [
     "videogamesm12"
   ],
@@ -11,24 +11,24 @@
     "repo": "https://github.com/videogamesm12/W2K"
   },
   "license": "MIT",
-  "icon": "assets/w2k-drivers-v1_21/icon.png",
+  "icon": "assets/w2k-drivers-v1_21_2/icon.png",
   "environment": "client",
   "entrypoints": {
     "w2k-event-passthru-driver": [
-      "me.videogamesm12.w2k.drivers.v1_21.required.W121EventPassthruDriver"
+      "me.videogamesm12.w2k.drivers.v1_21_2.required.W1212EventPassthruDriver"
     ],
     "w2k-version-bridge-driver": [
-      "me.videogamesm12.w2k.drivers.v1_21.required.W121VersionBridgeDriver"
+      "me.videogamesm12.w2k.drivers.v1_21_2.required.W1212VersionBridgeDriver"
     ],
     "w2k-command-wrapper-driver": [
-      "me.videogamesm12.w2k.drivers.v1_21.required.W121CommandDriver"
+      "me.videogamesm12.w2k.drivers.v1_21_2.required.W1212CommandDriver"
     ]
   },
   "mixins": [
-    "w2k.drivers.1_21.mixins.json"
+    "w2k.drivers.1_21_2.mixins.json"
   ],
   "depends": {
-    "minecraft": ["1.21", "1.21.1"]
+    "minecraft": ["1.21.2", "1.21.3"]
   },
   "custom": {
     "modmenu": {

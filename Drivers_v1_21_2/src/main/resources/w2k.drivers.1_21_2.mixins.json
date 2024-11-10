@@ -1,0 +1,25 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "me.videogamesm12.w2k.drivers.v1_21_2.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "client": [
+    "accessor.ClientWorldAccessor",
+    "accessor.DHAccessor",
+    "accessor.IGHAccessor",
+    "injector.BlockEntityRendererMixin",
+    "injector.ChatHudMixin",
+    "injector.ClientPlayNetworkHandlerMixin",
+    "injector.EntityRendererMixin",
+    "injector.GameRendererMixin",
+    "injector.MainMixin",
+    "injector.MinecraftClientMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "mixins": [
+    "accessor.WorldAccessor",
+    "injector.CrashReportMixin"
+  ]
+}
