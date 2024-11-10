@@ -139,7 +139,7 @@ public class W113VersionBridgeDriver implements WVersionBridgeDriver
     }
 
     @Override
-    public List<EntityEntry> getNearbyEntities()
+    public List<EntityEntry> getNearbyEntities(boolean includeNbt)
     {
         if (MinecraftClient.getInstance().world == null)
         {
@@ -152,7 +152,8 @@ public class W113VersionBridgeDriver implements WVersionBridgeDriver
                         EntityType.getId(entity.method_15557()) != null ? EntityType.getId(entity.method_15557()).toString() : entity.getClass().getName(),
                         String.format("%s, %s, %s", entity.x, entity.y, entity.z),
                         entity.getEntityId(),
-                        entity.getUuid()))
+                        entity.getUuid(),
+                        entity.toNbt(new NbtCompound()).toString()))
                 .collect(Collectors.toList());
     }
 

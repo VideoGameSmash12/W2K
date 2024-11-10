@@ -17,6 +17,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.map.MapState;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.Registries;
 import net.minecraft.text.Text;
 
@@ -138,7 +139,7 @@ public class W1204VersionBridgeDriver implements WVersionBridgeDriver
     }
 
     @Override
-    public List<EntityEntry> getNearbyEntities()
+    public List<EntityEntry> getNearbyEntities(boolean includeNbt)
     {
         if (MinecraftClient.getInstance().world == null)
         {
@@ -151,7 +152,8 @@ public class W1204VersionBridgeDriver implements WVersionBridgeDriver
                         EntityType.getId(entity.getType()).toString(),
                         String.format("%s, %s, %s", entity.getX(), entity.getY(), entity.getZ()),
                         entity.getId(),
-                        entity.getUuid()))
+                        entity.getUuid(),
+                        includeNbt ? entity.writeNbt(new NbtCompound()).toString() : null))
                 .toList();
     }
 

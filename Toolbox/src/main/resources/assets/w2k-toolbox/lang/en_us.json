@@ -5,5 +5,8 @@
   "w2k.toolbox.ashcon.error.player_not_found": "That player could not be found.",
   "w2k.toolbox.ashcon.error.unknown": "An error occurred whilst communicating with the API. Check the logs for more information.",
   "w2k.toolbox.ashcon.result.name": "%s resolves to %s.",
-  "w2k.toolbox.ashcon.result.uuid": "%s's UUID is %s."
+  "w2k.toolbox.ashcon.result.uuid": "%s's UUID is %s.",
+  "w2k.toolbox.dump.error": "An unrecoverable error occurred during the dump. Check the logs for more information.",
+  "w2k.toolbox.dump.starting.entities": "Dumping entities...",
+  "w2k.toolbox.dump.success.entities": "Entity dump complete (%1$s successful, %2$s failed)."
 }

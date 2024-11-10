@@ -131,7 +131,7 @@ public class W18VersionBridgeDriver implements WVersionBridgeDriver
     }
 
     @Override
-    public List<EntityEntry> getNearbyEntities()
+    public List<EntityEntry> getNearbyEntities(boolean includeNbt)
     {
         if (MinecraftClient.getInstance().world == null)
         {
@@ -139,14 +139,21 @@ public class W18VersionBridgeDriver implements WVersionBridgeDriver
         }
 
         return ((ClientWorldAccessor) MinecraftClient.getInstance().world).getEntities().stream()
-                .map(entity -> new EntityEntry(ComponentUtils.stringToElement(Text.Serializer.serialize(
-                        entity.getCustomName() != null && !entity.getCustomName().isEmpty() ? new LiteralText(entity.getCustomName()) : new TranslatableText(entity.getTranslationKey()))),
-                        ((EntityAccessor) entity).getSavedEntityId() != null ?
-                                ((EntityAccessor) entity).getSavedEntityId() :
-                                entity instanceof PlayerEntity ? "minecraft:player" : "minecraft:unknown",
-                        String.format("%s, %s, %s", entity.x, entity.y, entity.z),
-                        entity.getEntityId(),
-                        entity.getUuid()))
+                .map(entity ->
+                {
+                    final NbtCompound data = new NbtCompound();
+                    entity.writePlayerData(data);
+
+                    return new EntityEntry(ComponentUtils.stringToElement(Text.Serializer.serialize(
+                            entity.getCustomName() != null && !entity.getCustomName().isEmpty() ? new LiteralText(entity.getCustomName()) : new TranslatableText(entity.getTranslationKey()))),
+                            ((EntityAccessor) entity).getSavedEntityId() != null ?
+                                    ((EntityAccessor) entity).getSavedEntityId() :
+                                    entity instanceof PlayerEntity ? "minecraft:player" : "minecraft:unknown",
+                            String.format("%s, %s, %s", entity.x, entity.y, entity.z),
+                            entity.getEntityId(),
+                            entity.getUuid(),
+                            data.toString());
+                })
                 .collect(Collectors.toList());
     }
 
