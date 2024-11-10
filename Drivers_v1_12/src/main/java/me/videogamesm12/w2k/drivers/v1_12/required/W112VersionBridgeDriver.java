@@ -1,10 +1,7 @@
 package me.videogamesm12.w2k.drivers.v1_12.required;
 
 import com.google.gson.JsonElement;
-import me.videogamesm12.w2k.drivers.v1_12.mixin.accessor.ClientWorldAccessor;
-import me.videogamesm12.w2k.drivers.v1_12.mixin.accessor.DHAccessor;
-import me.videogamesm12.w2k.drivers.v1_12.mixin.accessor.IGHAccessor;
-import me.videogamesm12.w2k.drivers.v1_12.mixin.accessor.PersistentStateManagerAccessor;
+import me.videogamesm12.w2k.drivers.v1_12.mixin.accessor.*;
 import me.videogamesm12.w2k.kernel.W2K;
 import me.videogamesm12.w2k.kernel.data.*;
 import me.videogamesm12.w2k.kernel.driver.base.WDriverMetadata;
@@ -18,8 +15,10 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.map.MapState;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.screen.ScreenHandler;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
@@ -152,6 +151,35 @@ public class W112VersionBridgeDriver implements WVersionBridgeDriver
                         entity.getUuid(),
                         entity.toNbt(new NbtCompound()).toString()))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<InventoryEntry> getOpenInventory()
+    {
+        if (MinecraftClient.getInstance().world == null || MinecraftClient.getInstance().currentScreen == null
+                || MinecraftClient.getInstance().player == null)
+        {
+            return Collections.emptyList();
+        }
+
+        final ScreenHandler handler = MinecraftClient.getInstance().player.openScreenHandler;
+
+        return handler.slots.stream().filter(Objects::nonNull).map(slot ->
+        {
+            ItemStack entry = slot.getStack();
+            if (entry == null)
+            {
+                return null;
+            }
+
+            return new InventoryEntry(ComponentUtils.serializeComponentAsLegacy(Component.text(entry.getCustomName())),
+                    entry.getItem() != null && Item.REGISTRY.getIdentifier(entry.getItem()) != null ?
+                            Item.REGISTRY.getIdentifier(entry.getItem()).toString() : "minecraft:unknown",
+                    entry.getCount(),
+                    entry.getDamage(),
+                    String.valueOf(slot.id),
+                    entry.getNbt() != null ? entry.getNbt().toString() : null);
+        }).filter(Objects::nonNull).collect(Collectors.toList());
     }
 
     @Override

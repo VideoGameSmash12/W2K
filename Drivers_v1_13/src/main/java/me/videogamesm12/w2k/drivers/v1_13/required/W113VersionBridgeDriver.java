@@ -11,22 +11,21 @@ import me.videogamesm12.w2k.kernel.driver.base.WDriverMetadata;
 import me.videogamesm12.w2k.kernel.driver.base.WVersionBridgeDriver;
 import me.videogamesm12.w2k.kernel.util.ComponentUtils;
 import net.kyori.adventure.text.Component;
-import net.minecraft.block.Block;
 import net.minecraft.client.ClientBrandRetriever;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.map.MapState;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.screen.ScreenHandler;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -155,6 +154,35 @@ public class W113VersionBridgeDriver implements WVersionBridgeDriver
                         entity.getUuid(),
                         entity.toNbt(new NbtCompound()).toString()))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<InventoryEntry> getOpenInventory()
+    {
+        if (MinecraftClient.getInstance().world == null || MinecraftClient.getInstance().currentScreen == null
+                || MinecraftClient.getInstance().player == null)
+        {
+            return Collections.emptyList();
+        }
+
+        final ScreenHandler handler = MinecraftClient.getInstance().player.openScreenHandler;
+
+        return handler.slots.stream().filter(Objects::nonNull).map(slot ->
+        {
+            ItemStack entry = slot.getStack();
+            if (entry == null)
+            {
+                return null;
+            }
+
+            return new InventoryEntry(Text.Serializer.method_20183(entry.getName()),
+                    entry.getItem() != null && Registry.ITEM.getId(entry.getItem()) != null ?
+                            Registry.ITEM.getId(entry.getItem()).toString() : "minecraft:unknown",
+                    entry.getCount(),
+                    entry.getDamage(),
+                    String.valueOf(slot.id),
+                    entry.getNbt() != null ? entry.getNbt().toString() : null);
+        }).filter(Objects::nonNull).collect(Collectors.toList());
     }
 
     @Override

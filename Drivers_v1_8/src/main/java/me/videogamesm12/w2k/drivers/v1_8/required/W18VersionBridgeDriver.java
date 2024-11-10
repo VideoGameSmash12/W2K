@@ -14,8 +14,10 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.map.MapState;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.screen.ScreenHandler;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
@@ -155,6 +157,35 @@ public class W18VersionBridgeDriver implements WVersionBridgeDriver
                             data.toString());
                 })
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<InventoryEntry> getOpenInventory()
+    {
+        if (MinecraftClient.getInstance().world == null || MinecraftClient.getInstance().currentScreen == null
+                || MinecraftClient.getInstance().player == null)
+        {
+            return Collections.emptyList();
+        }
+
+        final ScreenHandler handler = MinecraftClient.getInstance().player.openScreenHandler;
+
+        return handler.slots.stream().filter(Objects::nonNull).map(slot ->
+        {
+            ItemStack entry = slot.getStack();
+            if (entry == null)
+            {
+                return null;
+            }
+
+            return new InventoryEntry(ComponentUtils.serializeComponentAsLegacy(Component.text(entry.getCustomName())),
+                    entry.getItem() != null && Item.REGISTRY.getIdentifier(entry.getItem()) != null ?
+                            Item.REGISTRY.getIdentifier(entry.getItem()).toString() : "minecraft:unknown",
+                    entry.count,
+                    entry.getDamage(),
+                    String.valueOf(slot.id),
+                    entry.getNbt() != null ? entry.getNbt().toString() : null);
+        }).filter(Objects::nonNull).collect(Collectors.toList());
     }
 
     @Override

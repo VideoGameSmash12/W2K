@@ -82,6 +82,12 @@ public interface WVersionBridgeDriver extends WDriver
     List<EntityEntry> getNearbyEntities(boolean includeNbt);
 
     /**
+     * Generates an {@link InventoryEntry} list consisting of every item in the currently open screen (if present).
+     * @return A list of wrapped item stacks
+     */
+    List<InventoryEntry> getOpenInventory();
+
+    /**
      * Generates an {@link EntityEntry} list consisting of all entities currently in memory, minus their NBT.
      * @return A list of wrapped entities
      */
