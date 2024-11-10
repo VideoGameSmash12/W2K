@@ -34,8 +34,8 @@ public class DumpCmd extends WCommand
 						return;
 					}
 
-					String[] complete = results[0];
-					String[] failed = results[1];
+					String[] complete = (String[]) results[0];
+					String[] failed = (String[]) results[1];
 
 					msg(Component.translatable("w2k.toolbox.dump.success.entities",
 							complete.length == 0 ? NamedTextColor.RED : failed.length == 0 ? NamedTextColor.GREEN : NamedTextColor.YELLOW,

@@ -21,12 +21,15 @@ public class DumpUtil
 		dumpsFolder.mkdirs();
 	}
 
-	public static CompletableFuture<String[][]> performEntityDump(final boolean parallel)
+	public static CompletableFuture<Object[][]> performEntityDump(final boolean parallel)
 	{
 		return CompletableFuture.supplyAsync(() ->
 		{
 			final List<String> completedEntities = new ArrayList<>();
 			final List<String> failedEntities = new ArrayList<>();
+			final List<String> ignoredEntities = new ArrayList<>();
+			final List<File> files = new ArrayList<>();
+
 			final List<EntityEntry> entry = W2K.getInstance().getDriverManager().getVersionBridge().getNearbyEntities(true);
 
 			final File dumpDir = new File(dumpsFolder, String.valueOf(System.currentTimeMillis()));
@@ -34,22 +37,40 @@ public class DumpUtil
 			{
 				dumpDir.mkdirs();
 			}
+			files.add(dumpDir);
 
 			(parallel ? entry.parallelStream() : entry.stream()).forEach(entity ->
 			{
-				try (FileOutputStream stream = new FileOutputStream(new File(dumpDir, "entity_" + entity.getId() + "_" + entity.getUuid() + ".nbt")))
+				String fileName = "entity_" + entity.getId() + "_" + entity.getUuid();
+				try (FileOutputStream stream = new FileOutputStream(new File(dumpDir, fileName + ".nbt")))
 				{
 					BinaryTagIO.writer().write(TagStringIO.get().asCompound(entity.getNbt()), stream, BinaryTagIO.Compression.GZIP);
 					completedEntities.add(entity.getUuid().toString());
 				}
 				catch (IOException ex)
 				{
-					failedEntities.add(entity.getUuid().toString());
+					// Fallback to saving files as SNBT
+					File temp = new File(dumpDir, fileName +" .nbt");
+					if (temp.exists())
+					{
+						temp.delete();
+					}
+
+					try (FileWriter writer = new FileWriter(new File(dumpDir, fileName + ".snbt")))
+					{
+						writer.write(entity.getNbt());
+					}
+					catch (IOException ex2)
+					{
+						// If both failed, oh well. We tried.
+						failedEntities.add(entity.getUuid().toString());
+						W2K.getLogger().error("Failed to dump entity ID {}", entity.getId(), ex);
+					}
 				}
 
 			});
 
-			return new String[][] {completedEntities.toArray(new String[0]), failedEntities.toArray(new String[0])};
+			return new Object[][] {completedEntities.toArray(new String[0]), failedEntities.toArray(new String[0]), ignoredEntities.toArray(new String[0]), files.toArray(new File[0])};
 		});
 	}
 }
