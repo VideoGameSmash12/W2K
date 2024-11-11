@@ -24,14 +24,12 @@ public class DumpUtil
 		dumpsFolder.mkdirs();
 	}
 
-	public static CompletableFuture<Object[][]> performEntityDump(final boolean parallel)
+	public static CompletableFuture<Object[]> performEntityDump(final boolean parallel)
 	{
 		return CompletableFuture.supplyAsync(() ->
 		{
 			final List<String> completedEntities = new ArrayList<>();
 			final List<String> failedEntities = new ArrayList<>();
-			final List<String> ignoredEntities = new ArrayList<>();
-			final List<File> files = new ArrayList<>();
 
 			final List<EntityEntry> entry = W2K.getInstance().getDriverManager().getVersionBridge().getNearbyEntities(true);
 
@@ -40,7 +38,6 @@ public class DumpUtil
 			{
 				dumpDir.mkdirs();
 			}
-			files.add(dumpDir);
 
 			(parallel ? entry.parallelStream() : entry.stream()).forEach(entity ->
 			{
@@ -73,7 +70,7 @@ public class DumpUtil
 
 			});
 
-			return new Object[][] {completedEntities.toArray(new String[0]), failedEntities.toArray(new String[0]), ignoredEntities.toArray(new String[0]), files.toArray(new File[0])};
+			return new Object[] {completedEntities.toArray(new String[0]), failedEntities.toArray(new String[0]), dumpDir};
 		});
 	}
 

@@ -133,7 +133,7 @@ public class DumpMenu extends JMenu
 
 				if (prompt == JOptionPane.YES_OPTION)
 				{
-					File folderPath = (File) results[3][0];
+					File folderPath = (File) results[2];
 					String[] fileViewerCommand = {"xdg-open", folderPath.getAbsolutePath()};
 
 					if (SysUtils.getOperatingSystem() == SysUtils.OperatingSystem.WINDOWS)
