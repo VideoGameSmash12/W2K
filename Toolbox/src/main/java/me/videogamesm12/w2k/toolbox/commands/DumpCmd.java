@@ -30,7 +30,7 @@ public class DumpCmd extends WCommand
 					if (throwable != null)
 					{
 						W2K.getLogger().error("Stacktrace:", throwable);
-						msg(Component.translatable("w2k.toolbox.dump.error"));
+						msg(Component.translatable("w2k.toolbox.dump.error", NamedTextColor.RED));
 						return;
 					}
 
@@ -52,7 +52,7 @@ public class DumpCmd extends WCommand
 					if (throwable != null)
 					{
 						W2K.getLogger().error("Stacktrace:", throwable);
-						msg(Component.translatable("w2k.toolbox.dump.error"));
+						msg(Component.translatable("w2k.toolbox.dump.error", NamedTextColor.RED));
 						return;
 					}
 
