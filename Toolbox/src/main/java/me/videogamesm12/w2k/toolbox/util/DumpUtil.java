@@ -109,12 +109,18 @@ public class DumpUtil
 							.putString("id", item.getType())
 							.putInt("Count", item.getCount())
 							.putInt("Slot", Integer.parseInt(item.getLocation()))
-							.put("tag", TagStringIO.get().asCompound(item.getData()))
 							.build();
+
+					// Ignore data if it doesn't exist
+					if (item.getData() != null)
+					{
+						compound.put("tag", TagStringIO.get().asCompound(item.getData()));
+					}
+
 					BinaryTagIO.writer().write(compound, stream, BinaryTagIO.Compression.GZIP);
 					completedItems.add(item.getLocation());
 				}
-				catch (IOException ex)
+				catch (Throwable ex)
 				{
 					// Fallback to saving files as SNBT
 					File temp = new File(dumpDir, fileName +" .nbt");
@@ -132,6 +138,7 @@ public class DumpUtil
 						// If both failed, oh well. We tried.
 						failedItems.add(item.toString());
 						W2K.getLogger().error("Failed to dump item in inventory slot {}", item.getLocation(), ex);
+
 					}
 				}
 
