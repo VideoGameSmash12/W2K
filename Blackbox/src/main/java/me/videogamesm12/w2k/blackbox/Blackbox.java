@@ -146,8 +146,20 @@ public class Blackbox extends Thread
         {
             switch (SysUtils.getOperatingSystem())
             {
-                default:
+                case WINDOWS:
+                {
+                    try
+                    {
+                        SysUtils.execute("notepad", event.getCrashReportFile().getAbsolutePath());
+                        break;
+                    }
+                    catch (Throwable ignored)
+                    {
+                        W2K.getLogger().warn("Failed to open Notepad, falling back to Crashpad");
+                    }
+                }
                 case LINUX:
+                default:
                 {
                     final Crashpad crashpad = new Crashpad(event.getCrashReportFile());
                     final AtomicBoolean done = new AtomicBoolean(false);
@@ -173,21 +185,6 @@ public class Blackbox extends Thread
                         }
 
                         continue;
-                    }
-
-                    break;
-                }
-                case WINDOWS:
-                {
-                    try
-                    {
-                        SysUtils.execute("notepad", event.getCrashReportFile().getAbsolutePath());
-                    }
-                    catch (Throwable ex)
-                    {
-                        JOptionPane.showMessageDialog(Blackbox.getInstance().getMainWindow(),
-                                "We weren't able to open Notepad. The crash report is located at "
-                                        + event.getCrashReportFile().getAbsolutePath() + ".");
                     }
 
                     break;

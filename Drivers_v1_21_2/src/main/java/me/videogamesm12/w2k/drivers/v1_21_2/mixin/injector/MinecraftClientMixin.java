@@ -80,11 +80,7 @@ public class MinecraftClientMixin
     @Inject(method = "saveCrashReport", at = @At(value = "INVOKE", target = "Lnet/minecraft/Bootstrap;println(Ljava/lang/String;)V", shift = At.Shift.BEFORE, ordinal = -1))
     private static void catchCrashReport(File runDir, CrashReport crashReport, CallbackInfoReturnable<Integer> cir, @Local(ordinal = 1) Path crashReportFile)
     {
-        if (ExperimentManager.isExperimentEnabled(Experiment.SUPERVISOR_CATCHES_CRASHES))
-        {
-            final ClientCrashedEvent event = new ClientCrashedEvent(MinecraftClient.getInstance(), crashReport.getCause(), crashReportFile.toFile());
-
-            Supervisor.getEventBus().post(event);
-        }
+        final ClientCrashedEvent event = new ClientCrashedEvent(MinecraftClient.getInstance(), crashReport.getCause(), crashReportFile.toFile());
+        Supervisor.getEventBus().post(event);
     }
 }
