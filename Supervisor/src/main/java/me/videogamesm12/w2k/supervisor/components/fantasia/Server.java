@@ -117,6 +117,7 @@ public class Server extends Thread
         registerCommand(CrashCmd.class);
         registerCommand(ChatCmd.class);
         registerCommand(DisconnectCmd.class);
+        registerCommand(DumpCmd.class);
         registerCommand(ExitCmd.class);
         registerCommand(FPSCmd.class);
         registerCommand(HelpCmd.class);

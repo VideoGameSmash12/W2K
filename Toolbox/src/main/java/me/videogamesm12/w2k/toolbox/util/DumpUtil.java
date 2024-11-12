@@ -174,7 +174,7 @@ public class DumpUtil
 		});
 	}
 
-	public static CompletableFuture<Object[]> performTileEntityDump(final boolean parallel)
+	public static CompletableFuture<DumpResult> performTileEntityDump(final boolean parallel)
 	{
 		return CompletableFuture.supplyAsync(() ->
 		{
@@ -226,9 +226,8 @@ public class DumpUtil
 
 			});
 
-			// Successful Tile Entities, Failed Tile Entities, Ignored Tile Entities, Directory
-			return new Object[] {completedTiles.toArray(new String[]{}), failedTiles.toArray(new String[]{}),
-					ignoredTiles.toArray(new String[]{}), dumpDir};
+			return DumpResult.builder().successful(completedTiles).failed(failedTiles).ignored(ignoredTiles)
+					.outputDirectory(dumpDir).build();
 		});
 	}
 
