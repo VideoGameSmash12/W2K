@@ -7,6 +7,7 @@ import me.videogamesm12.w2k.kernel.data.BuildMetadata;
 import net.fabricmc.loader.api.FabricLoader;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 
@@ -44,7 +45,24 @@ public class W2KCmd extends WCommand
                 }
                 else
                 {
-                    msg(metadata.toComponent());
+                    msg(Component.translatable("%s", Component.translatable("w2k.command.w2k.build_info.header").color(NamedTextColor.WHITE).decorate(TextDecoration.BOLD)).color(NamedTextColor.GRAY) // $#&^!
+                            .append(Component.newline())
+                            .append(Component.translatable("w2k.command.w2k.build_info.branch", Component.text(metadata.getBranch()).color(NamedTextColor.WHITE)))
+                            .append(Component.newline())
+                            .append(Component.translatable("w2k.command.w2k.build_info.commit_id",
+                                    Component.text(metadata.getCommitId()).color(NamedTextColor.WHITE),
+                                    Component.text(metadata.getCommitIdAbbreviated()).color(NamedTextColor.WHITE)))
+                            .append(Component.newline())
+                            .append(Component.translatable("w2k.command.w2k.build_info.commit_time",
+                                    Component.text(metadata.getCommitTime()).color(NamedTextColor.WHITE)))
+                            .append(Component.newline())
+                            .append(Component.translatable("w2k.command.w2k.build_info.origin_url",
+                                    Component.text(metadata.getOriginUrl()).color(NamedTextColor.WHITE)))
+                            .append(Component.newline())
+                            .append(Component.translatable("w2k.command.w2k.build_info.dirty",
+                                    Component.text(metadata.isDirty()).color(NamedTextColor.WHITE)))
+                            .hoverEvent(HoverEvent.showText(Component.translatable("chat.click.copy_to_clipboard")))
+                            .clickEvent(ClickEvent.copyToClipboard(toString())));
                 }
             }
             else
