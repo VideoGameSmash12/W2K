@@ -192,7 +192,7 @@ public class W114VersionBridgeDriver implements WVersionBridgeDriver
                 {
                     final MapState map = entry.getValue();
                     return new MapEntry(entry.getKey(), String.valueOf(map.scale), map.dimension.toString(),
-                            map.xCenter, map.zCenter, map.locked, map.colors);
+                            map.xCenter, map.zCenter, map.locked, map.colors, map.toTag(new CompoundTag()).toString());
                 }).collect(Collectors.toList());
     }
 

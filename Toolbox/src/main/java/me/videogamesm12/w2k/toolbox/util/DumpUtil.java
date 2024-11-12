@@ -4,6 +4,7 @@ import lombok.Getter;
 import me.videogamesm12.w2k.kernel.W2K;
 import me.videogamesm12.w2k.kernel.data.EntityEntry;
 import me.videogamesm12.w2k.kernel.data.InventoryEntry;
+import me.videogamesm12.w2k.kernel.data.MapEntry;
 import me.videogamesm12.w2k.kernel.data.TileEntry;
 import net.kyori.adventure.nbt.BinaryTagIO;
 import net.kyori.adventure.nbt.CompoundBinaryTag;
@@ -24,6 +25,40 @@ public class DumpUtil
 		dumpsFolder.mkdirs();
 	}
 
+	public static CompletableFuture<Object[]> performMapDump(final boolean parallel)
+	{
+		return CompletableFuture.supplyAsync(() ->
+		{
+			final List<String> completedMaps = new ArrayList<>();
+			final List<String> failedMaps = new ArrayList<>();
+
+			final List<MapEntry> entries = W2K.getInstance().getDriverManager().getVersionBridge().getLoadedMaps();
+
+			final File dumpDir = generateDumpFolder();
+
+			(parallel ? entries.parallelStream() : entries.stream()).forEach(map ->
+			{
+				String fileName = map.getId();
+				try (FileOutputStream stream = new FileOutputStream(new File(dumpDir, fileName + ".dat")))
+				{
+					BinaryTagIO.writer().write(TagStringIO.get().asCompound(map.getNbt()), stream, BinaryTagIO.Compression.GZIP);
+					completedMaps.add(map.getId());
+				}
+				catch (IOException ex)
+				{
+					File temp = new File(dumpDir, fileName + ".dat");
+					if (temp.exists())
+					{
+						temp.delete();
+					}
+					failedMaps.add(map.getId());
+				}
+			});
+
+			return new Object[] {completedMaps.toArray(new String[0]), failedMaps.toArray(new String[0]), dumpDir};
+		});
+	}
+
 	public static CompletableFuture<Object[]> performEntityDump(final boolean parallel)
 	{
 		return CompletableFuture.supplyAsync(() ->
@@ -33,11 +68,7 @@ public class DumpUtil
 
 			final List<EntityEntry> entry = W2K.getInstance().getDriverManager().getVersionBridge().getNearbyEntities(true);
 
-			final File dumpDir = new File(dumpsFolder, String.valueOf(System.currentTimeMillis()));
-			if (!dumpDir.isDirectory())
-			{
-				dumpDir.mkdirs();
-			}
+			final File dumpDir = generateDumpFolder();
 
 			(parallel ? entry.parallelStream() : entry.stream()).forEach(entity ->
 			{
@@ -84,11 +115,7 @@ public class DumpUtil
 
 			final List<InventoryEntry> entry = W2K.getInstance().getDriverManager().getVersionBridge().getOpenInventory();
 
-			final File dumpDir = new File(dumpsFolder, String.valueOf(System.currentTimeMillis()));
-			if (!dumpDir.isDirectory())
-			{
-				dumpDir.mkdirs();
-			}
+			final File dumpDir = generateDumpFolder();
 
 			(parallel ? entry.parallelStream() : entry.stream()).forEach(item ->
 			{
@@ -157,11 +184,7 @@ public class DumpUtil
 
 			final List<TileEntry> entry = W2K.getInstance().getDriverManager().getVersionBridge().getNearbyTileEntities();
 
-			final File dumpDir = new File(dumpsFolder, String.valueOf(System.currentTimeMillis()));
-			if (!dumpDir.isDirectory())
-			{
-				dumpDir.mkdirs();
-			}
+			final File dumpDir = generateDumpFolder();
 
 			(parallel ? entry.parallelStream() : entry.stream()).forEach(tile ->
 			{
@@ -207,5 +230,15 @@ public class DumpUtil
 			return new Object[] {completedTiles.toArray(new String[]{}), failedTiles.toArray(new String[]{}),
 					ignoredTiles.toArray(new String[]{}), dumpDir};
 		});
+	}
+
+	private static File generateDumpFolder()
+	{
+		final File dir = new File(dumpsFolder, String.valueOf(System.currentTimeMillis()));
+		if (!dir.isDirectory())
+		{
+			dir.mkdirs();
+		}
+		return dir;
 	}
 }

@@ -203,7 +203,7 @@ public class W113VersionBridgeDriver implements WVersionBridgeDriver
                             final Identifier world = Registry.DIMENSION_TYPE.getId(state.field_19747);
                             return new MapEntry(state.method_17914(), String.valueOf(state.scale), world != null ?
                                     world.toString() : "minecraft:unknown", state.xCenter, state.zCenter, false,
-                                    state.colors);
+                                    state.colors, state.toNbt(new NbtCompound()).toString());
                         }).collect(Collectors.toList())).forEach(mapStates::addAll);
 
         return mapStates;

@@ -199,8 +199,10 @@ public class W18VersionBridgeDriver implements WVersionBridgeDriver
         return ((PersistentStateManagerAccessor) MinecraftClient.getInstance().world.getPersistentStateManager())
                 .getStateMap().entrySet().stream().filter(entry -> entry.getKey().startsWith("map_")).map(entry -> {
                     final MapState state = ((MapState) entry.getValue());
+                    final NbtCompound nbt = new NbtCompound();
+                    state.toNbt(nbt);
                     return new MapEntry(state.id, String.valueOf(state.scale), String.valueOf(state.dimensionId),
-                            state.xCenter, state.zCenter, false, state.colors);
+                            state.xCenter, state.zCenter, false, state.colors, nbt.toString());
                 }).collect(Collectors.toList());
     }
 

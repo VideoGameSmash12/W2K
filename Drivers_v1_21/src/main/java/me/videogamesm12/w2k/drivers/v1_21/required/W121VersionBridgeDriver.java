@@ -206,7 +206,8 @@ public class W121VersionBridgeDriver implements WVersionBridgeDriver
                     return new MapEntry(entry.getKey().asString(),
                             String.valueOf(map.scale),
                             map.dimension.getValue().toString(),
-                            map.centerX, map.centerZ, map.locked, map.colors);
+                            map.centerX, map.centerZ, map.locked, map.colors,
+                            map.writeNbt(new NbtCompound(), getWrapperLookup()).toString());
                 }).collect(Collectors.toList());
     }
 

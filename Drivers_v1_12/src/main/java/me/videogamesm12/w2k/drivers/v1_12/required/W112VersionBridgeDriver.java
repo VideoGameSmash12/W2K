@@ -194,7 +194,8 @@ public class W112VersionBridgeDriver implements WVersionBridgeDriver
                 .getStateMap().entrySet().stream().filter(entry -> entry.getKey().startsWith("map_")).map(entry -> {
                     final MapState state = ((MapState) entry.getValue());
                     return new MapEntry(state.id, String.valueOf(state.scale), String.valueOf(state.dimensionId),
-                            state.xCenter, state.zCenter, false, state.colors);
+                            state.xCenter, state.zCenter, false, state.colors,
+                            state.toNbt(new NbtCompound()).toString());
                 }).collect(Collectors.toList());
     }
 

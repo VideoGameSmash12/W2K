@@ -6,6 +6,9 @@ import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.logging.Handler;
 
 /**
  * <h1>WCommand</h1>
@@ -14,6 +17,8 @@ import java.util.Objects;
 @Getter
 public abstract class WCommand
 {
+    private static final Timer scheduler = new Timer();
+
     private final String name;
     private final String usage;
 
@@ -36,5 +41,18 @@ public abstract class WCommand
     {
         Objects.requireNonNull(component);
         W2K.getInstance().getDriverManager().getVersionBridge().displayMessage(component);
+    }
+
+    public final void schedule(@NotNull Runnable task, int delay)
+    {
+        Objects.requireNonNull(task);
+        scheduler.schedule(new TimerTask()
+        {
+            @Override
+            public void run()
+            {
+                task.run();
+            }
+        }, delay);
     }
 }
