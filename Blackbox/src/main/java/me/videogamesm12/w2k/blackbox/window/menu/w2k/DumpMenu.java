@@ -28,27 +28,26 @@ public class DumpMenu extends JMenu
 				return;
 			}
 
-			String[] complete = (String[]) results[0];
-			String[] failed = (String[]) results[1];
-			File dumpFolder = (File) results[2];
 
 			SwingUtilities.invokeLater(() ->
 			{
 				int prompt = JOptionPane.showConfirmDialog(Blackbox.getInstance().getMainWindow(),
-						String.format("Map dump complete (%d successful, %d failed). Would you like to view it?", complete.length, failed.length),
+						String.format("Map dump complete (%d successful, %d failed). Would you like to view it?",
+								results.getSuccessful().size(), results.getFailed().size()),
 						"Dump completed", JOptionPane.YES_NO_OPTION , JOptionPane.QUESTION_MESSAGE);
 
 				if (prompt == JOptionPane.YES_OPTION)
 				{
-					String[] fileViewerCommand = {"xdg-open", dumpFolder.getAbsolutePath()};
+					String[] fileViewerCommand = {"xdg-open", results.getOutputDirectory().getAbsolutePath()};
 
 					if (SysUtils.getOperatingSystem() == SysUtils.OperatingSystem.WINDOWS)
 					{
-						fileViewerCommand = new String[] {"rundll32", "url.dll,FileProtocolHandler", dumpFolder.getAbsolutePath()};
+						fileViewerCommand = new String[] {"rundll32", "url.dll,FileProtocolHandler",
+								results.getOutputDirectory().getAbsolutePath()};
 					}
 					else if (SysUtils.getOperatingSystem() == SysUtils.OperatingSystem.MAC_OS)
 					{
-						fileViewerCommand = new String[] {"open", dumpFolder.getAbsolutePath()};
+						fileViewerCommand = new String[] {"open", results.getOutputDirectory().getAbsolutePath()};
 					}
 
 					try
@@ -75,28 +74,24 @@ public class DumpMenu extends JMenu
 				return;
 			}
 
-			String[] complete = (String[]) results[0];
-			String[] failed = (String[]) results[1];
-			String[] discarded = (String[]) results[2];
-			File dumpFolder = (File) results[3];
-
 			SwingUtilities.invokeLater(() ->
 			{
 				int prompt = JOptionPane.showConfirmDialog(Blackbox.getInstance().getMainWindow(),
-						String.format("Screen dump complete (%d successful, %d failed, %d ignored). Would you like to view it?", complete.length, failed.length, discarded.length),
+						String.format("Screen dump complete (%d successful, %d failed, %d ignored). Would you like to view it?",
+								results.getSuccessful().size(), results.getFailed().size(), results.getIgnored().size()),
 						"Dump completed", JOptionPane.YES_NO_OPTION , JOptionPane.QUESTION_MESSAGE);
 
 				if (prompt == JOptionPane.YES_OPTION)
 				{
-					String[] fileViewerCommand = {"xdg-open", dumpFolder.getAbsolutePath()};
+					String[] fileViewerCommand = {"xdg-open", results.getOutputDirectory().getAbsolutePath()};
 
 					if (SysUtils.getOperatingSystem() == SysUtils.OperatingSystem.WINDOWS)
 					{
-						fileViewerCommand = new String[] {"rundll32", "url.dll,FileProtocolHandler", dumpFolder.getAbsolutePath()};
+						fileViewerCommand = new String[] {"rundll32", "url.dll,FileProtocolHandler", results.getOutputDirectory().getAbsolutePath()};
 					}
 					else if (SysUtils.getOperatingSystem() == SysUtils.OperatingSystem.MAC_OS)
 					{
-						fileViewerCommand = new String[] {"open", dumpFolder.getAbsolutePath()};
+						fileViewerCommand = new String[] {"open", results.getOutputDirectory().getAbsolutePath()};
 					}
 
 					try
@@ -171,27 +166,25 @@ public class DumpMenu extends JMenu
 				return;
 			}
 
-			String[] complete = (String[]) results[0];
-			String[] failed = (String[]) results[1];
-
 			SwingUtilities.invokeLater(() ->
 			{
 				int prompt = JOptionPane.showConfirmDialog(Blackbox.getInstance().getMainWindow(),
-						String.format("Entity dump complete (%d successful, %d failed). Would you like to view it?", complete.length, failed.length),
+						String.format("Entity dump complete (%d successful, %d failed). Would you like to view it?",
+								results.getSuccessful().size(), results.getFailed().size()),
 						"Dump completed", JOptionPane.YES_NO_OPTION , JOptionPane.QUESTION_MESSAGE);
 
 				if (prompt == JOptionPane.YES_OPTION)
 				{
-					File folderPath = (File) results[2];
-					String[] fileViewerCommand = {"xdg-open", folderPath.getAbsolutePath()};
+					String[] fileViewerCommand = {"xdg-open", results.getOutputDirectory().getAbsolutePath()};
 
 					if (SysUtils.getOperatingSystem() == SysUtils.OperatingSystem.WINDOWS)
 					{
-						fileViewerCommand = new String[] {"rundll32", "url.dll,FileProtocolHandler", folderPath.getAbsolutePath()};
+						fileViewerCommand = new String[] {"rundll32", "url.dll,FileProtocolHandler",
+								results.getOutputDirectory().getAbsolutePath()};
 					}
 					else if (SysUtils.getOperatingSystem() == SysUtils.OperatingSystem.MAC_OS)
 					{
-						fileViewerCommand = new String[] {"open", folderPath.getAbsolutePath()};
+						fileViewerCommand = new String[] {"open", results.getOutputDirectory().getAbsolutePath()};
 					}
 
 					try

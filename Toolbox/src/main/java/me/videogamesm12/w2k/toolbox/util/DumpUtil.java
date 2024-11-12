@@ -6,6 +6,7 @@ import me.videogamesm12.w2k.kernel.data.EntityEntry;
 import me.videogamesm12.w2k.kernel.data.InventoryEntry;
 import me.videogamesm12.w2k.kernel.data.MapEntry;
 import me.videogamesm12.w2k.kernel.data.TileEntry;
+import me.videogamesm12.w2k.toolbox.data.DumpResult;
 import net.kyori.adventure.nbt.BinaryTagIO;
 import net.kyori.adventure.nbt.CompoundBinaryTag;
 import net.kyori.adventure.nbt.TagStringIO;
@@ -25,7 +26,7 @@ public class DumpUtil
 		dumpsFolder.mkdirs();
 	}
 
-	public static CompletableFuture<Object[]> performMapDump(final boolean parallel)
+	public static CompletableFuture<DumpResult> performMapDump(final boolean parallel)
 	{
 		return CompletableFuture.supplyAsync(() ->
 		{
@@ -55,11 +56,11 @@ public class DumpUtil
 				}
 			});
 
-			return new Object[] {completedMaps.toArray(new String[0]), failedMaps.toArray(new String[0]), dumpDir};
+			return DumpResult.builder().successful(completedMaps).failed(failedMaps).outputDirectory(dumpDir).build();
 		});
 	}
 
-	public static CompletableFuture<Object[]> performEntityDump(final boolean parallel)
+	public static CompletableFuture<DumpResult> performEntityDump(final boolean parallel)
 	{
 		return CompletableFuture.supplyAsync(() ->
 		{
@@ -101,11 +102,11 @@ public class DumpUtil
 
 			});
 
-			return new Object[] {completedEntities.toArray(new String[0]), failedEntities.toArray(new String[0]), dumpDir};
+			return DumpResult.builder().successful(completedEntities).failed(failedEntities).outputDirectory(dumpDir).build();
 		});
 	}
 
-	public static CompletableFuture<Object[]> performOpenInventoryDump(final boolean parallel)
+	public static CompletableFuture<DumpResult> performOpenInventoryDump(final boolean parallel)
 	{
 		return CompletableFuture.supplyAsync(() ->
 		{
@@ -168,9 +169,8 @@ public class DumpUtil
 
 			});
 
-			// Successful Items, Failed Items, Ignored Items, Directory
-			return new Object[] {completedItems.toArray(new String[]{}), failedItems.toArray(new String[]{}),
-					ignoredItems.toArray(new String[]{}), dumpDir};
+			return DumpResult.builder().successful(completedItems).failed(failedItems).ignored(ignoredItems)
+					.outputDirectory(dumpDir).build();
 		});
 	}
 

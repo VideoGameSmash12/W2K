@@ -56,12 +56,9 @@ public class DumpCmd extends WCommand
 						return;
 					}
 
-					String[] complete = (String[]) results[0];
-					String[] failed = (String[]) results[1];
-
 					msg(Component.translatable("w2k.toolbox.dump.success.entities",
-							complete.length == 0 ? NamedTextColor.RED : failed.length == 0 ? NamedTextColor.GREEN : NamedTextColor.YELLOW,
-							Component.text(complete.length), Component.text(failed.length)));
+							results.getSuccessful().isEmpty() ? NamedTextColor.RED : results.getFailed().isEmpty() ? NamedTextColor.GREEN : NamedTextColor.YELLOW,
+							Component.text(results.getSuccessful().size()), Component.text(results.getFailed().size())));
 				});
 				break;
 			}
@@ -77,12 +74,9 @@ public class DumpCmd extends WCommand
 						return;
 					}
 
-					String[] complete = (String[]) results[0];
-					String[] failed = (String[]) results[1];
-
 					msg(Component.translatable("w2k.toolbox.dump.success.maps",
-							complete.length == 0 ? NamedTextColor.RED : failed.length == 0 ? NamedTextColor.GREEN : NamedTextColor.YELLOW,
-							Component.text(complete.length), Component.text(failed.length)));
+							results.getSuccessful().isEmpty() ? NamedTextColor.RED : results.getFailed().isEmpty() ? NamedTextColor.GREEN : NamedTextColor.YELLOW,
+							Component.text(results.getSuccessful().size()), Component.text(results.getFailed().size())));
 				});
 				break;
 			}
@@ -99,13 +93,10 @@ public class DumpCmd extends WCommand
 						return;
 					}
 
-					String[] complete = (String[]) results[0];
-					String[] failed = (String[]) results[1];
-					String[] ignored = (String[]) results[2];
-
 					msg(Component.translatable("w2k.toolbox.dump.success.screen",
-							complete.length == 0 ? NamedTextColor.RED : failed.length == 0 ? NamedTextColor.GREEN : NamedTextColor.YELLOW,
-							Component.text(complete.length), Component.text(failed.length), Component.text(ignored.length)));
+							results.getSuccessful().isEmpty() ? NamedTextColor.RED : results.getFailed().isEmpty() ? NamedTextColor.GREEN : NamedTextColor.YELLOW,
+							Component.text(results.getSuccessful().size()), Component.text(results.getFailed().size()),
+							Component.text(results.getIgnored().size())));
 				}), 5000);
 				break;
 			}
