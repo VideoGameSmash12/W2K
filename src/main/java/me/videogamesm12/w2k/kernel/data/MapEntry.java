@@ -28,6 +28,8 @@ public final class MapEntry
 
     private final byte[] colors;
 
+    private final String nbt;
+
     public List<Object> toTableRow()
     {
         return Arrays.asList(

@@ -1,0 +1,107 @@
+package me.videogamesm12.w2k.toolbox.commands;
+
+import me.videogamesm12.w2k.kernel.W2K;
+import me.videogamesm12.w2k.kernel.command.Parameters;
+import me.videogamesm12.w2k.kernel.command.WCommand;
+import me.videogamesm12.w2k.toolbox.util.DumpUtil;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+
+@Parameters(name = "dump", usage = "/dump <entities | maps | screen | tiles> [parallel]")
+public class DumpCmd extends WCommand
+{
+	@Override
+	public boolean executeCommand(String commandLabel, String[] args)
+	{
+		if (args.length == 0)
+		{
+			return false;
+		}
+
+		boolean parallel = args.length > 1 && args[1].equalsIgnoreCase("parallel");
+
+		switch (args[0].toLowerCase())
+		{
+			case "tiles":
+			{
+				msg(Component.translatable("w2k.toolbox.dump.starting.tiles", NamedTextColor.GRAY));
+				DumpUtil.performTileEntityDump(parallel).whenComplete((results, throwable) ->
+				{
+					if (throwable != null)
+					{
+						W2K.getLogger().error("Stacktrace:", throwable);
+						msg(Component.translatable("w2k.toolbox.dump.error", NamedTextColor.RED));
+						return;
+					}
+
+					msg(Component.translatable("w2k.toolbox.dump.success.tiles",
+							results.getSuccessful().isEmpty() ? NamedTextColor.RED : results.getFailed().isEmpty() ? NamedTextColor.GREEN : NamedTextColor.YELLOW,
+							Component.text(results.getSuccessful().size()), Component.text(results.getFailed().size()),
+							Component.text(results.getIgnored().size())));
+				});
+				break;
+			}
+			case "entities":
+			{
+				msg(Component.translatable("w2k.toolbox.dump.starting.entities", NamedTextColor.GRAY));
+				DumpUtil.performEntityDump(parallel).whenComplete((results, throwable) ->
+				{
+					if (throwable != null)
+					{
+						W2K.getLogger().error("Stacktrace:", throwable);
+						msg(Component.translatable("w2k.toolbox.dump.error", NamedTextColor.RED));
+						return;
+					}
+
+					msg(Component.translatable("w2k.toolbox.dump.success.entities",
+							results.getSuccessful().isEmpty() ? NamedTextColor.RED : results.getFailed().isEmpty() ? NamedTextColor.GREEN : NamedTextColor.YELLOW,
+							Component.text(results.getSuccessful().size()), Component.text(results.getFailed().size())));
+				});
+				break;
+			}
+			case "maps":
+			{
+				msg(Component.translatable("w2k.toolbox.dump.starting.maps", NamedTextColor.GRAY));
+				DumpUtil.performMapDump(parallel).whenComplete((results, throwable) ->
+				{
+					if (throwable != null)
+					{
+						W2K.getLogger().error("Stacktrace:", throwable);
+						msg(Component.translatable("w2k.toolbox.dump.error", NamedTextColor.RED));
+						return;
+					}
+
+					msg(Component.translatable("w2k.toolbox.dump.success.maps",
+							results.getSuccessful().isEmpty() ? NamedTextColor.RED : results.getFailed().isEmpty() ? NamedTextColor.GREEN : NamedTextColor.YELLOW,
+							Component.text(results.getSuccessful().size()), Component.text(results.getFailed().size())));
+				});
+				break;
+			}
+			case "menu":
+			case "screen":
+			{
+				msg(Component.translatable("w2k.toolbox.dump.starting.screen", NamedTextColor.GRAY));
+				schedule(() -> DumpUtil.performOpenInventoryDump(parallel).whenComplete((results, throwable) ->
+				{
+					if (throwable != null)
+					{
+						W2K.getLogger().error("Stacktrace:", throwable);
+						msg(Component.translatable("w2k.toolbox.dump.error", NamedTextColor.RED));
+						return;
+					}
+
+					msg(Component.translatable("w2k.toolbox.dump.success.screen",
+							results.getSuccessful().isEmpty() ? NamedTextColor.RED : results.getFailed().isEmpty() ? NamedTextColor.GREEN : NamedTextColor.YELLOW,
+							Component.text(results.getSuccessful().size()), Component.text(results.getFailed().size()),
+							Component.text(results.getIgnored().size())));
+				}), 5000);
+				break;
+			}
+			default:
+			{
+				return false;
+			}
+		}
+		return true;
+	}
+}

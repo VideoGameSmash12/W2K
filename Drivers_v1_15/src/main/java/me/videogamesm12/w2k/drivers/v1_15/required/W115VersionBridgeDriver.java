@@ -12,18 +12,17 @@ import me.videogamesm12.w2k.kernel.util.ComponentUtils;
 import net.kyori.adventure.text.Component;
 import net.minecraft.client.ClientBrandRetriever;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.container.Container;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.map.MapState;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.util.registry.Registry;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -134,7 +133,7 @@ public class W115VersionBridgeDriver implements WVersionBridgeDriver
     }
 
     @Override
-    public List<EntityEntry> getNearbyEntities()
+    public List<EntityEntry> getNearbyEntities(boolean includeNbt)
     {
         if (MinecraftClient.getInstance().world == null)
         {
@@ -147,8 +146,37 @@ public class W115VersionBridgeDriver implements WVersionBridgeDriver
                         EntityType.getId(entity.getType()).toString(),
                         String.format("%s, %s, %s", entity.getX(), entity.getY(), entity.getZ()),
                         entity.getEntityId(),
-                        entity.getUuid()))
+                        entity.getUuid(),
+                        entity.toTag(new CompoundTag()).toString()))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<InventoryEntry> getOpenInventory()
+    {
+        if (MinecraftClient.getInstance().world == null || MinecraftClient.getInstance().currentScreen == null
+                || MinecraftClient.getInstance().player == null)
+        {
+            return Collections.emptyList();
+        }
+
+        final Container handler = MinecraftClient.getInstance().player.container;
+
+        return handler.slots.stream().filter(Objects::nonNull).map(slot ->
+        {
+            ItemStack entry = slot.getStack();
+            if (entry == null)
+            {
+                return null;
+            }
+
+            return new InventoryEntry(Text.Serializer.toJsonTree(entry.getName()),
+                    entry.getItem() != null ? Registry.ITEM.getId(entry.getItem()).toString() : "minecraft:unknown",
+                    entry.getCount(),
+                    entry.getDamage(),
+                    String.valueOf(slot.id),
+                    entry.getTag() != null ? entry.getTag().toString() : null);
+        }).filter(Objects::nonNull).collect(Collectors.toList());
     }
 
     @Override
@@ -164,7 +192,7 @@ public class W115VersionBridgeDriver implements WVersionBridgeDriver
                 {
                     final MapState map = entry.getValue();
                     return new MapEntry(entry.getKey(), String.valueOf(map.scale), map.dimension.toString(),
-                            map.xCenter, map.zCenter, map.locked, map.colors);
+                            map.xCenter, map.zCenter, map.locked, map.colors, map.toTag(new CompoundTag()).toString());
                 }).collect(Collectors.toList());
     }
 

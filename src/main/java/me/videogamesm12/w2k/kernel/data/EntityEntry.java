@@ -27,6 +27,8 @@ public class EntityEntry
 
     private final UUID uuid;
 
+    private final String nbt;
+
     public List<Object> toTableRow()
     {
         return Arrays.asList(
@@ -35,7 +37,8 @@ public class EntityEntry
                 type,                                                                                       // Type
                 location,                                                                                   // Location
                 id,                                                                                         // ID
-                uuid.toString()                                                                             // UUID
+                uuid.toString(),                                                                            // UUID
+                nbt                                                                                         // NBT Data
         );
     }
 }

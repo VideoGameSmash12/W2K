@@ -14,8 +14,10 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.map.MapState;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.screen.ScreenHandler;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
@@ -131,7 +133,7 @@ public class W18VersionBridgeDriver implements WVersionBridgeDriver
     }
 
     @Override
-    public List<EntityEntry> getNearbyEntities()
+    public List<EntityEntry> getNearbyEntities(boolean includeNbt)
     {
         if (MinecraftClient.getInstance().world == null)
         {
@@ -139,15 +141,51 @@ public class W18VersionBridgeDriver implements WVersionBridgeDriver
         }
 
         return ((ClientWorldAccessor) MinecraftClient.getInstance().world).getEntities().stream()
-                .map(entity -> new EntityEntry(ComponentUtils.stringToElement(Text.Serializer.serialize(
-                        entity.getCustomName() != null && !entity.getCustomName().isEmpty() ? new LiteralText(entity.getCustomName()) : new TranslatableText(entity.getTranslationKey()))),
-                        ((EntityAccessor) entity).getSavedEntityId() != null ?
-                                ((EntityAccessor) entity).getSavedEntityId() :
-                                entity instanceof PlayerEntity ? "minecraft:player" : "minecraft:unknown",
-                        String.format("%s, %s, %s", entity.x, entity.y, entity.z),
-                        entity.getEntityId(),
-                        entity.getUuid()))
+                .map(entity ->
+                {
+                    final NbtCompound data = new NbtCompound();
+                    entity.writePlayerData(data);
+
+                    return new EntityEntry(ComponentUtils.stringToElement(Text.Serializer.serialize(
+                            entity.getCustomName() != null && !entity.getCustomName().isEmpty() ? new LiteralText(entity.getCustomName()) : new TranslatableText(entity.getTranslationKey()))),
+                            ((EntityAccessor) entity).getSavedEntityId() != null ?
+                                    ((EntityAccessor) entity).getSavedEntityId() :
+                                    entity instanceof PlayerEntity ? "minecraft:player" : "minecraft:unknown",
+                            String.format("%s, %s, %s", entity.x, entity.y, entity.z),
+                            entity.getEntityId(),
+                            entity.getUuid(),
+                            data.toString());
+                })
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<InventoryEntry> getOpenInventory()
+    {
+        if (MinecraftClient.getInstance().world == null || MinecraftClient.getInstance().currentScreen == null
+                || MinecraftClient.getInstance().player == null)
+        {
+            return Collections.emptyList();
+        }
+
+        final ScreenHandler handler = MinecraftClient.getInstance().player.openScreenHandler;
+
+        return handler.slots.stream().filter(Objects::nonNull).map(slot ->
+        {
+            ItemStack entry = slot.getStack();
+            if (entry == null)
+            {
+                return null;
+            }
+
+            return new InventoryEntry(ComponentUtils.serializeComponentAsLegacy(Component.text(entry.getCustomName())),
+                    entry.getItem() != null && Item.REGISTRY.getIdentifier(entry.getItem()) != null ?
+                            Item.REGISTRY.getIdentifier(entry.getItem()).toString() : "minecraft:unknown",
+                    entry.count,
+                    entry.getDamage(),
+                    String.valueOf(slot.id),
+                    entry.getNbt() != null ? entry.getNbt().toString() : null);
+        }).filter(Objects::nonNull).collect(Collectors.toList());
     }
 
     @Override
@@ -161,8 +199,10 @@ public class W18VersionBridgeDriver implements WVersionBridgeDriver
         return ((PersistentStateManagerAccessor) MinecraftClient.getInstance().world.getPersistentStateManager())
                 .getStateMap().entrySet().stream().filter(entry -> entry.getKey().startsWith("map_")).map(entry -> {
                     final MapState state = ((MapState) entry.getValue());
+                    final NbtCompound nbt = new NbtCompound();
+                    state.toNbt(nbt);
                     return new MapEntry(state.id, String.valueOf(state.scale), String.valueOf(state.dimensionId),
-                            state.xCenter, state.zCenter, false, state.colors);
+                            state.xCenter, state.zCenter, false, state.colors, nbt.toString());
                 }).collect(Collectors.toList());
     }
 

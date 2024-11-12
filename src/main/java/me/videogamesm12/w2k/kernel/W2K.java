@@ -13,9 +13,11 @@ import me.videogamesm12.w2k.kernel.event.diagnostics.PopulateCrashReportEvent;
 import me.videogamesm12.w2k.kernel.experiment.ExperimentManager;
 import me.videogamesm12.w2k.kernel.util.VersionUtils;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.loader.api.FabricLoader;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -31,6 +33,16 @@ public class W2K implements ModInitializer
     private static final EventBus eventBus = new EventBus();
     @Getter
     private static final Logger logger = LogManager.getLogger("W2K");
+    @Getter
+    private static final File modFolder = new File(FabricLoader.getInstance().getGameDir().toFile(), "w2k");
+
+    static
+    {
+        if (!modFolder.isDirectory())
+        {
+            modFolder.mkdirs();
+        }
+    }
 
     @Getter
     private WDriverManager driverManager;

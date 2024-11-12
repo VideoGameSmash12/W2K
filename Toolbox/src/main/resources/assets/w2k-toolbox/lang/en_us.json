@@ -5,5 +5,14 @@
   "w2k.toolbox.ashcon.error.player_not_found": "That player could not be found.",
   "w2k.toolbox.ashcon.error.unknown": "An error occurred whilst communicating with the API. Check the logs for more information.",
   "w2k.toolbox.ashcon.result.name": "%s resolves to %s.",
-  "w2k.toolbox.ashcon.result.uuid": "%s's UUID is %s."
+  "w2k.toolbox.ashcon.result.uuid": "%s's UUID is %s.",
+  "w2k.toolbox.dump.error": "An unrecoverable error occurred during the dump. Check the logs for more information.",
+  "w2k.toolbox.dump.starting.entities": "Dumping entities...",
+  "w2k.toolbox.dump.starting.screen": "Preparing dump. Open an inventory within the next 5 seconds to dump its contents.",
+  "w2k.toolbox.dump.starting.maps": "Dumping maps...",
+  "w2k.toolbox.dump.starting.tiles": "Dumping tile entities...",
+  "w2k.toolbox.dump.success.entities": "Entity dump complete (%1$s successful, %2$s failed).",
+  "w2k.toolbox.dump.success.maps": "Map dump complete (%1$s successful, %2$s failed).",
+  "w2k.toolbox.dump.success.screen": "Inventory dump complete (%1$s successful, %2$s failed, %3$s ignored).",
+  "w2k.toolbox.dump.success.tiles": "Tile entity dump complete (%1$s successful, %2$s failed, %3$s ignored)."
 }

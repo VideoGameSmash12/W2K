@@ -19,17 +19,17 @@ import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.NbtComponent;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.map.MapState;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.BuiltinRegistries;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.RegistryWrapper;
+import net.minecraft.screen.ScreenHandler;
 import net.minecraft.text.Text;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -144,7 +144,7 @@ public class W1212VersionBridgeDriver implements WVersionBridgeDriver
     }
 
     @Override
-    public List<EntityEntry> getNearbyEntities()
+    public List<EntityEntry> getNearbyEntities(boolean includeNbt)
     {
         if (MinecraftClient.getInstance().world == null)
         {
@@ -157,8 +157,39 @@ public class W1212VersionBridgeDriver implements WVersionBridgeDriver
                         EntityType.getId(entity.getType()).toString(),
                         String.format("%s, %s, %s", entity.getX(), entity.getY(), entity.getZ()),
                         entity.getId(),
-                        entity.getUuid()))
+                        entity.getUuid(),
+                        includeNbt ? entity.writeNbt(new NbtCompound()).toString() : null))
                 .toList();
+    }
+
+    @Override
+    public List<InventoryEntry> getOpenInventory()
+    {
+        if (MinecraftClient.getInstance().world == null || MinecraftClient.getInstance().currentScreen == null
+                || MinecraftClient.getInstance().player == null)
+        {
+            return Collections.emptyList();
+        }
+
+        final ScreenHandler handler = MinecraftClient.getInstance().player.currentScreenHandler;
+
+        return handler.slots.stream().filter(Objects::nonNull).map(slot ->
+        {
+            ItemStack entry = slot.getStack();
+            if (entry == null)
+            {
+                return null;
+            }
+
+            final NbtComponent nbt = entry.getOrDefault(DataComponentTypes.CUSTOM_DATA, NbtComponent.DEFAULT);
+            return new InventoryEntry(ComponentUtils.stringToElement(Text.Serialization.toJsonString(entry.getName(),
+                    wrapperLookup)),
+                    entry.getItem() != null ? Registries.ITEM.getId(entry.getItem()).toString() : "minecraft:unknown",
+                    entry.getCount(),
+                    entry.getDamage(),
+                    String.valueOf(slot.id),
+                    nbt.isEmpty() ? null : nbt.toString());
+        }).filter(Objects::nonNull).toList();
     }
 
     @Override
@@ -176,7 +207,8 @@ public class W1212VersionBridgeDriver implements WVersionBridgeDriver
                     return new MapEntry(entry.getKey().asString(),
                             String.valueOf(map.scale),
                             map.dimension.getValue().toString(),
-                            map.centerX, map.centerZ, map.locked, map.colors);
+                            map.centerX, map.centerZ, map.locked, map.colors,
+                            map.writeNbt(new NbtCompound(), getWrapperLookup()).toString());
                 }).collect(Collectors.toList());
     }
 

@@ -5,4 +5,6 @@ plugins {
 dependencies {
     minecraft "com.mojang:minecraft:1.8.9"
     mappings legacy.yarn("1.8.9", 541)
+
+    implementation project(":Toolbox")
 }
