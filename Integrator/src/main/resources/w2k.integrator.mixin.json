@@ -6,7 +6,6 @@
   "compatibilityLevel": "JAVA_8",
   "mixins": [
     "asteroid.AsteroidModuleMixin",
-    "asteroid.AsteroidModuleMixin",
     "bleachhack.BleachHackMixin",
     "bleachhack.BleachHackModuleMixin",
     "litematica.LitematicaMixin",
@@ -15,6 +14,7 @@
     "replaymod.GuiRecordingControlsAccessor",
     "replaymod.GuiRecordingControlsMixin",
     "replaymod.PacketListenerMixin",
+    "replaymod.ReplayModAccessor",
     "replaymod.ReplayModMixin",
     "wurst.AltManagerMixin",
     "wurst.WurstClientMixin",
