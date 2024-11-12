@@ -1,21 +1,53 @@
 package me.videogamesm12.w2k.integrator.partitions.meteor;
 
 import me.videogamesm12.w2k.blackbox.Blackbox;
+import me.videogamesm12.w2k.integrator.mixins.meteor_client.FontFamilyAccessor;
+import meteordevelopment.meteorclient.MeteorClient;
+import meteordevelopment.meteorclient.renderer.Fonts;
+import meteordevelopment.meteorclient.renderer.text.FontFace;
 import meteordevelopment.meteorclient.settings.*;
 import meteordevelopment.meteorclient.systems.modules.Module;
 import meteordevelopment.meteorclient.utils.render.color.SettingColor;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.IOException;
+import java.util.*;
+import java.util.List;
 
 public class MeteorModuleSettingsDialog extends JDialog
 {
+    private static final Map<FontFace, Font> fontCache = new HashMap<>();
+
+    // Cache Meteor's fonts so that we don't have to constantly recreate new Font instances every time
+    static
+    {
+
+    }
+
     public MeteorModuleSettingsDialog(Module module)
     {
         super(Blackbox.getInstance().getMainWindow(), "Settings for " + module.title);
 
         BoxLayout pLayout = new BoxLayout(getContentPane(), BoxLayout.Y_AXIS);
         setLayout(pLayout);
+
+        // Getting Fonts for every FontFace is a very intensive task that tanks performance and resources. To at least
+        //  make it bearable, we cache fonts ahead of time so that we don't have to later on. If we somehow encounter a
+        //  font that isn't cached, we'll just generate it on runtime and then cache it.
+        if (fontCache.isEmpty())
+        {
+            Fonts.FONT_FAMILIES.forEach(family -> ((FontFamilyAccessor) family).getFonts().forEach(face ->
+            {
+                try
+                {
+                    fontCache.put(face, Font.createFont(Font.TRUETYPE_FONT, face.toStream()).deriveFont(12.0F));
+                }
+                catch (IOException | FontFormatException ignored)
+                {
+                }
+            }));
+        }
 
         module.settings.groups.forEach(group ->
         {
@@ -35,7 +67,7 @@ public class MeteorModuleSettingsDialog extends JDialog
             for (Setting<?> setting : group)
             {
                 final JLabel settingLabel = new JLabel(setting.title);
-                final JComponent settingComponent = getSettingComponent(setting);
+                final JComponent settingComponent = getSettingComponent(this, setting);
 
                 labels.addComponent(settingLabel);
                 settings.addComponent(settingComponent);
@@ -64,7 +96,7 @@ public class MeteorModuleSettingsDialog extends JDialog
     }
 
     @SuppressWarnings("unchecked")
-    public JComponent getSettingComponent(Setting<?> setting)
+    public static JComponent getSettingComponent(Component parent, Setting<?> setting)
     {
         JComponent settingComponent;
 
@@ -87,10 +119,10 @@ public class MeteorModuleSettingsDialog extends JDialog
             final Setting<SettingColor> colorSetting = (Setting<SettingColor>) setting;
             settingComponent = new JButton();
             final JButton button = (JButton) settingComponent;
-
+            button.setText("\t");
             button.setBackground(new Color(colorSetting.get().r, colorSetting.get().g, colorSetting.get().b, colorSetting.get().a));
             button.addActionListener(e -> {
-                Color newColor = JColorChooser.showDialog(this, "Choose a color", button.getBackground());
+                Color newColor = JColorChooser.showDialog(parent, "Choose a color", button.getBackground());
                 if (newColor != null)
                 {
                     button.setBackground(newColor);
@@ -144,11 +176,62 @@ public class MeteorModuleSettingsDialog extends JDialog
             comboBox.addItemListener(e -> enumSetting.set(Enum.valueOf(enumSetting.get().getClass(),
                     (String) comboBox.getSelectedItem())));
         }
+        else if (setting.get() instanceof FontFace)
+        {
+            final List<FontFace> fonts = new ArrayList<>();
+            Fonts.FONT_FAMILIES.forEach(family -> fonts.addAll(((FontFamilyAccessor) family).getFonts()));
+
+            final FontFaceSetting fontFaceSetting = (FontFaceSetting) setting;
+            settingComponent = new JComboBox<>(fonts.toArray());
+            final JComboBox<FontFace> comboBox = (JComboBox<FontFace>) settingComponent;
+            comboBox.setSelectedItem(fontFaceSetting.get());
+            comboBox.addItemListener(e ->
+            {
+                fontFaceSetting.set((FontFace) comboBox.getSelectedItem());
+                comboBox.setFont(fontCache.get(fontFaceSetting.get()));
+            });
+            comboBox.setRenderer(new FontCellRenderer());
+            comboBox.setFont(fontCache.get(fontFaceSetting.get()));
+        }
         else
         {
             settingComponent = new JLabel("Not supported");
         }
 
         return settingComponent;
+    }
+
+    private static class FontCellRenderer extends DefaultListCellRenderer
+    {
+        public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus)
+        {
+            if (value instanceof FontFace)
+            {
+                final JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                final FontFace fontFace = (FontFace) value;
+
+                try
+                {
+                    if (!fontCache.containsKey(fontFace))
+                    {
+                        fontCache.put(fontFace, Font.createFont(Font.TRUETYPE_FONT, fontFace.toStream()).deriveFont(12.0F));
+                    }
+
+                    Font font = fontCache.get((FontFace) value);
+
+                    label.setFont(font);
+                    label.setText(font.getFontName());
+                }
+                catch (IOException | FontFormatException ex)
+                {
+                    // Fallback to the one being used before everything went to shit
+                    fontCache.put(fontFace, label.getFont());
+                }
+
+                return label;
+            }
+
+            return super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+        }
     }
 }

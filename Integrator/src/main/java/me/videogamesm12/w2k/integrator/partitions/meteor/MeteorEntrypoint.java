@@ -7,6 +7,8 @@ import meteordevelopment.meteorclient.MeteorClient;
 import meteordevelopment.meteorclient.addons.MeteorAddon;
 import meteordevelopment.meteorclient.systems.modules.Modules;
 
+import javax.swing.*;
+
 public class MeteorEntrypoint extends MeteorAddon
 {
     @Override
@@ -25,6 +27,14 @@ public class MeteorEntrypoint extends MeteorAddon
             Modules.get().getGroup(category).forEach(module -> categoryMenu.addModule(new MeteorModuleMenu(module)));
             menu.addSubMenu(categoryMenu);
         });
+
+        // Add separator
+        menu.addSeparator();
+
+        // Add Settings menu option
+        final JMenuItem settings = new JMenuItem("Settings");
+        settings.addActionListener((e) -> new MeteorSettingsDialog().setVisible(true));
+        menu.add(settings);
 
         // Adds the menu
         W2KMenu.queueModMenu(menu);

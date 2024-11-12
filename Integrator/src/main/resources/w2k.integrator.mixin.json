@@ -6,10 +6,10 @@
   "compatibilityLevel": "JAVA_8",
   "mixins": [
     "asteroid.AsteroidModuleMixin",
-    "asteroid.AsteroidModuleMixin",
     "bleachhack.BleachHackMixin",
     "bleachhack.BleachHackModuleMixin",
     "litematica.LitematicaMixin",
+    "meteor_client.FontFamilyAccessor",
     "meteor_client.MeteorModuleMixin",
     "replaymod.ConnectionEventHandlerAccessor",
     "replaymod.GuiRecordingControlsAccessor",
