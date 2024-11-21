@@ -134,13 +134,9 @@ public class DumpUtil
 							.putString("id", item.getType())
 							.putInt("Count", item.getCount())
 							.putInt("Slot", Integer.parseInt(item.getLocation()))
+							.put("tag", item.getData() != null ? TagStringIO.get().asCompound(item.getData())
+									: CompoundBinaryTag.empty())
 							.build();
-
-					// Ignore data if it doesn't exist
-					if (item.getData() != null)
-					{
-						compound.put("tag", TagStringIO.get().asCompound(item.getData()));
-					}
 
 					BinaryTagIO.writer().write(compound, stream, BinaryTagIO.Compression.GZIP);
 					completedItems.add(item.getLocation());
