@@ -5,6 +5,7 @@ import com.google.gson.JsonElement;
 import me.videogamesm12.w2k.kernel.data.*;
 import net.kyori.adventure.text.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -109,4 +110,9 @@ public interface WVersionBridgeDriver extends WDriver
     List<InventoryEntry> getInventory();
 
     List<TileEntry> getNearbyTileEntities();
+
+    default List<AbstractW2KEntity> getNearbyEntitiesExperimental()
+    {
+        return new ArrayList<>();
+    }
 }

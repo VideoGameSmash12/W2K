@@ -160,6 +160,19 @@ public class W18VersionBridgeDriver implements WVersionBridgeDriver
     }
 
     @Override
+    public List<AbstractW2KEntity> getNearbyEntitiesExperimental()
+    {
+        if (MinecraftClient.getInstance().world == null)
+        {
+            return Collections.emptyList();
+        }
+
+        return ((ClientWorldAccessor) MinecraftClient.getInstance().world).getEntities().stream()
+                .map(entity -> (AbstractW2KEntity) entity)
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public List<InventoryEntry> getOpenInventory()
     {
         if (MinecraftClient.getInstance().world == null || MinecraftClient.getInstance().currentScreen == null

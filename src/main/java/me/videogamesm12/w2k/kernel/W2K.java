@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
 import me.videogamesm12.w2k.kernel.command.WCommandManager;
 import me.videogamesm12.w2k.kernel.commands.ExperimentsCmd;
+import me.videogamesm12.w2k.kernel.commands.TestCmd;
 import me.videogamesm12.w2k.kernel.commands.W2KCmd;
 import me.videogamesm12.w2k.kernel.data.BuildMetadata;
 import me.videogamesm12.w2k.kernel.driver.WDriverManager;
@@ -69,6 +70,7 @@ public class W2K implements ModInitializer
         logger.info("We are running version {}!", driverManager.getVersionFetcher().getGameVersion());
         commandManager.registerCommand(W2KCmd.class);
         commandManager.registerCommand(ExperimentsCmd.class);
+        commandManager.registerCommand(TestCmd.class);
 
         // Experiment
         if (!ExperimentManager.getEnabledExperiments().isEmpty())
