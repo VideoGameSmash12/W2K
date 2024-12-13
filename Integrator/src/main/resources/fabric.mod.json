@@ -17,6 +17,9 @@
     ],
     "meteor": [
       "me.videogamesm12.w2k.integrator.partitions.meteor.MeteorEntrypoint"
+    ],
+    "w2k-integrator-mod-hooks": [
+      "me.videogamesm12.w2k.integrator.partitions.litematica.LitematicaIntegrator"
     ]
   },
   "mixins": [

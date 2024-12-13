@@ -63,8 +63,30 @@ public class Integrator implements ClientModInitializer
 
             final IntegratorMetadata metadata = entry.getClass().getAnnotation(IntegratorMetadata.class);
 
-            return Arrays.stream(metadata.required()).allMatch(e -> FabricLoader.getInstance().isModLoaded(e))
-                    && Arrays.stream(metadata.breaks()).noneMatch(e -> FabricLoader.getInstance().isModLoaded(e));
+            // There are two methods that one can take here to determine whether to use an integrator. Integrations for
+            //  Fabric mods can just specify their mod ID as the "required" parameter. For mods loaded using *other
+            //  means*, they have to specify a class that gets checked on runtime to see if the mod is loaded.
+            //
+            // Examples of valid use cases for both:
+            //  - Litematica supports different versions of Minecraft using different mod loaders (Rift for 1.13.2 and
+            //  Fabric for 1.14+), but we want to integrate into the mod regardless of how it's loaded in, so we use the
+            //  requiredClass parameter with the main entrypoint class so that if we're loaded in 1.13.2 and the player
+            //  uses a mod to get the Rift mod loader working with Litematica, it'll still integrate just fine.
+            //
+            //  - ViaFabricPlus only supports Fabric, so we would take the simpler approach of giving the mod ID and let
+            //  it handle the rest.
+            return (metadata.required().length > 0 && Arrays.stream(metadata.required()).allMatch(e -> FabricLoader.getInstance().isModLoaded(e))
+                    || metadata.requiredClasses().length > 0 && Arrays.stream(metadata.requiredClasses()).allMatch(e -> {
+                try
+                {
+                    Class.forName(e);
+                    return true;
+                }
+                catch (ClassNotFoundException ex)
+                {
+                    return false;
+                }
+            })) && Arrays.stream(metadata.breaks()).noneMatch(e -> FabricLoader.getInstance().isModLoaded(e));
         }).collect(Collectors.toList()));
 
         integrators.forEach(IModIntegrator::setup);

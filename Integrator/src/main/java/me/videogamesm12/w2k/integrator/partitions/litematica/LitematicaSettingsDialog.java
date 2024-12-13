@@ -131,11 +131,23 @@ public class LitematicaSettingsDialog extends JDialog
                 final ConfigColor color = (ConfigColor) entry;
                 settingComponent = new JButton();
                 JButton button = (JButton) settingComponent;
-                Color convertedColor = new Color(color.getColor().r, color.getColor().g, color.getColor().b, color.getColor().a);
 
-                button.setBackground(convertedColor);
+                Color convertedColor;
+                try
+                {
+                    convertedColor = new Color(color.getColor().r, color.getColor().g, color.getColor().b, color.getColor().a);
+                    button.setBackground(convertedColor);
+                }
+                catch (IllegalArgumentException ignored)
+                {
+                    convertedColor = null;
+                }
+
+                // needs to be final because lambdas are goofy i guess
+                final Color finalConvertedColor = convertedColor;
+
                 button.addActionListener(e -> {
-                    Color newColor = JColorChooser.showDialog(this, "Choose a color", convertedColor);
+                    Color newColor = JColorChooser.showDialog(this, "Choose a color", finalConvertedColor);
                     if (newColor != null)
                     {
                         button.setBackground(newColor);
