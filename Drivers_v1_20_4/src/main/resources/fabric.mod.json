@@ -14,9 +14,6 @@
   "icon": "assets/w2k-drivers-v1_20_4/icon.png",
   "environment": "client",
   "entrypoints": {
-    "main": [
-      "me.videogamesm12.w2k.drivers.v1_20_4.W2K"
-    ],
     "w2k-event-passthru-driver": [
       "me.videogamesm12.w2k.drivers.v1_20_4.required.W120EventPassthruDriver"
     ],
