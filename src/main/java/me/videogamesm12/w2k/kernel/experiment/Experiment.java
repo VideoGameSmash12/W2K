@@ -3,7 +3,6 @@ package me.videogamesm12.w2k.kernel.experiment;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import me.videogamesm12.w2k.kernel.util.SysUtils;
 import net.fabricmc.loader.api.FabricLoader;
 import net.kyori.adventure.text.Component;
 

@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "id": "w2k-drivers-v1_21_4",
+  "version": "${version}",
+  "name": "The Drivers Awaken",
+  "description": "Minecraft 1.21.4 drivers for W2K",
+  "authors": [
+    "videogamesm12"
+  ],
+  "contact": {
+    "repo": "https://github.com/videogamesm12/W2K"
+  },
+  "license": "MIT",
+  "icon": "assets/w2k-drivers-v1_21_4/icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "w2k-event-passthru-driver": [
+      "me.videogamesm12.w2k.drivers.v1_21_4.required.W1212EventPassthruDriver"
+    ],
+    "w2k-version-bridge-driver": [
+      "me.videogamesm12.w2k.drivers.v1_21_4.required.W1212VersionBridgeDriver"
+    ],
+    "w2k-command-wrapper-driver": [
+      "me.videogamesm12.w2k.drivers.v1_21_4.required.W1212CommandDriver"
+    ]
+  },
+  "mixins": [
+    "w2k.drivers.1_21_4.mixins.json"
+  ],
+  "depends": {
+    "minecraft": ["1.21.4"]
+  },
+  "custom": {
+    "modmenu": {
+      "badges": ["library"],
+      "parent": "w2k"
+    }
+  }
+}
