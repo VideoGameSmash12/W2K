@@ -9,7 +9,6 @@
     "asteroid.AsteroidModuleMixin",
     "bleachhack.BleachHackMixin",
     "bleachhack.BleachHackModuleMixin",
-    "litematica.LitematicaMixin",
     "meteor_client.MeteorModuleMixin",
     "replaymod.ConnectionEventHandlerAccessor",
     "replaymod.GuiRecordingControlsAccessor",

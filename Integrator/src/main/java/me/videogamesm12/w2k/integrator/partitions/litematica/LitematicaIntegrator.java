@@ -8,7 +8,7 @@ import me.videogamesm12.w2k.integrator.core.gui.PModMenu;
 
 import javax.swing.*;
 
-@IntegratorMetadata(requiredClasses = "fi.dy.masa.litematica.Litematica")
+@IntegratorMetadata(required = "litematica")
 public class LitematicaIntegrator extends IModIntegrator
 {
 	@Override

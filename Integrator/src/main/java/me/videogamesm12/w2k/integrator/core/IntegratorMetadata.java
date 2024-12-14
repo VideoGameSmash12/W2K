@@ -6,9 +6,7 @@ import java.lang.annotation.RetentionPolicy;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface IntegratorMetadata
 {
-    String[] required() default {};
-
-    String[] requiredClasses() default {};
+    String[] required();
 
     String[] breaks() default {};
 }
