@@ -32,6 +32,7 @@ import me.videogamesm12.w2k.kernel.data.*;
 import me.videogamesm12.w2k.kernel.event.diagnostics.PopulateCrashReportEvent;
 import me.videogamesm12.w2k.kernel.event.lifecycle.ClientStartedEvent;
 import me.videogamesm12.w2k.kernel.event.lifecycle.ClientStoppedEvent;
+import me.videogamesm12.w2k.kernel.wrapper.network.WrappedPlayerListEntry;
 import me.videogamesm12.w2k.supervisor.api.SVComponent;
 import me.videogamesm12.w2k.supervisor.components.fantasia.Fantasia;
 import me.videogamesm12.w2k.supervisor.components.flags.Flags;
@@ -178,9 +179,9 @@ public class Supervisor extends Thread
         W2K.getInstance().getDriverManager().getVersionBridge().runCommand(command);
     }
 
-    public List<PlayerEntry> getOnlinePlayers()
+    public List<WrappedPlayerListEntry> getOnlinePlayers()
     {
-        return W2K.getInstance().getDriverManager().getVersionBridge().getOnlinePlayers();
+        return W2K.getInstance().getDriverManager().getVersionBridge().getPlayers();
     }
 
     public List<EntityEntry> getNearbyEntities()

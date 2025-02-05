@@ -3,6 +3,7 @@ package me.videogamesm12.w2k.kernel.driver.base;
 import com.google.common.annotations.Beta;
 import com.google.gson.JsonElement;
 import me.videogamesm12.w2k.kernel.data.*;
+import me.videogamesm12.w2k.kernel.wrapper.network.WrappedPlayerListEntry;
 import net.kyori.adventure.text.Component;
 
 import java.util.List;
@@ -109,4 +110,10 @@ public interface WVersionBridgeDriver extends WDriver
     List<InventoryEntry> getInventory();
 
     List<TileEntry> getNearbyTileEntities();
+
+    /**
+     * Generates a {@link WrappedPlayerListEntry} list consisting of all player entries currently listed using.
+     * @return  A list of wrapped player list entries
+     */
+    List<WrappedPlayerListEntry> getPlayers();
 }

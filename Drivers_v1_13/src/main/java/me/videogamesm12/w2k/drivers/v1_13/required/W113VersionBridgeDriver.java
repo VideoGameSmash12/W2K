@@ -10,6 +10,7 @@ import me.videogamesm12.w2k.kernel.data.*;
 import me.videogamesm12.w2k.kernel.driver.base.WDriverMetadata;
 import me.videogamesm12.w2k.kernel.driver.base.WVersionBridgeDriver;
 import me.videogamesm12.w2k.kernel.util.ComponentUtils;
+import me.videogamesm12.w2k.kernel.wrapper.network.WrappedPlayerListEntry;
 import net.kyori.adventure.text.Component;
 import net.minecraft.client.ClientBrandRetriever;
 import net.minecraft.client.MinecraftClient;
@@ -270,5 +271,17 @@ public class W113VersionBridgeDriver implements WVersionBridgeDriver
                     tile.getPos().getZ(),
                     nbt.toString());
         }).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<WrappedPlayerListEntry> getPlayers()
+    {
+        if (MinecraftClient.getInstance().getNetworkHandler() == null)
+        {
+            return Collections.emptyList();
+        }
+
+        return MinecraftClient.getInstance().getNetworkHandler().getPlayerList().stream().map(entry ->
+                (WrappedPlayerListEntry) entry).collect(Collectors.toList());
     }
 }

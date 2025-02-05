@@ -13,13 +13,15 @@
     "injector.EntityRendererMixin",
     "injector.GameRendererMixin",
     "injector.MainMixin",
-    "injector.MinecraftClientMixin"
+    "injector.MinecraftClientMixin",
+    "wrapping.network.PlayerListEntryWrappingMixin"
   ],
   "injectors": {
     "defaultRequire": 1
   },
   "mixins": [
     "accessor.WorldAccessor",
-    "injector.CrashReportMixin"
+    "injector.CrashReportMixin",
+    "wrapping.EntityWrappingMixin"
   ]
 }

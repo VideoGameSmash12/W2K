@@ -12,7 +12,8 @@
     "injector.ClientPlayNetworkHandlerMixin",
     "injector.EntityRendererMixin",
     "injector.GameRendererMixin",
-    "injector.MinecraftClientMixin"
+    "injector.MinecraftClientMixin",
+    "wrapping.network.PlayerListEntryWrappingMixin"
   ],
   "injectors": {
     "defaultRequire": 1
@@ -20,6 +21,7 @@
   "mixins": [
     "accessor.EnigmaClass4070Accessor",
     "accessor.PersistentStateManagerAccessor",
-    "injector.CrashReportMixin"
+    "injector.CrashReportMixin",
+    "wrapping.EntityWrappingMixin"
   ]
 }
