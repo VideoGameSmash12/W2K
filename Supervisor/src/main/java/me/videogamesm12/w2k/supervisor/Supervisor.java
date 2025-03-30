@@ -32,12 +32,15 @@ import me.videogamesm12.w2k.kernel.data.*;
 import me.videogamesm12.w2k.kernel.event.diagnostics.PopulateCrashReportEvent;
 import me.videogamesm12.w2k.kernel.event.lifecycle.ClientStartedEvent;
 import me.videogamesm12.w2k.kernel.event.lifecycle.ClientStoppedEvent;
+import me.videogamesm12.w2k.kernel.wrapper.WrappedMinecraftClient;
 import me.videogamesm12.w2k.kernel.wrapper.network.WrappedPlayerListEntry;
 import me.videogamesm12.w2k.supervisor.api.SVComponent;
 import me.videogamesm12.w2k.supervisor.components.fantasia.Fantasia;
 import me.videogamesm12.w2k.supervisor.components.flags.Flags;
 import me.videogamesm12.w2k.supervisor.components.watchdog.Watchdog;
 import net.fabricmc.loader.api.FabricLoader;
+import net.kyori.adventure.text.Component;
+import net.minecraft.client.MinecraftClient;
 
 import java.io.File;
 import java.io.FileReader;
@@ -63,6 +66,8 @@ public class Supervisor extends Thread
     private final List<SVComponent> components = new ArrayList<>();
     @Getter
     private final Flags flags;
+    //--
+    private WrappedMinecraftClient minecraftClient = null;
 
     public Supervisor()
     {
@@ -171,7 +176,11 @@ public class Supervisor extends Thread
 
     public void disconnect()
     {
-        W2K.getInstance().getDriverManager().getVersionBridge().disconnect();
+        if (getMinecraftClient() != null && getMinecraftClient().w2k$isNetworkHandlerPresent())
+        {
+            Objects.requireNonNull(getMinecraftClient().w2k$getNetworkHandler())
+                    .w2k$disconnect(Component.text("Disconnected by Supervisor"));
+        }
     }
 
     public void runCommand(String command)
@@ -181,7 +190,14 @@ public class Supervisor extends Thread
 
     public List<WrappedPlayerListEntry> getOnlinePlayers()
     {
-        return W2K.getInstance().getDriverManager().getVersionBridge().getPlayers();
+        if (getMinecraftClient() != null && getMinecraftClient().w2k$isNetworkHandlerPresent())
+        {
+            return Objects.requireNonNull(getMinecraftClient().w2k$getNetworkHandler()).w2k$getPlayerList();
+        }
+        else
+        {
+            return Collections.emptyList();
+        }
     }
 
     public List<EntityEntry> getNearbyEntities()
@@ -250,5 +266,20 @@ public class Supervisor extends Thread
         });
 
         return all;
+    }
+
+    private WrappedMinecraftClient getMinecraftClient()
+    {
+        if (!getFlags().isGameStartedYet())
+        {
+            return null;
+        }
+
+        if (minecraftClient == null)
+        {
+            minecraftClient = W2K.getInstance().getDriverManager().getVersionBridge().getMinecraftInstance();
+        }
+
+        return minecraftClient;
     }
 }

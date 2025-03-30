@@ -49,8 +49,9 @@ public interface WrappedPlayerListEntry
 	String w2k$getModel();
 
 	/**
-	 * Gets this entry's set skin identifier. Older versions of the game (pre-1.8) didn't
-	 * @return
+	 * Gets this entry's set skin identifier. Older versions of the game (pre-1.8) didn't transmit this information, so
+	 * 	when running those versions this will simply return what is in memory.
+	 * @return	The identifier
 	 */
 	String w2k$getSkinIdentifier();
 }

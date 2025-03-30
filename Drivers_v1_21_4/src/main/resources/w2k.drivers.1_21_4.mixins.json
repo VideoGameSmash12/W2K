@@ -14,6 +14,8 @@
     "injector.GameRendererMixin",
     "injector.MainMixin",
     "injector.MinecraftClientMixin",
+    "wrapping.MinecraftClientWrappingMixin",
+    "wrapping.network.ClientPlayNetworkHandlerWrappingMixin",
     "wrapping.network.PlayerListEntryWrappingMixin"
   ],
   "injectors": {

@@ -6,11 +6,13 @@ import me.videogamesm12.w2k.drivers.v1_21_4.mixin.accessor.ClientWorldAccessor;
 import me.videogamesm12.w2k.drivers.v1_21_4.mixin.accessor.DHAccessor;
 import me.videogamesm12.w2k.drivers.v1_21_4.mixin.accessor.IGHAccessor;
 import me.videogamesm12.w2k.drivers.v1_21_4.mixin.accessor.WorldAccessor;
+import me.videogamesm12.w2k.drivers.v1_21_4.mixin.wrapping.MinecraftClientWrappingMixin;
 import me.videogamesm12.w2k.kernel.W2K;
 import me.videogamesm12.w2k.kernel.data.*;
 import me.videogamesm12.w2k.kernel.driver.base.WDriverMetadata;
 import me.videogamesm12.w2k.kernel.driver.base.WVersionBridgeDriver;
 import me.videogamesm12.w2k.kernel.util.ComponentUtils;
+import me.videogamesm12.w2k.kernel.wrapper.WrappedMinecraftClient;
 import me.videogamesm12.w2k.kernel.wrapper.entity.WrappedEntity;
 import me.videogamesm12.w2k.kernel.wrapper.network.WrappedPlayerListEntry;
 import net.kyori.adventure.text.Component;
@@ -292,5 +294,11 @@ public class W1212VersionBridgeDriver implements WVersionBridgeDriver
 
         return MinecraftClient.getInstance().getNetworkHandler().getPlayerList().stream().map(entry ->
                 (WrappedPlayerListEntry) entry).toList();
+    }
+
+    @Override
+    public WrappedMinecraftClient getMinecraftInstance()
+    {
+        return (WrappedMinecraftClient) MinecraftClient.getInstance();
     }
 }
