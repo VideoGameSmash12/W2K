@@ -124,21 +124,6 @@ public class W113VersionBridgeDriver implements WVersionBridgeDriver
     }
 
     @Override
-    public List<PlayerEntry> getOnlinePlayers()
-    {
-        if (MinecraftClient.getInstance().getNetworkHandler() == null)
-        {
-            return Collections.emptyList();
-        }
-
-        return MinecraftClient.getInstance().getNetworkHandler().getPlayerList().stream().map(entry ->
-                new PlayerEntry(entry.getProfile(), ComponentUtils.stringToElement(Text.Serializer.serialize(entry.getDisplayName())),
-                        entry.getLatency(), entry.getGameMode().getGameModeName(), entry.getModel(),
-                        entry.getSkinTexture().toString()))
-                .collect(Collectors.toList());
-    }
-
-    @Override
     public List<EntityEntry> getNearbyEntities(boolean includeNbt)
     {
         if (MinecraftClient.getInstance().world == null)

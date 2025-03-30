@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "id": "w2k-drivers-v1_7",
+  "version": "${version}",
+  "name": "The Drivers that Changed the World",
+  "description": "Minecraft 1.7.10 drivers for W2K",
+  "authors": [
+    "videogamesm12"
+  ],
+  "contact": {
+    "repo": "https://github.com/videogamesm12/W2K"
+  },
+  "license": "MIT",
+  "icon": "assets/w2k-drivers-v1_7/icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "w2k-event-passthru-driver": [
+      "me.videogamesm12.w2k.drivers.v1_7.required.W18EventPassThruDriver"
+    ],
+    "w2k-version-bridge-driver": [
+      "me.videogamesm12.w2k.drivers.v1_7.required.W18VersionBridgeDriver"
+    ],
+    "w2k-command-wrapper-driver": [
+      "me.videogamesm12.w2k.drivers.v1_7.required.W18CommandDriver"
+    ]
+  },
+  "mixins": [
+    "w2k.drivers.1_7.mixins.json"
+  ],
+  "depends": {
+    "minecraft": "1.7.10"
+  },
+  "custom": {
+    "modmenu": {
+      "badges": ["library"],
+      "parent": "w2k"
+    }
+  }
+}

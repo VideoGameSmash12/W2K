@@ -2,7 +2,6 @@ package me.videogamesm12.w2k.blackbox.window.model;
 
 import me.videogamesm12.w2k.blackbox.window.general.Dynamic;
 import me.videogamesm12.w2k.kernel.W2K;
-import me.videogamesm12.w2k.kernel.data.PlayerEntry;
 import me.videogamesm12.w2k.kernel.wrapper.network.WrappedPlayerListEntry;
 import me.videogamesm12.w2k.supervisor.Supervisor;
 
@@ -11,7 +10,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 public class PlayerTableModel extends AbstractTableModel implements Dynamic
 {

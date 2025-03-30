@@ -1,12 +1,8 @@
 package me.videogamesm12.w2k.blackbox.window.model.enhanced;
 
 import me.videogamesm12.w2k.blackbox.window.general.Dynamic;
-import me.videogamesm12.w2k.kernel.W2K;
 import me.videogamesm12.w2k.kernel.data.MapEntry;
-import me.videogamesm12.w2k.kernel.data.PlayerEntry;
 import me.videogamesm12.w2k.supervisor.Supervisor;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.PlayerListEntry;
 
 import javax.swing.table.AbstractTableModel;
 import java.util.ArrayList;

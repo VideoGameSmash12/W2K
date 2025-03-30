@@ -70,12 +70,6 @@ public interface WVersionBridgeDriver extends WDriver
     String getCurrentUsername();
 
     /**
-     * Generates a {@link PlayerEntry} list consisting of all online players.
-     * @return A list of wrapped player entries
-     */
-    List<PlayerEntry> getOnlinePlayers();
-
-    /**
      * Generates an {@link EntityEntry} list consisting of all entities currently in memory.
      * @param includeNbt    boolean
      * @return              A list of wrapped entities
