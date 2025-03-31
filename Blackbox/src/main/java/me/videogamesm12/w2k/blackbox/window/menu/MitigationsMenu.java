@@ -1,5 +1,6 @@
 package me.videogamesm12.w2k.blackbox.window.menu;
 
+import me.videogamesm12.w2k.kernel.W2K;
 import me.videogamesm12.w2k.kernel.util.VersionUtils;
 import me.videogamesm12.w2k.supervisor.Configuration;
 import me.videogamesm12.w2k.supervisor.Supervisor;
@@ -28,8 +29,8 @@ public class MitigationsMenu extends JMenu
         menu.setToolTipText("Drastic actions you can take if necessary.");
 
         final JMenuItem crash = new JMenuItem("Crash");
-        crash.setToolTipText("Forces the client to crash the next time it tries to render something.");
-        crash.addActionListener((e) -> Supervisor.getInstance().getFlags().setSupposedToCrash(true));
+        crash.setToolTipText("Forces the client to crash on the next tick.");
+        crash.addActionListener((e) -> Supervisor.getInstance().crash());
         menu.add(crash);
         //--
         final JMenuItem disconnect = new JMenuItem("Disconnect");

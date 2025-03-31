@@ -40,7 +40,7 @@ import me.videogamesm12.w2k.supervisor.components.flags.Flags;
 import me.videogamesm12.w2k.supervisor.components.watchdog.Watchdog;
 import net.fabricmc.loader.api.FabricLoader;
 import net.kyori.adventure.text.Component;
-import net.minecraft.client.MinecraftClient;
+import net.kyori.adventure.text.format.NamedTextColor;
 
 import java.io.File;
 import java.io.FileReader;
@@ -171,7 +171,10 @@ public class Supervisor extends Thread
 
     public void chatMessage(String message)
     {
-        W2K.getInstance().getDriverManager().getVersionBridge().sendMessage(message);
+        if (getMinecraftClient().w2k$getPlayer() == null)
+            throw new IllegalStateException("Not connected to a server");
+
+        Objects.requireNonNull(getMinecraftClient().w2k$getPlayer()).w2k$sendMessage(message);
     }
 
     public void disconnect()
@@ -179,18 +182,21 @@ public class Supervisor extends Thread
         if (getMinecraftClient() != null && getMinecraftClient().w2k$isNetworkHandlerPresent())
         {
             Objects.requireNonNull(getMinecraftClient().w2k$getNetworkHandler())
-                    .w2k$disconnect(Component.text("Disconnected by Supervisor"));
+                    .w2k$disconnect(Component.text("Disconnected by Supervisor").color(NamedTextColor.BLUE));
         }
     }
 
     public void runCommand(String command)
     {
-        W2K.getInstance().getDriverManager().getVersionBridge().runCommand(command);
+        if (getMinecraftClient().w2k$getPlayer() == null)
+            throw new IllegalStateException("Not connected to a server");
+
+        Objects.requireNonNull(getMinecraftClient().w2k$getPlayer()).w2k$runCommand(command);
     }
 
     public List<WrappedPlayerListEntry> getOnlinePlayers()
     {
-        if (getMinecraftClient() != null && getMinecraftClient().w2k$isNetworkHandlerPresent())
+        if (getMinecraftClient().w2k$isNetworkHandlerPresent())
         {
             return Objects.requireNonNull(getMinecraftClient().w2k$getNetworkHandler()).w2k$getPlayerList();
         }
@@ -222,7 +228,16 @@ public class Supervisor extends Thread
 
     public void closeCurrentScreen()
     {
-        W2K.getInstance().getDriverManager().getVersionBridge().closeCurrentScreen();
+        Objects.requireNonNull(getMinecraftClient()).w2k$queuePreTick(() ->
+				getMinecraftClient().w2k$setScreen(null));
+    }
+
+    public void crash()
+    {
+        getMinecraftClient().w2k$queuePreTick(() ->
+        {
+            throw new RuntimeException("Intentionally crashed by Supervisor");
+        });
     }
 
     public void shutdown()
@@ -245,7 +260,7 @@ public class Supervisor extends Thread
 
     public void shutdownSafely()
     {
-        W2K.getInstance().getDriverManager().getVersionBridge().scheduleSafeShutdown();
+        getMinecraftClient().w2k$scheduleSafeShutdown();
     }
 
     public List<String> dumpThreads()
@@ -272,7 +287,7 @@ public class Supervisor extends Thread
     {
         if (!getFlags().isGameStartedYet())
         {
-            return null;
+            throw new IllegalStateException("Minecraft hasn't started yet.");
         }
 
         if (minecraftClient == null)

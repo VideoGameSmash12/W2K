@@ -1,6 +1,5 @@
-package me.videogamesm12.w2k.drivers.v1_21_4.mixin.wrapping;
+package me.videogamesm12.w2k.drivers.v1_8.mixin.wrapped;
 
-import com.llamalad7.mixinextras.sugar.Local;
 import me.videogamesm12.w2k.kernel.wrapper.WrappedMinecraftClient;
 import me.videogamesm12.w2k.kernel.wrapper.entity.player.WrappedPlayerEntity;
 import me.videogamesm12.w2k.kernel.wrapper.gui.WrappedScreen;
@@ -8,7 +7,7 @@ import me.videogamesm12.w2k.kernel.wrapper.network.WrappedClientPlayNetworkHandl
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
-import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.entity.player.ClientPlayerEntity;
 import net.minecraft.util.profiler.Profiler;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
@@ -21,20 +20,22 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.concurrent.FutureTask;
 
 @Mixin(MinecraftClient.class)
 public abstract class MinecraftClientWrappingMixin implements WrappedMinecraftClient
 {
+	@Shadow public abstract void setScreen(@Nullable Screen screen);
+
 	@Shadow @Nullable public abstract ClientPlayNetworkHandler getNetworkHandler();
 
-	@Shadow @Final private Queue<Runnable> renderTaskQueue;
+	@Final @Shadow public Profiler profiler;
 
-	@Shadow public abstract void setScreen(@Nullable Screen screen);
+	@Shadow @Final private Queue<FutureTask<?>> tasks;
 
 	@Shadow public abstract void scheduleStop();
 
-	@Shadow @Nullable public ClientPlayerEntity player;
-
+	@Shadow public ClientPlayerEntity player;
 	@Unique
 	private final Queue<Runnable> w2k$preTickQueue = new ConcurrentLinkedDeque<>();
 
@@ -42,10 +43,9 @@ public abstract class MinecraftClientWrappingMixin implements WrappedMinecraftCl
 	private final Queue<Runnable> w2k$postTickQueue = new ConcurrentLinkedDeque<>();
 
 	@Override
-	public WrappedClientPlayNetworkHandler w2k$getNetworkHandler()
+	public @Nullable WrappedClientPlayNetworkHandler w2k$getNetworkHandler()
 	{
-		ClientPlayNetworkHandler handler = getNetworkHandler();
-		return handler != null ? (WrappedClientPlayNetworkHandler) handler : null;
+		return (WrappedClientPlayNetworkHandler) getNetworkHandler();
 	}
 
 	@Override
@@ -76,7 +76,7 @@ public abstract class MinecraftClientWrappingMixin implements WrappedMinecraftCl
 	@Override
 	public void w2k$queuePreRender(Runnable runnable)
 	{
-		this.renderTaskQueue.add(runnable);
+		this.tasks.add(new FutureTask<>(runnable, null));
 	}
 
 	@Override
@@ -106,11 +106,12 @@ public abstract class MinecraftClientWrappingMixin implements WrappedMinecraftCl
 		}
 	}
 
-	@Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Keyboard;pollDebugCrash()V",
-			shift = At.Shift.AFTER))
-	public void injectTickForPostTickProcessing(CallbackInfo ci, @Local Profiler profiler)
+	@Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/profiler/Profiler;pop()V",
+			shift = At.Shift.BEFORE))
+	public void injectTickForPostTickProcessing(CallbackInfo ci)
 	{
 		profiler.swap("w2kPostTick");
+
 		while (!w2k$postTickQueue.isEmpty())
 		{
 			w2k$postTickQueue.poll().run();

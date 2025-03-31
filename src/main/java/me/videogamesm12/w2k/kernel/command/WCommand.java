@@ -40,7 +40,9 @@ public abstract class WCommand
     public final void msg(@NotNull Component component)
     {
         Objects.requireNonNull(component);
-        W2K.getInstance().getDriverManager().getVersionBridge().displayMessage(component);
+
+        W2K.getInstance().getDriverManager().getVersionBridge().getMinecraftInstance().w2k$getNonnullPlayer()
+                .w2k$displayMessage(component, false);
     }
 
     public final void schedule(@NotNull Runnable task, int delay)

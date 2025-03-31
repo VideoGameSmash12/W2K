@@ -7,6 +7,7 @@ import me.videogamesm12.w2k.kernel.data.*;
 import me.videogamesm12.w2k.kernel.driver.base.WDriverMetadata;
 import me.videogamesm12.w2k.kernel.driver.base.WVersionBridgeDriver;
 import me.videogamesm12.w2k.kernel.util.ComponentUtils;
+import me.videogamesm12.w2k.kernel.wrapper.WrappedMinecraftClient;
 import me.videogamesm12.w2k.kernel.wrapper.network.WrappedPlayerListEntry;
 import net.kyori.adventure.text.Component;
 import net.minecraft.block.Block;
@@ -254,5 +255,11 @@ public class W18VersionBridgeDriver implements WVersionBridgeDriver
 
         return MinecraftClient.getInstance().getNetworkHandler().getPlayerList().stream().map(entry ->
                 (WrappedPlayerListEntry) entry).collect(Collectors.toList());
+    }
+
+    @Override
+    public WrappedMinecraftClient getMinecraftInstance()
+    {
+        return (WrappedMinecraftClient) MinecraftClient.getInstance();
     }
 }

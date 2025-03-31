@@ -1,4 +1,4 @@
-package me.videogamesm12.w2k.drivers.v1_8.mixin.wrapped;
+package me.videogamesm12.w2k.drivers.v1_8.mixin.wrapped.entity;
 
 import com.google.gson.JsonElement;
 import me.videogamesm12.w2k.kernel.util.ComponentUtils;

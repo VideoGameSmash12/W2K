@@ -14,6 +14,10 @@
     "injector.EntityRendererMixin",
     "injector.GameRendererMixin",
     "injector.MinecraftClientMixin",
+    "wrapped.MinecraftClientWrappingMixin",
+    "wrapped.entity.player.ClientPlayerEntityWrappingMixin",
+    "wrapped.gui.ScreenWrappingMixin",
+    "wrapped.network.ClientPlayNetworkHandlerWrappingMixin",
     "wrapped.network.PlayerListEntryWrappingMixin"
   ],
   "injectors": {
@@ -23,6 +27,6 @@
     "accessor.EntityAccessor",
     "accessor.PersistentStateManagerAccessor",
     "injector.CrashReportMixin",
-    "wrapped.EntityWrappingMixin"
+    "wrapped.entity.EntityWrappingMixin"
   ]
 }

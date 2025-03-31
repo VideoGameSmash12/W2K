@@ -56,6 +56,8 @@ public class Watchdog extends Thread implements SVComponent
     {
         W2K.getEventBus().register(this);
 
+
+
         freezeDetector.scheduleAtFixedRate(() ->
         {
             long time = System.currentTimeMillis();
