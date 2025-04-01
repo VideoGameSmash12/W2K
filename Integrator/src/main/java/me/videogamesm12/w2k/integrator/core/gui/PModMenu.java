@@ -22,9 +22,9 @@
 
 package me.videogamesm12.w2k.integrator.core.gui;
 
+import me.videogamesm12.w2k.blackbox.Blackbox;
 import me.videogamesm12.w2k.blackbox.window.menu.w2k.ModMenu;
-import me.videogamesm12.w2k.kernel.experiment.ExperimentManager;
-import me.videogamesm12.w2k.kernel.experiment.Experiment;
+import me.videogamesm12.w2k.kernel.W2K;
 import net.fabricmc.loader.api.FabricLoader;
 
 import javax.imageio.ImageIO;
@@ -32,6 +32,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Optional;
 
 public class PModMenu<T> extends ModMenu<T>
 {
@@ -67,21 +68,19 @@ public class PModMenu<T> extends ModMenu<T>
 
     public void addModIconIfPresent(String id)
     {
-        if (ExperimentManager.isExperimentEnabled(Experiment.INTEGRATOR_MOD_ICONS))
-        {
-            FabricLoader.getInstance().getModContainer(id).flatMap(container -> container.getMetadata().getIconPath(128)).ifPresent(path ->
-            {
-                try (InputStream stream = getModClass().getClassLoader().getResourceAsStream(path))
-                {
-                    if (stream != null)
-                    {
-                        setIcon(new ImageIcon(ImageIO.read(stream).getScaledInstance(24, 24, Image.SCALE_FAST)));
-                    }
-                }
-                catch (IOException ignored)
-                {
-                }
-            });
-        }
+        FabricLoader.getInstance().getModContainer(id).map(container -> container.getMetadata().getIconPath(128))
+                .map(optionalPath -> optionalPath.map(path -> getModClass().getClassLoader()
+                        .getResourceAsStream(path)).orElse(Blackbox.class.getClassLoader()
+						.getResourceAsStream("assets/w2k-blackbox/icons/default/missing-mod-icon.png")))
+				.ifPresent(stream ->
+				{
+					try
+					{
+						setIcon(new ImageIcon(ImageIO.read(stream).getScaledInstance(24, 24, Image.SCALE_SMOOTH)));
+					}
+					catch (IOException ignored)
+					{
+					}
+				});
     }
 }
