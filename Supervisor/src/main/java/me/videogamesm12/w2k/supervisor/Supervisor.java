@@ -193,9 +193,10 @@ public class Supervisor extends Thread
         return W2K.getInstance().getDriverManager().getVersionBridge().getNearbyTileEntities();
     }
 
-    public List<MapEntry> getLoadedMaps()
+    public List<IMapEntry> getLoadedMaps()
     {
-        return W2K.getInstance().getDriverManager().getVersionBridge().getLoadedMaps();
+        //return W2K.getInstance().getDriverManager().getVersionBridge().getLoadedMaps();
+        return W2K.getInstance().getDriverManager().getVersionBridge().getMaps();
     }
 
     public List<InventoryEntry> getInventory()

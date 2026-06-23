@@ -16,7 +16,6 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.map.MapState;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.Registries;
 import net.minecraft.screen.ScreenHandler;
@@ -24,7 +23,6 @@ import net.minecraft.text.Text;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 @WDriverMetadata(identifier = "120_version_bridge")
@@ -178,20 +176,15 @@ public class WVersionBridgeDriver implements me.videogamesm12.w2k.kernel.driver.
     }
 
     @Override
-    public List<MapEntry> getLoadedMaps()
+    public List<IMapEntry> getMaps()
     {
         if (MinecraftClient.getInstance().world == null)
         {
             return Collections.emptyList();
         }
 
-        return ((ClientWorldAccessor) MinecraftClient.getInstance().world).getMapStates().entrySet().stream()
-                .map(entry ->
-                {
-                    final MapState map = entry.getValue();
-                    return new MapEntry(entry.getKey(), String.valueOf(map.scale), map.dimension.toString(),
-                            map.centerX, map.centerZ, map.locked, map.colors, map.writeNbt(new NbtCompound()).toString());
-                }).collect(Collectors.toList());
+        return ((ClientWorldAccessor) MinecraftClient.getInstance().world).getMapStates().entrySet().stream().map(entry ->
+                ((IMapEntry) entry.getValue()).w2k$id(entry.getKey())).toList();
     }
 
     @Override

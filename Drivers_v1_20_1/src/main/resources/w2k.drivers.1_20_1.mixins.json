@@ -21,6 +21,7 @@
   },
   "mixins": [
     "accessor.WorldAccessor",
-    "injector.CrashReportMixin"
+    "injector.CrashReportMixin",
+    "wrapper.MapStateWrapper"
   ]
 }

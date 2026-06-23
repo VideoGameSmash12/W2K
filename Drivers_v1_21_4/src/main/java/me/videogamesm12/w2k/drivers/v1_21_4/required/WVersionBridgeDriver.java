@@ -188,25 +188,16 @@ public class WVersionBridgeDriver implements me.videogamesm12.w2k.kernel.driver.
     }
 
     @Override
-    public List<MapEntry> getLoadedMaps()
+    public List<IMapEntry> getMaps()
     {
         if (MinecraftClient.getInstance().world == null)
         {
             return Collections.emptyList();
         }
 
-        return ((ClientWorldAccessor) MinecraftClient.getInstance().world).getMapStates().entrySet().stream()
-                .map(entry ->
-                {
-                    final MapState map = entry.getValue();
-                    return new MapEntry(entry.getKey().asString(),
-                            String.valueOf(map.scale),
-                            map.dimension.getValue().toString(),
-                            map.centerX, map.centerZ, map.locked, map.colors,
-                            map.writeNbt(new NbtCompound(), getWrapperLookup()).toString());
-                }).collect(Collectors.toList());
+        return ((ClientWorldAccessor) MinecraftClient.getInstance().world).getMapStates().entrySet().stream().map(entry ->
+                ((IMapEntry) entry.getValue()).w2k$id(entry.getKey().asString())).toList();
     }
-
 
     @Override
     public List<InventoryEntry> getInventory()

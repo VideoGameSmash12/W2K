@@ -2,10 +2,7 @@ package me.videogamesm12.w2k.kernel.data;
 
 import com.google.gson.JsonElement;
 import com.mojang.authlib.GameProfile;
-import me.videogamesm12.w2k.kernel.W2K;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public interface IPlayerEntry
@@ -22,8 +19,5 @@ public interface IPlayerEntry
 
     String w2k$skinIdentifier();
 
-    default List<Object> w2k$toTableRow()
-    {
-        return new ArrayList<>();
-    }
+    List<Object> w2k$toTableRow();
 }

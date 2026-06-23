@@ -1,8 +1,5 @@
 package me.videogamesm12.w2k.kernel.data;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-
 import java.util.Arrays;
 import java.util.List;
 
@@ -12,6 +9,8 @@ import java.util.List;
  */
 public interface IMapEntry
 {
+    IMapEntry w2k$id(String id);
+
     String w2k$id();
 
     String w2k$scale();
@@ -28,16 +27,14 @@ public interface IMapEntry
 
     String w2k$nbt();
 
-    List<Object> w2k$toTableRow();
-    /*public List<Object> toTableRow()
+    default List<Object> w2k$toTableRow()
     {
         return Arrays.asList(
-                id,         // Map ID
-                scale,      // Scale
-                dimension,  // Dimension ID
-                centerX,    // Center X
-                centerZ,    // Center Z
-                locked      // Locked
-        );
-    }*/
+                w2k$id(),             // Map ID
+                w2k$scale(),          // Scale
+                w2k$dimension(),      // Dimension ID
+                w2k$centerX(),        // Center X
+                w2k$centerZ(),        // Center Z
+                w2k$locked());        // Locked
+    }
 }

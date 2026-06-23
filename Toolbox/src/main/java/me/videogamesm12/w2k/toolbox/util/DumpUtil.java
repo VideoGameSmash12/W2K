@@ -2,10 +2,7 @@ package me.videogamesm12.w2k.toolbox.util;
 
 import lombok.Getter;
 import me.videogamesm12.w2k.kernel.W2K;
-import me.videogamesm12.w2k.kernel.data.EntityEntry;
-import me.videogamesm12.w2k.kernel.data.InventoryEntry;
-import me.videogamesm12.w2k.kernel.data.MapEntry;
-import me.videogamesm12.w2k.kernel.data.TileEntry;
+import me.videogamesm12.w2k.kernel.data.*;
 import me.videogamesm12.w2k.toolbox.data.DumpResult;
 import net.kyori.adventure.nbt.BinaryTagIO;
 import net.kyori.adventure.nbt.CompoundBinaryTag;
@@ -33,17 +30,17 @@ public class DumpUtil
 			final List<String> completedMaps = new ArrayList<>();
 			final List<String> failedMaps = new ArrayList<>();
 
-			final List<MapEntry> entries = W2K.getInstance().getDriverManager().getVersionBridge().getLoadedMaps();
+			final List<IMapEntry> entries = W2K.getInstance().getDriverManager().getVersionBridge().getMaps();
 
 			final File dumpDir = generateDumpFolder();
 
 			(parallel ? entries.parallelStream() : entries.stream()).forEach(map ->
 			{
-				String fileName = map.getId();
+				String fileName = map.w2k$id();
 				try (FileOutputStream stream = new FileOutputStream(new File(dumpDir, fileName + ".dat")))
 				{
-					BinaryTagIO.writer().write(TagStringIO.get().asCompound(map.getNbt()), stream, BinaryTagIO.Compression.GZIP);
-					completedMaps.add(map.getId());
+					BinaryTagIO.writer().write(TagStringIO.get().asCompound(map.w2k$nbt()), stream, BinaryTagIO.Compression.GZIP);
+					completedMaps.add(map.w2k$id());
 				}
 				catch (IOException ex)
 				{
@@ -52,7 +49,7 @@ public class DumpUtil
 					{
 						temp.delete();
 					}
-					failedMaps.add(map.getId());
+					failedMaps.add(map.w2k$id());
 				}
 			});
 

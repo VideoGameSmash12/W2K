@@ -1,25 +1,26 @@
-package me.videogamesm12.w2k.drivers.v26_1.mixin.wrapper;
+package me.videogamesm12.w2k.drivers.v1_21_4.mixin.wrapper;
 
 import me.videogamesm12.w2k.kernel.data.IMapEntry;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtOps;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.item.map.MapState;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryWrapper;
+import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 
-@Mixin(MapItemSavedData.class)
-public class MapStateWrapper implements IMapEntry
+@Mixin(MapState.class)
+public abstract class MapStateWrapper implements IMapEntry
 {
     @Shadow
     @Final
     public byte scale;
     @Shadow
     @Final
-    public ResourceKey<Level> dimension;
+    public RegistryKey<World> dimension;
     @Shadow
     @Final
     public int centerX;
@@ -31,6 +32,9 @@ public class MapStateWrapper implements IMapEntry
     public boolean locked;
     @Shadow
     public byte[] colors;
+
+    @Shadow
+    public abstract NbtCompound writeNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registries);
 
     @Unique
     private String id = null;
@@ -58,7 +62,7 @@ public class MapStateWrapper implements IMapEntry
     @Override
     public String w2k$dimension()
     {
-        return dimension.identifier().toString();
+        return dimension.getValue().toString();
     }
 
     @Override
@@ -88,7 +92,11 @@ public class MapStateWrapper implements IMapEntry
     @Override
     public String w2k$nbt()
     {
-        return MapItemSavedData.CODEC.encodeStart(NbtOps.INSTANCE, MapItemSavedData.class.cast(this)).result()
-                .orElse(new CompoundTag()).toString();
+        if (MinecraftClient.getInstance().world == null)
+        {
+            return "";
+        }
+
+        return writeNbt(new NbtCompound(), MinecraftClient.getInstance().world.getRegistryManager()).toString();
     }
 }

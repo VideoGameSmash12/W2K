@@ -6,6 +6,7 @@ import me.videogamesm12.w2k.kernel.data.*;
 import net.kyori.adventure.text.Component;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -101,10 +102,13 @@ public interface WVersionBridgeDriver extends WDriver
     }
 
     /**
-     * Generates a {@link MapEntry} list consisting of all map data currently in memory.
+     * Generates a {@link IMapEntry} list consisting of all map data currently in memory.
      * @return A list of wrapped maps
      */
-    List<MapEntry> getLoadedMaps();
+    default List<IMapEntry> getMaps()
+    {
+        return Collections.emptyList();
+    }
 
     /**
      * Generates an {@link InventoryEntry} list consisting of every item in the player's inventory.
