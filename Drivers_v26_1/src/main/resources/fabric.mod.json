@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
-  "id": "w2k-drivers-v1_20_1",
+  "id": "w2k-drivers-v26_1",
   "version": "${version}",
-  "name": "Trails & Drivers",
-  "description": "Minecraft 1.20 - 1.20.1 drivers for W2K",
+  "name": "Drivers Takeover",
+  "description": "Minecraft 26.1 drivers for W2K",
   "authors": [
     "videogamesm12"
   ],
@@ -11,24 +11,24 @@
     "repo": "https://github.com/videogamesm12/W2K"
   },
   "license": "MIT",
-  "icon": "assets/w2k-drivers-v1_20_1/icon.png",
+  "icon": "assets/w2k-drivers-26_1/icon.png",
   "environment": "client",
   "entrypoints": {
     "w2k-event-passthru-driver": [
-      "me.videogamesm12.w2k.drivers.v1_20_1.required.W120EventPassthruDriver"
+      "me.videogamesm12.w2k.drivers.v26_1.required.WEventPassthruDriver"
     ],
     "w2k-version-bridge-driver": [
-      "me.videogamesm12.w2k.drivers.v1_20_1.required.WVersionBridgeDriver"
+      "me.videogamesm12.w2k.drivers.v26_1.required.WVersionBridgeDriver"
     ],
     "w2k-command-wrapper-driver": [
-      "me.videogamesm12.w2k.drivers.v1_20_1.required.W120CommandDriver"
+      "me.videogamesm12.w2k.drivers.v26_1.required.WCommandDriver"
     ]
   },
   "mixins": [
-    "w2k.drivers.1_20_1.mixins.json"
+    "w2k.drivers.26_1.mixins.json"
   ],
   "depends": {
-    "minecraft": ["1.20", "1.20.1"]
+    "minecraft": ["26.1.x"]
   },
   "custom": {
     "modmenu": {

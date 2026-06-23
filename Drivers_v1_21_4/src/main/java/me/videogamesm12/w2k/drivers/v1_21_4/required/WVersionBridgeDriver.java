@@ -9,7 +9,6 @@ import me.videogamesm12.w2k.drivers.v1_21_4.mixin.accessor.WorldAccessor;
 import me.videogamesm12.w2k.kernel.W2K;
 import me.videogamesm12.w2k.kernel.data.*;
 import me.videogamesm12.w2k.kernel.driver.base.WDriverMetadata;
-import me.videogamesm12.w2k.kernel.driver.base.WVersionBridgeDriver;
 import me.videogamesm12.w2k.kernel.util.ComponentUtils;
 import net.kyori.adventure.text.Component;
 import net.minecraft.block.entity.BlockEntity;
@@ -34,7 +33,7 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 @WDriverMetadata(identifier = "1212_version_bridge")
-public class W1212VersionBridgeDriver implements WVersionBridgeDriver
+public class WVersionBridgeDriver implements me.videogamesm12.w2k.kernel.driver.base.WVersionBridgeDriver
 {
     @Getter
     private static final RegistryWrapper.WrapperLookup wrapperLookup = BuiltinRegistries.createWrapperLookup();
@@ -128,18 +127,15 @@ public class W1212VersionBridgeDriver implements WVersionBridgeDriver
     }
 
     @Override
-    public List<PlayerEntry> getOnlinePlayers()
+    public List<IPlayerEntry> getPlayerList()
     {
         if (MinecraftClient.getInstance().getNetworkHandler() == null)
         {
             return Collections.emptyList();
         }
 
-        return MinecraftClient.getInstance().getNetworkHandler().getPlayerList().stream().map(entry ->
-                new PlayerEntry(entry.getProfile(), ComponentUtils.stringToElement(Text.Serialization.toJsonString(entry.getDisplayName() != null ? entry.getDisplayName() : Text.literal(entry.getProfile().getName()), wrapperLookup)),
-                        entry.getLatency(), entry.getGameMode() != null ? entry.getGameMode().getName() : "",
-                        entry.getSkinTextures().model().getName(),
-                        entry.getSkinTextures().texture().toString())).collect(Collectors.toList());
+        return MinecraftClient.getInstance().getNetworkHandler().getPlayerList().stream()
+                .map(entry -> (IPlayerEntry) entry).toList();
     }
 
     @Override

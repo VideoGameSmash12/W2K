@@ -1,5 +1,6 @@
 ext {
-    post_twenty_five = true
+    java_version = 21
+    remap = true
 }
 
 dependencies {

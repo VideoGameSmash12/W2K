@@ -178,9 +178,9 @@ public class Supervisor extends Thread
         W2K.getInstance().getDriverManager().getVersionBridge().runCommand(command);
     }
 
-    public List<PlayerEntry> getOnlinePlayers()
+    public List<IPlayerEntry> getPlayerList()
     {
-        return W2K.getInstance().getDriverManager().getVersionBridge().getOnlinePlayers();
+        return W2K.getInstance().getDriverManager().getVersionBridge().getPlayerList();
     }
 
     public List<EntityEntry> getNearbyEntities()

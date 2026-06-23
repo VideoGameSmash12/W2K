@@ -1,5 +1,5 @@
-plugins {
-    id "legacy-looming" version "1.9-SNAPSHOT" // Version must be the same as fabric-loom's
+ext {
+    remap = true
 }
 
 repositories {
@@ -7,8 +7,8 @@ repositories {
 }
 
 dependencies {
-    minecraft "com.mojang:minecraft:1.8.9"
-    mappings legacy.yarn("1.8.9", 541)
+    minecraft "com.mojang:minecraft:1.20.1"
+    mappings "net.fabricmc:yarn:1.20.1+build.10:v2"
 
     implementation project(":Supervisor")
     implementation project(":Toolbox")

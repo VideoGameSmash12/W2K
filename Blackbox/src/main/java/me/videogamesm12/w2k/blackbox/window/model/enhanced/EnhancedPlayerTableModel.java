@@ -1,7 +1,7 @@
 package me.videogamesm12.w2k.blackbox.window.model.enhanced;
 
 import me.videogamesm12.w2k.blackbox.window.general.Dynamic;
-import me.videogamesm12.w2k.kernel.data.PlayerEntry;
+import me.videogamesm12.w2k.kernel.data.IPlayerEntry;
 import me.videogamesm12.w2k.supervisor.Supervisor;
 
 import javax.swing.table.AbstractTableModel;
@@ -44,7 +44,7 @@ public class EnhancedPlayerTableModel extends AbstractTableModel implements Dyna
     {
         rows.clear();
 
-        rows.addAll(Supervisor.getInstance().getOnlinePlayers().stream().map(PlayerEntry::toTableRow).collect(Collectors.toList()));
+        rows.addAll(Supervisor.getInstance().getPlayerList().stream().map(IPlayerEntry::w2k$toTableRow).collect(Collectors.toList()));
 
         fireTableDataChanged();
     }

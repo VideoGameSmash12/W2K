@@ -18,7 +18,7 @@
       "me.videogamesm12.w2k.drivers.v1_21_4.required.W1212EventPassthruDriver"
     ],
     "w2k-version-bridge-driver": [
-      "me.videogamesm12.w2k.drivers.v1_21_4.required.W1212VersionBridgeDriver"
+      "me.videogamesm12.w2k.drivers.v1_21_4.required.WVersionBridgeDriver"
     ],
     "w2k-command-wrapper-driver": [
       "me.videogamesm12.w2k.drivers.v1_21_4.required.W1212CommandDriver"

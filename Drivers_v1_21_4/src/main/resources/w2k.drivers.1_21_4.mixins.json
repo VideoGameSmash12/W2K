@@ -13,7 +13,8 @@
     "injector.EntityRendererMixin",
     "injector.GameRendererMixin",
     "injector.MainMixin",
-    "injector.MinecraftClientMixin"
+    "injector.MinecraftClientMixin",
+    "wrapper.PlayerEntryWrapper"
   ],
   "injectors": {
     "defaultRequire": 1

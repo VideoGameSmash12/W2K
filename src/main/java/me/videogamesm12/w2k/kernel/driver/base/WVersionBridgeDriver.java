@@ -5,6 +5,7 @@ import com.google.gson.JsonElement;
 import me.videogamesm12.w2k.kernel.data.*;
 import net.kyori.adventure.text.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -69,10 +70,13 @@ public interface WVersionBridgeDriver extends WDriver
     String getCurrentUsername();
 
     /**
-     * Generates a {@link PlayerEntry} list consisting of all online players.
+     * Generates a {@link IPlayerEntry} list consisting of all online players.
      * @return A list of wrapped player entries
      */
-    List<PlayerEntry> getOnlinePlayers();
+    default List<IPlayerEntry> getPlayerList()
+    {
+        return new ArrayList<>();
+    }
 
     /**
      * Generates an {@link EntityEntry} list consisting of all entities currently in memory.
