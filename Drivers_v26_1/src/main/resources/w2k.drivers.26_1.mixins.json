@@ -23,6 +23,7 @@
   "mixins": [
     "accessor.WorldAccessor",
     "injector.CrashReportMixin",
+    "wrapper.BlockEntityWrapper",
     "wrapper.MapStateWrapper"
   ]
 }

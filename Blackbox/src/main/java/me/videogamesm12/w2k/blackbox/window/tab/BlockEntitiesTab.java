@@ -1,17 +1,17 @@
 package me.videogamesm12.w2k.blackbox.window.tab;
 
 import me.videogamesm12.w2k.blackbox.window.general.Dynamic;
-import me.videogamesm12.w2k.blackbox.window.model.TileEntityTableModel;
+import me.videogamesm12.w2k.blackbox.window.model.BlockEntityTableModel;
 
 import javax.swing.*;
 
-public class TileEntitiesTab extends ScrollableTab
+public class BlockEntitiesTab extends ScrollableTab
 {
     public final JTable table;
 
-    public TileEntitiesTab()
+    public BlockEntitiesTab()
     {
-        table = new JTable(new TileEntityTableModel());
+        table = new JTable(new BlockEntityTableModel());
         table.setCellSelectionEnabled(true);
         setup();
     }

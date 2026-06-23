@@ -175,24 +175,24 @@ public class DumpUtil
 			final List<String> failedTiles = new ArrayList<>();
 			final List<String> ignoredTiles = new ArrayList<>();
 
-			final List<TileEntry> entry = W2K.getInstance().getDriverManager().getVersionBridge().getNearbyTileEntities();
+			final List<IBlockEntityEntry> entry = W2K.getInstance().getDriverManager().getVersionBridge().getBlockEntities();
 
 			final File dumpDir = generateDumpFolder();
 
 			(parallel ? entry.parallelStream() : entry.stream()).forEach(tile ->
 			{
-				if (tile.getData() == null)
+				if (tile.w2k$data() == null)
 				{
 					ignoredTiles.add(tile.toString());
 					return;
 				}
 
-				String fileName = String.format("tile-entity_%s_%d-%d-%d", tile.getType().replace(":", "-"),
-						tile.getX(), tile.getY(), tile.getZ());
+				String fileName = String.format("tile-entity_%s_%d-%d-%d", tile.w2k$type().replace(":", "-"),
+						tile.w2k$x(), tile.w2k$y(), tile.w2k$z());
 
 				try (FileOutputStream stream = new FileOutputStream(new File(dumpDir, fileName + ".nbt")))
 				{
-					BinaryTagIO.writer().write(TagStringIO.get().asCompound(tile.getData()), stream, BinaryTagIO.Compression.GZIP);
+					BinaryTagIO.writer().write(TagStringIO.get().asCompound(tile.w2k$data()), stream, BinaryTagIO.Compression.GZIP);
 					completedTiles.add(tile.toString());
 				}
 				catch (IOException ex)
@@ -206,14 +206,14 @@ public class DumpUtil
 
 					try (FileWriter writer = new FileWriter(new File(dumpDir, fileName + ".snbt")))
 					{
-						writer.write(tile.getData());
+						writer.write(tile.w2k$data());
 					}
 					catch (IOException ex2)
 					{
 						// If both failed, oh well. We tried.
 						failedTiles.add(tile.toString());
 						W2K.getLogger().error("Failed to dump tile entity of type {} at {}, {}, {}",
-								tile.getType(), tile.getX(), tile.getY(), tile.getZ(), ex);
+								tile.w2k$type(), tile.w2k$x(), tile.w2k$y(), tile.w2k$z(), ex);
 					}
 				}
 

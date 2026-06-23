@@ -1,8 +1,7 @@
 package me.videogamesm12.w2k.blackbox.window.model;
 
 import me.videogamesm12.w2k.blackbox.window.general.Dynamic;
-import me.videogamesm12.w2k.kernel.data.EntityEntry;
-import me.videogamesm12.w2k.kernel.data.TileEntry;
+import me.videogamesm12.w2k.kernel.data.IBlockEntityEntry;
 import me.videogamesm12.w2k.supervisor.Supervisor;
 
 import javax.swing.table.AbstractTableModel;
@@ -11,7 +10,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class TileEntityTableModel extends AbstractTableModel implements Dynamic
+public class BlockEntityTableModel extends AbstractTableModel implements Dynamic
 {
     private final List<String> columns = Arrays.asList("Type", "Location", "Data");
     private final List<List<Object>> rows = new ArrayList<>();
@@ -45,7 +44,7 @@ public class TileEntityTableModel extends AbstractTableModel implements Dynamic
     {
         rows.clear();
 
-        rows.addAll(Supervisor.getInstance().getNearbyTileEntities().stream().map(TileEntry::toTableRow).collect(Collectors.toList()));
+        rows.addAll(Supervisor.getInstance().getNearbyBlockEntities().stream().map(IBlockEntityEntry::w2k$toTableRow).collect(Collectors.toList()));
 
         fireTableDataChanged();
     }

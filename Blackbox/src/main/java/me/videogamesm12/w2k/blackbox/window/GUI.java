@@ -65,7 +65,7 @@ public class GUI extends JFrame
         tabbedPane.addTab("General", new MainTab());
         tabbedPane.addTab("Players", new PlayersTab());
         tabbedPane.addTab("Entities", new EntitiesTab());
-        tabbedPane.addTab("Tile Entities", new TileEntitiesTab());
+        tabbedPane.addTab("Tile Entities", new BlockEntitiesTab());
         tabbedPane.addTab("Maps", new MapsTab());
         tabbedPane.addTab("Inventory", new InventoryTab());
         if (ExperimentManager.isExperimentEnabled(Experiment.BLACKBOX_RUNTIME_PROPERTIES_TAB))

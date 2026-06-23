@@ -116,5 +116,12 @@ public interface WVersionBridgeDriver extends WDriver
      */
     List<InventoryEntry> getInventory();
 
-    List<TileEntry> getNearbyTileEntities();
+    /**
+     * Generates an {@link IBlockEntityEntry} list consisting of every block entity in memory.
+     * @return A list of wrapped block entities
+     */
+    default List<IBlockEntityEntry> getBlockEntities()
+    {
+        return new ArrayList<>();
+    }
 }

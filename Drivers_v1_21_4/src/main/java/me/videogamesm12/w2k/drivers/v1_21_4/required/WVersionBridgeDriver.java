@@ -262,23 +262,18 @@ public class WVersionBridgeDriver implements me.videogamesm12.w2k.kernel.driver.
     }
 
     @Override
-    public List<TileEntry> getNearbyTileEntities()
+    public List<IBlockEntityEntry> getBlockEntities()
     {
         if (MinecraftClient.getInstance().world == null)
         {
             return Collections.emptyList();
         }
 
-        return ((WorldAccessor) MinecraftClient.getInstance().world).getBlockEntityTickers().stream().filter(ticker -> !ticker.isRemoved())
+        return ((WorldAccessor) MinecraftClient.getInstance().world).getBlockEntityTickers().stream()
+                .filter(ticker -> !ticker.isRemoved())
                 .filter(ticker -> ticker.getPos() != null)
-                .filter(ticker -> MinecraftClient.getInstance().world.getBlockEntity(ticker.getPos()) != null).map(ticker -> {
-                    final BlockEntity tileEntity = MinecraftClient.getInstance().world.getBlockEntity(ticker.getPos());
-                    NbtCompound nbt = Objects.requireNonNull(tileEntity).toInitialChunkDataNbt(wrapperLookup);
-                    return new TileEntry(Objects.requireNonNull(Registries.BLOCK_ENTITY_TYPE.getId(Objects.requireNonNull(tileEntity).getType())).toString(),
-                            tileEntity.getPos().getX(),
-                            tileEntity.getPos().getY(),
-                            tileEntity.getPos().getZ(),
-                            nbt.isEmpty() ? null : nbt.toString());
-                }).toList();
+                .filter(ticker -> MinecraftClient.getInstance().world.getBlockEntity(ticker.getPos()) != null)
+                .map(ticker -> ((IBlockEntityEntry) MinecraftClient.getInstance().world.getBlockEntity(ticker.getPos())))
+                .toList();
     }
 }
