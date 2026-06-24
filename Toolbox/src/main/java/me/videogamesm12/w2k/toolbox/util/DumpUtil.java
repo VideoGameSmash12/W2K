@@ -111,32 +111,33 @@ public class DumpUtil
 			final List<String> failedItems = new ArrayList<>();
 			final List<String> ignoredItems = new ArrayList<>();
 
-			final List<InventoryEntry> entry = W2K.getInstance().getDriverManager().getVersionBridge().getOpenInventory();
+			final List<IItemStackEntry> entry = W2K.getInstance().getDriverManager().getVersionBridge().getOpenInventory();
 
 			final File dumpDir = generateDumpFolder();
 
 			(parallel ? entry.parallelStream() : entry.stream()).forEach(item ->
 			{
-				if (!item.isNotEmpty())
+				if (!item.w2k$isNotEmpty())
 				{
-					ignoredItems.add(item.getLocation());
+					ignoredItems.add(item.w2k$location());
 					return;
 				}
 
-				String fileName = String.format("item_%s", item.getLocation());
+				String fileName = String.format("item_%s", item.w2k$location());
 
 				try (FileOutputStream stream = new FileOutputStream(new File(dumpDir, fileName + ".nbt")))
 				{
-					final CompoundBinaryTag compound = CompoundBinaryTag.builder()
-							.putString("id", item.getType())
-							.putInt("Count", item.getCount())
-							.putInt("Slot", Integer.parseInt(item.getLocation()))
-							.put("tag", item.getData() != null ? TagStringIO.get().asCompound(item.getData())
+					/*final CompoundBinaryTag compound = CompoundBinaryTag.builder()
+							.putString("id", item.w2k$type())
+							.putInt("Count", item.w2k$count())
+							.putInt("Slot", Integer.parseInt(item.w2k$location()))
+							.put("tag", item.w2k$data() != null ? TagStringIO.get().asCompound(item.w2k$data())
 									: CompoundBinaryTag.empty())
 							.build();
-
+					 */
+					final CompoundBinaryTag compound = TagStringIO.get().asCompound(item.w2k$data());
 					BinaryTagIO.writer().write(compound, stream, BinaryTagIO.Compression.GZIP);
-					completedItems.add(item.getLocation());
+					completedItems.add(item.w2k$location());
 				}
 				catch (Throwable ex)
 				{
@@ -149,13 +150,13 @@ public class DumpUtil
 
 					try (FileWriter writer = new FileWriter(new File(dumpDir, fileName + ".snbt")))
 					{
-						writer.write(item.getData());
+						writer.write(item.w2k$data());
 					}
 					catch (IOException ex2)
 					{
 						// If both failed, oh well. We tried.
 						failedItems.add(item.toString());
-						W2K.getLogger().error("Failed to dump item in inventory slot {}", item.getLocation(), ex);
+						W2K.getLogger().error("Failed to dump item in inventory slot {}", item.w2k$location(), ex);
 
 					}
 				}

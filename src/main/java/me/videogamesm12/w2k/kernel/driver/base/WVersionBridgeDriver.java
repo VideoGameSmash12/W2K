@@ -87,10 +87,10 @@ public interface WVersionBridgeDriver extends WDriver
     List<EntityEntry> getNearbyEntities(boolean includeNbt);
 
     /**
-     * Generates an {@link InventoryEntry} list consisting of every item in the currently open screen (if present).
+     * Generates an {@link IItemStackEntry} list consisting of every item in the currently open screen (if present).
      * @return A list of wrapped item stacks
      */
-    List<InventoryEntry> getOpenInventory();
+    List<IItemStackEntry> getOpenInventory();
 
     /**
      * Generates an {@link EntityEntry} list consisting of all entities currently in memory, minus their NBT.
@@ -111,17 +111,17 @@ public interface WVersionBridgeDriver extends WDriver
     }
 
     /**
-     * Generates an {@link InventoryEntry} list consisting of every item in the player's inventory.
+     * Generates an {@link IItemStackEntry} list consisting of every item in the player's inventory.
      * @return A list of wrapped item stacks
      */
-    List<InventoryEntry> getInventory();
+    default List<IItemStackEntry> getPlayerInventory()
+    {
+        return new ArrayList<>();
+    }
 
     /**
      * Generates an {@link IBlockEntityEntry} list consisting of every block entity in memory.
      * @return A list of wrapped block entities
      */
-    default List<IBlockEntityEntry> getBlockEntities()
-    {
-        return new ArrayList<>();
-    }
+    List<IBlockEntityEntry> getBlockEntities();
 }

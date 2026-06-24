@@ -10,7 +10,6 @@ import me.videogamesm12.w2k.kernel.data.*;
 import me.videogamesm12.w2k.kernel.driver.base.WDriverMetadata;
 import me.videogamesm12.w2k.kernel.util.ComponentUtils;
 import net.kyori.adventure.text.Component;
-import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.client.ClientBrandRetriever;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.EntityType;
@@ -19,6 +18,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.Registries;
 import net.minecraft.screen.ScreenHandler;
+import net.minecraft.screen.slot.Slot;
 import net.minecraft.text.Text;
 
 import java.util.*;
@@ -148,7 +148,7 @@ public class WVersionBridgeDriver implements me.videogamesm12.w2k.kernel.driver.
     }
 
     @Override
-    public List<InventoryEntry> getOpenInventory()
+    public List<IItemStackEntry> getOpenInventory()
     {
         if (MinecraftClient.getInstance().world == null || MinecraftClient.getInstance().currentScreen == null
                 || MinecraftClient.getInstance().player == null)
@@ -158,21 +158,8 @@ public class WVersionBridgeDriver implements me.videogamesm12.w2k.kernel.driver.
 
         final ScreenHandler handler = MinecraftClient.getInstance().player.currentScreenHandler;
 
-        return handler.slots.stream().filter(Objects::nonNull).map(slot ->
-        {
-            ItemStack entry = slot.getStack();
-            if (entry == null)
-            {
-                return null;
-            }
-
-            return new InventoryEntry(Text.Serializer.toJsonTree(entry.getName()),
-                    entry.getItem() != null ? Registries.ITEM.getId(entry.getItem()).toString() : "minecraft:unknown",
-                    entry.getCount(),
-                    entry.getDamage(),
-                    String.valueOf(slot.id),
-                    entry.getNbt() != null ? entry.getNbt().toString() : null);
-        }).filter(Objects::nonNull).toList();
+        return handler.slots.stream().filter(Objects::nonNull).filter(Slot::hasStack).map(slot ->
+                IItemStackEntry.class.cast(slot.getStack()).w2k$location(String.valueOf(slot.id))).filter(Objects::nonNull).toList();
     }
 
     @Override
@@ -188,7 +175,7 @@ public class WVersionBridgeDriver implements me.videogamesm12.w2k.kernel.driver.
     }
 
     @Override
-    public List<InventoryEntry> getInventory()
+    public List<IItemStackEntry> getPlayerInventory()
     {
         if (MinecraftClient.getInstance().player == null)
         {
@@ -196,32 +183,23 @@ public class WVersionBridgeDriver implements me.videogamesm12.w2k.kernel.driver.
         }
 
         final PlayerInventory inventory = MinecraftClient.getInstance().player.getInventory();
-        final List<InventoryEntry> entries = new ArrayList<>();
+        final List<IItemStackEntry> entries = new ArrayList<>();
         final AtomicInteger slot = new AtomicInteger(0);
 
-        entries.addAll(inventory.main.stream().map(entry ->
-                new InventoryEntry(Text.Serializer.toJsonTree(entry.getName()),
-                        entry.getItem() != null ? Registries.ITEM.getId(entry.getItem()).toString() : "minecraft:unknown",
-                        entry.getCount(),
-                        entry.getDamage(),
-                        String.valueOf(slot.getAndIncrement()),
-                        entry.getNbt() != null ? entry.getNbt().toString() : null)).toList());
+        entries.addAll(inventory.main.stream().filter(lol -> {
+            slot.getAndIncrement();
+            return !lol.isEmpty();
+        }).map(entry -> IItemStackEntry.class.cast(entry).w2k$location(String.valueOf(slot))).toList());
 
-        entries.addAll(inventory.armor.stream().map(entry ->
-                new InventoryEntry(Text.Serializer.toJsonTree(entry.getName()),
-                        entry.getItem() != null ? Registries.ITEM.getId(entry.getItem()).toString() : "minecraft:unknown",
-                        entry.getCount(),
-                        entry.getDamage(),
-                        String.valueOf(slot.getAndIncrement()),
-                        entry.getNbt() != null ? entry.getNbt().toString() : null)).toList());
+        entries.addAll(inventory.armor.stream().filter(lol -> {
+            slot.getAndIncrement();
+            return !lol.isEmpty();
+        }).map(entry -> IItemStackEntry.class.cast(entry).w2k$location(String.valueOf(slot))).toList());
 
-        entries.addAll(inventory.offHand.stream().map(entry ->
-                new InventoryEntry(Text.Serializer.toJsonTree(entry.getName()),
-                        entry.getItem() != null ? Registries.ITEM.getId(entry.getItem()).toString() : "minecraft:unknown",
-                        entry.getCount(),
-                        entry.getDamage(),
-                        String.valueOf(slot.getAndIncrement()),
-                        entry.getNbt() != null ? entry.getNbt().toString() : null)).toList());
+        entries.addAll(inventory.offHand.stream().filter(lol -> {
+            slot.getAndIncrement();
+            return !lol.isEmpty();
+        }).map(entry -> IItemStackEntry.class.cast(entry).w2k$location(String.valueOf(slot))).toList());
 
         return entries;
     }

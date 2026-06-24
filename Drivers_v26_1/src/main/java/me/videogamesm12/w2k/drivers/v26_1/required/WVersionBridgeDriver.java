@@ -24,7 +24,9 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
@@ -233,13 +235,20 @@ public class WVersionBridgeDriver implements me.videogamesm12.w2k.kernel.driver.
     }
 
     @Override
-    public List<InventoryEntry> getOpenInventory()
+    public List<IItemStackEntry> getOpenInventory()
     {
-        /*if (Minecraft.getInstance().level == null || Minecraft.getInstance().screen == null
+        if (Minecraft.getInstance().level == null || Minecraft.getInstance().screen == null
                 || Minecraft.getInstance().player == null)
         {
             return Collections.emptyList();
         }
+
+        final AbstractContainerMenu handler = Minecraft.getInstance().player.containerMenu;
+
+        return handler.slots.stream().filter(Slot::hasItem).map(slot ->
+                IItemStackEntry.class.cast(slot.getItem()).w2k$location(String.valueOf(slot.index))).filter(Objects::nonNull).toList();
+
+        /*
 
         final AbstractContainerMenu handler = Minecraft.getInstance().player.containerMenu;
 
@@ -257,7 +266,7 @@ public class WVersionBridgeDriver implements me.videogamesm12.w2k.kernel.driver.
                     nbt.isEmpty() ? null : nbt.toString());
         }).filter(Objects::nonNull).toList();*/
 
-        return Collections.emptyList();
+        //return Collections.emptyList();
     }
 
     @Override
@@ -273,67 +282,20 @@ public class WVersionBridgeDriver implements me.videogamesm12.w2k.kernel.driver.
     }
 
     @Override
-    public List<InventoryEntry> getInventory()
+    public List<IItemStackEntry> getPlayerInventory()
     {
-        /*if (MinecraftClient.getInstance().player == null)
+        if (Minecraft.getInstance().player == null)
         {
             return Collections.emptyList();
         }
 
-        final PlayerInventory inventory = MinecraftClient.getInstance().player.getInventory();
-        final List<InventoryEntry> entries = new ArrayList<>();
+        final Inventory inventory = Minecraft.getInstance().player.getInventory();
         final AtomicInteger slot = new AtomicInteger(0);
 
-        // TODO: NBT used to be the backbone of Minecraft and its items. This changed in 1.20.5 so majorly that I
-        //  actually don't know how to work this new data component system.
-
-        entries.addAll(inventory.main.stream().filter(entry -> {
+        return StreamSupport.stream(inventory.spliterator(), false).filter(entry -> {
             slot.getAndIncrement();
             return !entry.isEmpty();
-        }).map(entry -> {
-            final NbtComponent nbt = entry.getOrDefault(DataComponentTypes.CUSTOM_DATA, NbtComponent.DEFAULT);
-            return new InventoryEntry(ComponentUtils.stringToElement(Text.Serialization.toJsonString(entry.getName(),
-                    wrapperLookup)),
-                    entry.getItem() != null ? Registries.ITEM.getId(entry.getItem()).toString() : "minecraft:unknown",
-                    entry.getCount(),
-                    entry.getDamage(),
-                    String.valueOf(slot.get()),
-                    nbt.isEmpty() ? null : nbt.toString());
-        }).toList());
-
-        entries.addAll(inventory.armor.stream().filter(entry -> {
-            slot.getAndIncrement();
-            return !entry.isEmpty();
-        }).map(entry ->
-        {
-            final NbtComponent nbt = entry.getOrDefault(DataComponentTypes.CUSTOM_DATA, NbtComponent.DEFAULT);
-            return new InventoryEntry(ComponentUtils.stringToElement(Text.Serialization.toJsonString(entry.getName(),
-                    wrapperLookup)),
-                    entry.getItem() != null ? Registries.ITEM.getId(entry.getItem()).toString() : "minecraft:unknown",
-                    entry.getCount(),
-                    entry.getDamage(),
-                    String.valueOf(slot.getAndIncrement()),
-                    nbt.isEmpty() ? null : nbt.toString());
-        }).toList());
-
-        entries.addAll(inventory.offHand.stream().filter(entry -> {
-            slot.getAndIncrement();
-            return !entry.isEmpty();
-        }).map(entry ->
-        {
-            final NbtComponent nbt = entry.getOrDefault(DataComponentTypes.CUSTOM_DATA, NbtComponent.DEFAULT);
-            return new InventoryEntry(ComponentUtils.stringToElement(Text.Serialization.toJsonString(entry.getName(),
-                    wrapperLookup)),
-                    entry.getItem() != null ? Registries.ITEM.getId(entry.getItem()).toString() : "minecraft:unknown",
-                    entry.getCount(),
-                    entry.getDamage(),
-                    String.valueOf(slot.getAndIncrement()),
-                    nbt.isEmpty() ? null : nbt.toString());
-        }).toList());
-
-        return entries;*/
-
-        return Collections.emptyList();
+        }).map(entry -> IItemStackEntry.class.cast(entry).w2k$location(String.valueOf(slot))).toList();
     }
 
     @Override

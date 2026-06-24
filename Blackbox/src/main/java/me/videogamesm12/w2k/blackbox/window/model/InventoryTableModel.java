@@ -1,7 +1,7 @@
 package me.videogamesm12.w2k.blackbox.window.model;
 
 import me.videogamesm12.w2k.blackbox.window.general.Dynamic;
-import me.videogamesm12.w2k.kernel.data.InventoryEntry;
+import me.videogamesm12.w2k.kernel.data.IItemStackEntry;
 import me.videogamesm12.w2k.supervisor.Supervisor;
 
 import javax.swing.table.AbstractTableModel;
@@ -44,8 +44,8 @@ public class InventoryTableModel extends AbstractTableModel implements Dynamic
     {
         rows.clear();
 
-        rows.addAll(Supervisor.getInstance().getInventory().stream().filter(InventoryEntry::isNotEmpty)
-                .map(InventoryEntry::toTableRow).collect(Collectors.toList()));
+        rows.addAll(Supervisor.getInstance().getInventory().stream().filter(IItemStackEntry::w2k$isNotEmpty)
+                .map(IItemStackEntry::w2k$toTableRow).collect(Collectors.toList()));
 
         fireTableDataChanged();
     }

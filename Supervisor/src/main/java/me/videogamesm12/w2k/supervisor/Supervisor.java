@@ -198,9 +198,9 @@ public class Supervisor extends Thread
         return W2K.getInstance().getDriverManager().getVersionBridge().getMaps();
     }
 
-    public List<InventoryEntry> getInventory()
+    public List<IItemStackEntry> getInventory()
     {
-        return W2K.getInstance().getDriverManager().getVersionBridge().getInventory();
+        return W2K.getInstance().getDriverManager().getVersionBridge().getPlayerInventory();
     }
 
     public void closeCurrentScreen()
