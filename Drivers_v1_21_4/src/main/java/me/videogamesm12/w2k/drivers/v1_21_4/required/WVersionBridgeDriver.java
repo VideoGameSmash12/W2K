@@ -11,18 +11,10 @@ import me.videogamesm12.w2k.kernel.data.*;
 import me.videogamesm12.w2k.kernel.driver.base.WDriverMetadata;
 import me.videogamesm12.w2k.kernel.util.ComponentUtils;
 import net.kyori.adventure.text.Component;
-import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.client.ClientBrandRetriever;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.NbtComponent;
-import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.map.MapState;
-import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.BuiltinRegistries;
-import net.minecraft.registry.Registries;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
@@ -30,7 +22,6 @@ import net.minecraft.text.Text;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 @WDriverMetadata(identifier = "1212_version_bridge")
@@ -140,7 +131,7 @@ public class WVersionBridgeDriver implements me.videogamesm12.w2k.kernel.driver.
     }
 
     @Override
-    public List<EntityEntry> getNearbyEntities(boolean includeNbt)
+    public List<IEntityEntry> getEntities()
     {
         if (MinecraftClient.getInstance().world == null)
         {
@@ -148,13 +139,7 @@ public class WVersionBridgeDriver implements me.videogamesm12.w2k.kernel.driver.
         }
 
         return StreamSupport.stream(MinecraftClient.getInstance().world.getEntities().spliterator(), false)
-                .map(entity -> new EntityEntry(ComponentUtils.stringToElement(Text.Serialization.toJsonString(
-                        entity.getDisplayName() != null ? entity.getDisplayName() : entity.getName(), wrapperLookup)),
-                        EntityType.getId(entity.getType()).toString(),
-                        String.format("%s, %s, %s", entity.getX(), entity.getY(), entity.getZ()),
-                        entity.getId(),
-                        entity.getUuid(),
-                        includeNbt ? entity.writeNbt(new NbtCompound()).toString() : null))
+                .map(IEntityEntry.class::cast)
                 .toList();
     }
 

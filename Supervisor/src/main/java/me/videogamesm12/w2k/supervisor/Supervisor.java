@@ -183,9 +183,9 @@ public class Supervisor extends Thread
         return W2K.getInstance().getDriverManager().getVersionBridge().getPlayerList();
     }
 
-    public List<EntityEntry> getNearbyEntities()
+    public List<IEntityEntry> getNearbyEntities()
     {
-        return W2K.getInstance().getDriverManager().getVersionBridge().getNearbyEntities();
+        return W2K.getInstance().getDriverManager().getVersionBridge().getEntities();
     }
 
     public List<IBlockEntityEntry> getNearbyBlockEntities()

@@ -64,17 +64,17 @@ public class DumpUtil
 			final List<String> completedEntities = new ArrayList<>();
 			final List<String> failedEntities = new ArrayList<>();
 
-			final List<EntityEntry> entry = W2K.getInstance().getDriverManager().getVersionBridge().getNearbyEntities(true);
+			final List<IEntityEntry> entry = W2K.getInstance().getDriverManager().getVersionBridge().getEntities();
 
 			final File dumpDir = generateDumpFolder();
 
 			(parallel ? entry.parallelStream() : entry.stream()).forEach(entity ->
 			{
-				String fileName = "entity_" + entity.getId() + "_" + entity.getUuid();
+				String fileName = "entity_" + entity.w2k$id() + "_" + entity.w2k$uuid();
 				try (FileOutputStream stream = new FileOutputStream(new File(dumpDir, fileName + ".nbt")))
 				{
-					BinaryTagIO.writer().write(TagStringIO.get().asCompound(entity.getNbt()), stream, BinaryTagIO.Compression.GZIP);
-					completedEntities.add(entity.getUuid().toString());
+					BinaryTagIO.writer().write(TagStringIO.get().asCompound(entity.w2k$data()), stream, BinaryTagIO.Compression.GZIP);
+					completedEntities.add(entity.w2k$uuid().toString());
 				}
 				catch (IOException ex)
 				{
@@ -87,13 +87,13 @@ public class DumpUtil
 
 					try (FileWriter writer = new FileWriter(new File(dumpDir, fileName + ".snbt")))
 					{
-						writer.write(entity.getNbt());
+						writer.write(entity.w2k$data());
 					}
 					catch (IOException ex2)
 					{
 						// If both failed, oh well. We tried.
-						failedEntities.add(entity.getUuid().toString());
-						W2K.getLogger().error("Failed to dump entity ID {}", entity.getId(), ex);
+						failedEntities.add(entity.w2k$uuid().toString());
+						W2K.getLogger().error("Failed to dump entity ID {}", entity.w2k$id(), ex);
 					}
 				}
 

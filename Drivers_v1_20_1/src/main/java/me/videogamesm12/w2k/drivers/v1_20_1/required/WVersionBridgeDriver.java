@@ -12,11 +12,7 @@ import me.videogamesm12.w2k.kernel.util.ComponentUtils;
 import net.kyori.adventure.text.Component;
 import net.minecraft.client.ClientBrandRetriever;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.registry.Registries;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.text.Text;
@@ -129,7 +125,7 @@ public class WVersionBridgeDriver implements me.videogamesm12.w2k.kernel.driver.
     }
 
     @Override
-    public List<EntityEntry> getNearbyEntities(boolean includeNbt)
+    public List<IEntityEntry> getEntities()
     {
         if (MinecraftClient.getInstance().world == null)
         {
@@ -137,13 +133,7 @@ public class WVersionBridgeDriver implements me.videogamesm12.w2k.kernel.driver.
         }
 
         return StreamSupport.stream(MinecraftClient.getInstance().world.getEntities().spliterator(), false)
-                .map(entity -> new EntityEntry(Text.Serializer.toJsonTree(
-                        entity.getDisplayName() != null ? entity.getDisplayName() : Text.literal(entity.getEntityName())),
-                        EntityType.getId(entity.getType()).toString(),
-                        String.format("%s, %s, %s", entity.getX(), entity.getY(), entity.getZ()),
-                        entity.getId(),
-                        entity.getUuid(),
-                        includeNbt ? entity.writeNbt(new NbtCompound()).toString() : null))
+                .map(IEntityEntry.class::cast)
                 .toList();
     }
 

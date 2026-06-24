@@ -24,6 +24,7 @@
     "accessor.WorldAccessor",
     "injector.CrashReportMixin",
     "wrapper.BlockEntityWrapper",
+    "wrapper.EntityWrapper",
     "wrapper.ItemStackWrapper",
     "wrapper.MapStateWrapper"
   ]

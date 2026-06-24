@@ -214,7 +214,7 @@ public class WVersionBridgeDriver implements me.videogamesm12.w2k.kernel.driver.
     }
 
     @Override
-    public List<EntityEntry> getNearbyEntities(boolean includeNbt)
+    public List<IEntityEntry> getEntities()
     {
         if (Minecraft.getInstance().level == null)
         {
@@ -222,15 +222,7 @@ public class WVersionBridgeDriver implements me.videogamesm12.w2k.kernel.driver.
         }
 
         return StreamSupport.stream(Minecraft.getInstance().level.entitiesForRendering().spliterator(), false)
-                .map(entity ->
-                        new EntityEntry(
-                                ComponentSerialization.CODEC.encodeStart(JsonOps.INSTANCE, entity.getDisplayName()).getOrThrow(),
-                                net.minecraft.world.entity.EntityType.getKey(entity.getType()).toString(),
-                                String.format("%s, %s, %s", entity.getX(), entity.getY(), entity.getZ()),
-                                entity.getId(),
-                                entity.getUUID(),
-                                "yeah not implemented yet sorry"))
-                                //includeNbt ? entity.save(TagValueOutput.createWithContext(ProblemReporter.DISCARDING)) : null))
+                .map(IEntityEntry.class::cast)
                 .toList();
     }
 
@@ -247,26 +239,6 @@ public class WVersionBridgeDriver implements me.videogamesm12.w2k.kernel.driver.
 
         return handler.slots.stream().filter(Slot::hasItem).map(slot ->
                 IItemStackEntry.class.cast(slot.getItem()).w2k$location(String.valueOf(slot.index))).filter(Objects::nonNull).toList();
-
-        /*
-
-        final AbstractContainerMenu handler = Minecraft.getInstance().player.containerMenu;
-
-        return handler.slots.stream().map(slot ->
-        {
-            ItemStack entry = slot.getItem();
-
-            final NbtComponent nbt = entry.getOrDefault(DataComponentTypes.CUSTOM_DATA, NbtComponent.DEFAULT);
-            return new InventoryEntry(ComponentUtils.stringToElement(Text.Serialization.toJsonString(entry.getName(),
-                    wrapperLookup)),
-                    entry.getItem() != null ? Registries.ITEM.getId(entry.getItem()).toString() : "minecraft:unknown",
-                    entry.getCount(),
-                    entry.getDamage(),
-                    String.valueOf(slot.id),
-                    nbt.isEmpty() ? null : nbt.toString());
-        }).filter(Objects::nonNull).toList();*/
-
-        //return Collections.emptyList();
     }
 
     @Override

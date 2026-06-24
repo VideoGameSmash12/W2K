@@ -1,7 +1,7 @@
 package me.videogamesm12.w2k.blackbox.window.model;
 
 import me.videogamesm12.w2k.blackbox.window.general.Dynamic;
-import me.videogamesm12.w2k.kernel.data.EntityEntry;
+import me.videogamesm12.w2k.kernel.data.IEntityEntry;
 import me.videogamesm12.w2k.supervisor.Supervisor;
 
 import javax.swing.table.AbstractTableModel;
@@ -44,7 +44,7 @@ public class EntityTableModel extends AbstractTableModel implements Dynamic
     {
         rows.clear();
 
-        rows.addAll(Supervisor.getInstance().getNearbyEntities().stream().map(EntityEntry::toTableRow).collect(Collectors.toList()));
+        rows.addAll(Supervisor.getInstance().getNearbyEntities().stream().map(IEntityEntry::w2k$toTableRow).collect(Collectors.toList()));
 
         fireTableDataChanged();
     }
