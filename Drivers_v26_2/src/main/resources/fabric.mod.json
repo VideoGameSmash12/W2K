@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "id": "w2k-drivers-v26_2",
+  "version": "${version}",
+  "name": "Drivers^3",
+  "description": "Minecraft 26.2 drivers for W2K",
+  "authors": [
+    "videogamesm12"
+  ],
+  "contact": {
+    "repo": "https://github.com/videogamesm12/W2K"
+  },
+  "license": "MIT",
+  "icon": "assets/w2k-drivers-26_2/icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "w2k-event-passthru-driver": [
+      "me.videogamesm12.w2k.drivers.v26_2.required.WEventPassthruDriver"
+    ],
+    "w2k-version-bridge-driver": [
+      "me.videogamesm12.w2k.drivers.v26_2.required.WVersionBridgeDriver"
+    ],
+    "w2k-command-wrapper-driver": [
+      "me.videogamesm12.w2k.drivers.v26_2.required.WCommandDriver"
+    ]
+  },
+  "mixins": [
+    "w2k.drivers.26_2.mixins.json"
+  ],
+  "depends": {
+    "minecraft": ["26.2.x"]
+  },
+  "custom": {
+    "modmenu": {
+      "badges": ["library"],
+      "parent": "w2k"
+    }
+  }
+}
