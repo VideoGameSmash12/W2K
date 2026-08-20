@@ -83,6 +83,8 @@ public class Configuration
 
         private boolean ignoringParticleSpawns;
 
+        private boolean ignoringMapUpdates;
+
         public Map<String, Boolean> getSettings()
         {
             final Map<String, Boolean> map = new WeakHashMap<>();

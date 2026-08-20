@@ -24,10 +24,7 @@ package me.videogamesm12.w2k.drivers.v1_21_4.mixin.injector;
 
 import me.videogamesm12.w2k.supervisor.Supervisor;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
-import net.minecraft.network.packet.s2c.play.EntitySpawnS2CPacket;
-import net.minecraft.network.packet.s2c.play.ExplosionS2CPacket;
-import net.minecraft.network.packet.s2c.play.LightUpdateS2CPacket;
-import net.minecraft.network.packet.s2c.play.ParticleS2CPacket;
+import net.minecraft.network.packet.s2c.play.*;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -67,6 +64,15 @@ public class ClientPlayNetworkHandlerMixin
     public void onParticleSpawn(ParticleS2CPacket packet, CallbackInfo ci)
     {
         if (Supervisor.getConfig().getNetworkSettings().isIgnoringParticleSpawns())
+        {
+            ci.cancel();
+        }
+    }
+
+    @Inject(method = "onMapUpdate", at = @At("HEAD"), cancellable = true)
+    public void onParticleSpawn(MapUpdateS2CPacket packet, CallbackInfo ci)
+    {
+        if (Supervisor.getConfig().getNetworkSettings().isIgnoringMapUpdates())
         {
             ci.cancel();
         }

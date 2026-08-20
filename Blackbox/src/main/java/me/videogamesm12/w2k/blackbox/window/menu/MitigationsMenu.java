@@ -99,6 +99,11 @@ public class MitigationsMenu extends JMenu
         particleSpawning.setToolTipText("Ignores packets for particle spawning.");
         particleSpawning.addActionListener((e) -> network.setIgnoringParticleSpawns(particleSpawning.isSelected()));
         menu.add(particleSpawning);
+        //--
+        final JCheckBoxMenuItem mapUpdates = new JCheckBoxMenuItem("Ignore map updates", network.isIgnoringMapUpdates());
+        mapUpdates.setToolTipText("Ignores packets for map data updates.");
+        mapUpdates.addActionListener((e) -> network.setIgnoringMapUpdates(mapUpdates.isSelected()));
+        menu.add(mapUpdates);
 
         return menu;
     }
