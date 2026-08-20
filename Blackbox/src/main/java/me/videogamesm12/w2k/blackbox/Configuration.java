@@ -25,7 +25,7 @@ public class Configuration
     private boolean systemTrayEnabled = true;
     private boolean ignoringFreezesDuringStartup = true;
     private boolean autoRefreshEnabled = true;
-    private String theme = ExperimentManager.isExperimentEnabled(Experiment.BLACKBOX_DEFAULT_LAF_BASED_ON_SYSTEM_CONFIG) ? getDefaultTheme() : "DARK";
+    private String theme = getDefaultTheme();
     private int width = 420;
     private int height = 560;
 

@@ -27,7 +27,6 @@ public enum Experiment
 {
     BLACKBOX_HELP_WINDOW("Blackbox", true, Collections.EMPTY_LIST),
     BLACKBOX_COMMAND_LINE_LAF_OVERRIDE("Blackbox", true, Collections.EMPTY_LIST),
-    BLACKBOX_DEFAULT_LAF_BASED_ON_SYSTEM_CONFIG("Blackbox", true, Collections.EMPTY_LIST),
     BLACKBOX_RUNTIME_PROPERTIES_TAB("Blackbox", true, Collections.EMPTY_LIST),
     INTEGRATOR_WURST_ALT_MANAGER("Integrator", true, Collections.singletonList(Condition.of("Requires Wurst",
             FabricLoader.getInstance().isModLoaded("wurst"))));
