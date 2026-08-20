@@ -87,11 +87,11 @@ public class Configuration
                     return "NIMBUS";
                 }
             }
-            case LINUX:
+            /*case LINUX:
             case SOLARIS:
             {
                 return "GTK";
-            }
+            }*/
             default:
             {
                 return "DARK";
