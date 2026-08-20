@@ -47,7 +47,7 @@ public class Configuration
     {
         private int port = 6969;
 
-        private ConnectionType connectionType = ConnectionType.TELNET;
+        private String connectionType = ConnectionType.TELNET.getKey();
 
         private boolean nonLocalConnectionsAllowed;
 

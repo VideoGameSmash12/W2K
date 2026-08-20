@@ -74,7 +74,7 @@ public class MinecraftClientMixin
         }
     }
 
-    @Inject(method = "saveReport(Ljava/io/File;Lnet/minecraft/CrashReport;I)I", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/Bootstrap;realStdoutPrintln(Ljava/lang/String;)V", shift = At.Shift.BEFORE, ordinal = -1))
+    @Inject(method = "saveReport(Ljava/io/File;Lnet/minecraft/CrashReport;I)I", at = @At(value = "RETURN"))
     private static void catchCrashReport(File gameDirectory, CrashReport crash, int reportExitCode, CallbackInfoReturnable<Integer> cir, @Local(ordinal = 1) Path crashFile)
     {
         final ClientCrashedEvent event = new ClientCrashedEvent(Minecraft.getInstance(), crash.getException(), crashFile.toFile());

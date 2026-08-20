@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Video
+ * Copyright (c) 2026 Video
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,9 +22,65 @@
 
 package me.videogamesm12.w2k.supervisor.components.fantasia.listener;
 
-public interface IConnectionListener
-{
-    void start();
+import lombok.Getter;
+import me.videogamesm12.w2k.supervisor.components.fantasia.Server;
 
-    void shutdown();
+import java.io.IOException;
+import java.net.ServerSocket;
+
+public abstract class IConnectionListener extends Thread
+{
+    @Getter
+    private final Server server;
+
+    public IConnectionListener(final String identifier, final Server server)
+    {
+        super(identifier);
+        this.server = server;
+    }
+
+    public final void start()
+    {
+        super.start();
+    }
+
+    public abstract void shutdown();
+
+    /**
+     * Utility method to check if a network port is available for use
+     * @param port  Integer
+     * @return      True if the port specified is not yet occupied
+     */
+    public final boolean portIsAvailable(int port)
+    {
+        port = Math.min(Math.max(port, 0), 65535);
+
+        ServerSocket socket;
+        boolean success;
+
+        try
+        {
+            socket = new ServerSocket(port);
+            socket.setReuseAddress(true);
+            success = true;
+        }
+        catch (IOException ex)
+        {
+            socket = null;
+            success = false;
+        }
+
+        if (socket != null)
+        {
+            try
+            {
+                socket.close();
+            }
+            catch (IOException ignored)
+            {
+            }
+        }
+
+        return success;
+    }
 }

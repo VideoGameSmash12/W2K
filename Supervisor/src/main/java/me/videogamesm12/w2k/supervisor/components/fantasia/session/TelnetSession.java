@@ -180,7 +180,7 @@ public class TelnetSession extends Thread implements ISession
     {
         try
         {
-            writer.write(message + "\n");
+            writer.write(message + "\r\n");
             writer.flush();
         }
         catch (IOException ignored)

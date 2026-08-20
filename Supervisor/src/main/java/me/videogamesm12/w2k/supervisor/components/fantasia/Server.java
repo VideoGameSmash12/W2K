@@ -66,41 +66,13 @@ public class Server extends Thread
         Supervisor.getEventBus().register(this);
         try
         {
-            switch (Supervisor.getConfig().getFantasiaSettings().getConnectionType())
+            final String connectionTypeKey = Supervisor.getConfig().getFantasiaSettings().getConnectionType();
+
+            // Even if we don't have a connection type defined, we still want to allow it to register commands, as
+            //  Fantasia can also be accessed using the Blackbox, which bypasses the entire connection type system.
+            if (connectionTypeKey != null)
             {
-                case TELNET:
-                {
-                    int port = Supervisor.getConfig().getFantasiaSettings().getPort();
-
-                    while (!portIsAvailable(port))
-                    {
-                        if (port >= 65535)
-                        {
-                            port = 0;
-                        }
-                        else
-                        {
-                            port++;
-                        }
-                    }
-
-                    if (port != Supervisor.getConfig().getFantasiaSettings().getPort())
-                    {
-                        W2K.getLogger().info("We weren't able to reserve the port defined in the configuration. So, we've instead reserved port {}", port);
-                    }
-
-                    connectionListener = new TelnetConnectionListener(this, new ServerSocket(port, 999, Supervisor.getConfig().getFantasiaSettings().isNonLocalConnectionsAllowed() ? null : InetAddress.getLoopbackAddress()));
-                    break;
-                }
-                default:
-                {
-                    connectionListener = null;
-                    break;
-                }
-            }
-
-            if (connectionListener != null)
-            {
+                connectionListener = ConnectionType.get(connectionTypeKey).createListener(this);
                 connectionListener.start();
             }
         }

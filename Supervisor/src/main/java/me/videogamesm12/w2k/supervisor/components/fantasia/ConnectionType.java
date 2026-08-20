@@ -22,12 +22,77 @@
 
 package me.videogamesm12.w2k.supervisor.components.fantasia;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import me.videogamesm12.w2k.supervisor.components.fantasia.listener.IConnectionListener;
+import me.videogamesm12.w2k.supervisor.components.fantasia.listener.TelnetConnectionListener;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * <h1>ConnectionType</h1>
  * <p>An enum that stores the various types of methods to connect to the Fantasia server.</p>
  */
-public enum ConnectionType
+@RequiredArgsConstructor
+public class ConnectionType<T extends IConnectionListener>
 {
-    TELNET,
-    UNIX
+    private static final Map<String, ConnectionType<?>> registry = new HashMap<>();
+    //--
+    public static final ConnectionType<TelnetConnectionListener> TELNET = register(new ConnectionType("w2k:telnet", TelnetConnectionListener.class));
+    //--
+    @Getter
+    private final String key;
+    @Getter
+    private final Constructor<T> constructor;
+
+    public ConnectionType(final String key, final Class<T> clazz)
+    {
+        this.key = key;
+
+        try
+        {
+            this.constructor = clazz.getConstructor(Server.class);
+        }
+        catch (NoSuchMethodException ex)
+        {
+            throw new IllegalArgumentException(clazz.getName() + " does not have a constructor that only takes class " + Server.class.getName());
+        }
+    }
+
+    public T createListener(Object... arguments) throws InvocationTargetException, InstantiationException, IllegalAccessException
+    {
+        return constructor.newInstance(arguments);
+    }
+
+    @Override
+    public String toString()
+    {
+        return key;
+    }
+
+    public static <T extends IConnectionListener> ConnectionType<T> get(String key)
+    {
+        // Legacy keys from when the connection types were an enum
+        if (!key.contains(":"))
+        {
+            key = "w2k:" + key.toLowerCase();
+        }
+
+        // Make sure it's an actual valid connection type
+        if (!registry.containsKey(key))
+        {
+            throw new IllegalArgumentException(key + " is not a registered connection type");
+        }
+
+        return (ConnectionType<T>) registry.get(key);
+    }
+
+    private static <T extends IConnectionListener> ConnectionType<T> register(ConnectionType<T> type)
+    {
+        registry.put(type.key, type);
+        return type;
+    }
 }

@@ -28,20 +28,47 @@ import me.videogamesm12.w2k.supervisor.Supervisor;
 import me.videogamesm12.w2k.supervisor.components.fantasia.Server;
 import me.videogamesm12.w2k.supervisor.components.fantasia.session.TelnetSession;
 
+import java.io.IOException;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public class TelnetConnectionListener extends Thread implements IConnectionListener
+public class TelnetConnectionListener extends IConnectionListener
 {
-    private final Server server;
     @Getter
     private final ServerSocket socket;
 
-    public TelnetConnectionListener(Server server, ServerSocket socket)
+    public TelnetConnectionListener(Server server) throws IOException
     {
-        super("Fantasia-TelnetConnectionListener");
-        this.server = server;
-        this.socket = socket;
+        super("Fantasia-TelnetConnectionListener", server);
+
+        // Set up Telnet server by finding an available port
+        int port = Supervisor.getConfig().getFantasiaSettings().getPort();
+        boolean looped = false;
+
+        while (!portIsAvailable(port))
+        {
+            if (port >= 65535)
+            {
+                port = 0;
+                looped = true;
+            }
+            else if (port == Supervisor.getConfig().getFantasiaSettings().getPort() && looped)
+            {
+                throw new IllegalStateException("Unable to find a free port despite our best efforts");
+            }
+            else
+            {
+                port++;
+            }
+        }
+
+        if (port != Supervisor.getConfig().getFantasiaSettings().getPort())
+        {
+            W2K.getLogger().info("We weren't able to reserve the port defined in the configuration. So, we've instead reserved port {}", port);
+        }
+
+        this.socket = new ServerSocket(port, 999, Supervisor.getConfig().getFantasiaSettings().isNonLocalConnectionsAllowed() ? null : InetAddress.getLoopbackAddress());
     }
 
     @Override
@@ -73,8 +100,8 @@ public class TelnetConnectionListener extends Thread implements IConnectionListe
                 continue;
             }
 
-            TelnetSession session = new TelnetSession(server, clientSocket);
-            server.addSession(session);
+            TelnetSession session = new TelnetSession(getServer(), clientSocket);
+            getServer().addSession(session);
             session.start();
         }
     }
