@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
-  "id": "w2k-integrator",
+  "id": "w2k-integrator-replaymod",
   "version": "${version}",
-  "name": "Integrator",
+  "name": "ReplayMod",
   "description": "Integrates various mods into W2K",
   "authors": [
     "videogamesm12"
@@ -12,18 +12,20 @@
   "icon": "assets/w2k-integrator/icon.png",
   "environment": "client",
   "entrypoints": {
-    "client": [
-      "me.videogamesm12.w2k.integrator.Integrator"
+    "w2k-integrator-mod-hooks": [
+      "me.videogamesm12.w2k.integrator.integrations.replaymod.ReplayModIntegrator"
     ]
   },
   "mixins": [
+    "w2k.integrator.replaymod.mixin.json"
   ],
   "depends": {
-    "w2k-blackbox": "*"
+    "w2k-integrator": "*",
+    "replaymod": "*"
   },
   "custom": {
     "modmenu": {
-      "parent": "w2k"
+      "parent": "w2k-integrator"
     }
   }
 }

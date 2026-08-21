@@ -2,16 +2,6 @@ ext {
     remap = true
 }
 
-repositories {
-    maven { url 'https://jitpack.io/' }
-    maven { url = "https://maven.meteordev.org/releases" }
-    maven { url = "https://maven.meteordev.org/snapshots" }
-    exclusiveContent {
-        forRepository { maven { url = "https://api.modrinth.com/maven" } }
-        filter { includeGroup "maven.modrinth" }
-    }
-}
-
 dependencies {
     minecraft "com.mojang:minecraft:1.20.1"
     mappings "net.fabricmc:yarn:1.20.1+build.10:v2"
@@ -20,16 +10,26 @@ dependencies {
 
     // Some mods rely on the Fabric API for one reason or another.
     modApi "net.fabricmc.fabric-api:fabric-api:0.28.5+1.14"
+}
 
-    // Wurst
-    modApi "com.github.VideoGameSmash12:Wurst7:master"
-    // Meteor (and hopefully its derivatives)
-    modApi "meteordevelopment:meteor-client:0.5.8-SNAPSHOT"
-    // ReplayMod
-    modApi "maven.modrinth:replaymod:1.14.4-2.6.15"
-    // Litematica
-    modApi "maven.modrinth:litematica:0.9.0"
-    modApi "maven.modrinth:malilib:HljUtdhE"
-    // BleachHack
-    modApi "com.github.VideoGameSmash12:BleachHack:0ff238ad09c6dbe9ac31e6d8c0806f5160e57ed9"
+subprojects {
+    repositories {
+        exclusiveContent {
+            forRepository { maven { url = "https://api.modrinth.com/maven" } }
+            filter { includeGroup "maven.modrinth" }
+        }
+        exclusiveContent {
+            forRepository { maven { url = "https://jitpack.io/" } }
+            filter { includeGroup "com.github.VideoGameSmash12" }
+        }
+    }
+
+    dependencies {
+        api project(":Blackbox")
+        api project(":Integrator")
+    }
+
+    each {
+        it.name = it.name + "Integrations"
+    }
 }

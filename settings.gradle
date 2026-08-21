@@ -43,3 +43,8 @@ include "Toolbox"
 include "Integrator"
 //--
 include "Supervisor:UnixDomains"
+//--
+include "Integrator:ReplayMod"
+include "Integrator:Meteor"
+include "Integrator:Wurst"
+include "Integrator:Litematica"

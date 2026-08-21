@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "w2k-integrator-meteor",
+  "version": "${version}",
+  "name": "Meteor Integrations",
+  "description": "Adds Meteor Client integrations into W2K",
+  "authors": [
+    "videogamesm12"
+  ],
+  "contact": {},
+  "license": "MIT",
+  "icon": "assets/w2k-integrator/icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "w2k-integrator-mod-hooks": [
+      "me.videogamesm12.w2k.integrator.integrations.meteor.MeteorIntegrator"
+    ]
+  },
+  "mixins": [
+    "w2k.integrator.meteor.mixin.json"
+  ],
+  "depends": {
+    "w2k-integrator": "*",
+    "meteor-client": "*"
+  },
+  "custom": {
+    "modmenu": {
+      "parent": "w2k-integrator"
+    }
+  }
+}

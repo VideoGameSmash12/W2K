@@ -23,9 +23,6 @@ dependencies {
     implementation include("net.kyori:adventure-text-serializer-json:4.17.0")
     implementation include("net.kyori:option:1.0.0")
 
-    /*subprojects.each {
-        include project("${it.path}")
-    }*/
     subprojects.each {
         if (it.getPath().split(":").size() <= 2)
             include project("${it.path}")
@@ -98,11 +95,6 @@ allprojects {
             'git.dirty'
         ]
     }
-
-    /*task sourcesJar(type: Jar, dependsOn: classes) {
-        archiveClassifier.set("sources")
-        from sourceSets.main.allSource
-    }*/
 }
 
 subprojects {

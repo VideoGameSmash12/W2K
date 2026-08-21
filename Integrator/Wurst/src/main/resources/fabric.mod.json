@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "w2k-integrator-wurst",
+  "version": "${version}",
+  "name": "Wurst Integrations",
+  "description": "Adds Wurst Client integrations into W2K",
+  "authors": [
+    "videogamesm12"
+  ],
+  "contact": {},
+  "license": "MIT",
+  "icon": "assets/w2k-integrator/icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "w2k-integrator-mod-hooks": [
+      "me.videogamesm12.w2k.integrator.integrations.wurst.WurstIntegrator"
+    ]
+  },
+  "mixins": [
+    "w2k.integrator.wurst.mixin.json"
+  ],
+  "depends": {
+    "w2k-integrator": "*",
+    "wurst": "*"
+  },
+  "custom": {
+    "modmenu": {
+      "parent": "w2k-integrator"
+    }
+  }
+}

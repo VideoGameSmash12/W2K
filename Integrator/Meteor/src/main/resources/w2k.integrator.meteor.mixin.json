@@ -1,0 +1,12 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "me.videogamesm12.w2k.integrator.integrations.meteor.mixins",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "MeteorModuleMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

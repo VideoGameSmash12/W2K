@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "id": "w2k-integrator-litematica",
+  "version": "${version}",
+  "name": "Litematica Integrations",
+  "description": "Adds Litematica integrations into W2K",
+  "authors": [
+    "videogamesm12"
+  ],
+  "contact": {},
+  "license": "MIT",
+  "icon": "assets/w2k-integrator/icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "w2k-integrator-mod-hooks": [
+      "me.videogamesm12.w2k.integrator.integrations.litematica.LitematicaIntegrator"
+    ]
+  },
+  "mixins": [
+  ],
+  "depends": {
+    "w2k-integrator": "*",
+    "litematica": "*"
+  },
+  "custom": {
+    "modmenu": {
+      "parent": "w2k-integrator"
+    }
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "me.videogamesm12.w2k.integrator.integrations.replaymod.mixins",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "ConnectionEventHandlerAccessor",
+    "GuiRecordingControlsAccessor",
+    "GuiRecordingControlsMixin",
+    "PacketListenerMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

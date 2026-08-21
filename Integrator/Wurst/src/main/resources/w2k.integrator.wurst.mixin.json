@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "me.videogamesm12.w2k.integrator.integrations.wurst.mixins",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "AltManagerMixin",
+    "WurstHackMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
