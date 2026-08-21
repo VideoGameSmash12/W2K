@@ -26,10 +26,12 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import me.videogamesm12.w2k.supervisor.components.fantasia.listener.IConnectionListener;
 import me.videogamesm12.w2k.supervisor.components.fantasia.listener.TelnetConnectionListener;
+import net.fabricmc.loader.api.FabricLoader;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -42,6 +44,13 @@ public class ConnectionType<T extends IConnectionListener>
     private static final Map<String, ConnectionType<?>> registry = new HashMap<>();
     //--
     public static final ConnectionType<TelnetConnectionListener> TELNET = register(new ConnectionType("w2k:telnet", TelnetConnectionListener.class));
+    //--
+    static
+    {
+        // Search for available connection types for future use
+        FabricLoader.getInstance().getEntrypoints("w2k-supervisor-connection-type", ConnectionType.class)
+                .forEach(ConnectionType::register);
+    }
     //--
     @Getter
     private final String key;

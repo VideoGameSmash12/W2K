@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "id": "w2k-supervisor-unix-domain-sockets",
+  "version": "${version}",
+  "name": "Unix Domain Socket Support for Fantasia",
+  "description": "",
+  "authors": [
+    "videogamesm12"
+  ],
+  "contact": {},
+  "license": "MIT",
+  "icon": "assets/w2k-supervisor-unix-domain-sockets/icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "w2k-supervisor-connection-type": [
+      "me.videogamesm12.w2k.supervisor.components.fantasia.unix.UnixDomainConnectionType"
+    ]
+  },
+  "depends": {
+    "java": ">=16"
+  },
+  "custom": {
+    "modmenu": {
+      "badges": ["library"],
+      "parent": "w2k-supervisor"
+    }
+  }
+}
