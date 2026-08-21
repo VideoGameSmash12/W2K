@@ -43,7 +43,7 @@ public class ConnectionType<T extends IConnectionListener>
 {
     private static final Map<String, ConnectionType<?>> registry = new HashMap<>();
     //--
-    public static final ConnectionType<TelnetConnectionListener> TELNET = register(new ConnectionType("w2k:telnet", TelnetConnectionListener.class));
+    public static final ConnectionType<TelnetConnectionListener> TELNET = register(new ConnectionType<>("w2k:telnet", TelnetConnectionListener.class));
     //--
     static
     {
@@ -71,7 +71,7 @@ public class ConnectionType<T extends IConnectionListener>
         }
     }
 
-    public T createListener(Object... arguments) throws InvocationTargetException, InstantiationException, IllegalAccessException
+    public T createListener(Server arguments) throws InvocationTargetException, InstantiationException, IllegalAccessException
     {
         return constructor.newInstance(arguments);
     }

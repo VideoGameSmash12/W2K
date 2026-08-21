@@ -26,12 +26,27 @@ import me.videogamesm12.w2k.blackbox.Blackbox;
 
 import javax.swing.*;
 
+/**
+ * <h1>IThemeType</h1>
+ * <p>Represents a type/group of themes.</p>
+ */
 public interface IThemeType
 {
+    /**
+     * Get the name of this theme type, which is displayed in the Themes menu in the Blackbox.
+     * @return  String
+     */
     String getLabel();
 
+    /**
+     * Get the internal ID of this theme type.
+     * @return  Integer
+     */
     int getId();
 
+    /**
+     * Update all open windows in the Blackbox.
+     */
     default void update()
     {
         SwingUtilities.updateComponentTreeUI(Blackbox.getInstance().getMainWindow());

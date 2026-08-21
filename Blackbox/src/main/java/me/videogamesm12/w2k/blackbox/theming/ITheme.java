@@ -22,21 +22,55 @@
 
 package me.videogamesm12.w2k.blackbox.theming;
 
+/**
+ * <h1>ITheme</h1>
+ * <p>Interface representing a Blackbox theme.</p>
+ */
 public interface ITheme
 {
+    /**
+     * Get the internal name for this theme, which will be serialized in the Blackbox configuration.
+     * @return  String
+     */
     String getInternalName();
 
+    /**
+     * Get the display name for this theme, which will show up in the Blackbox.
+     * @return  String
+     */
     String getThemeName();
 
+    /**
+     * Get an optional description for this theme, which will show up when you hover over it in the Blackbox.
+     * @return  String
+     */
     String getThemeDescription();
 
+    /**
+     * Get the {@link IThemeType} that this theme will be grouped with.
+     * @return  IThemeType
+     */
     IThemeType getType();
 
+    /**
+     * Get the class for the Swing Look and Feel that this theme uses.
+     * @return  String
+     */
     String getThemeClass();
 
+    /**
+     * Determines whether this theme should be shown in the environment it's currently running in.
+     * @return  True if the theme should show up
+     */
     boolean isSupposedToShow();
 
+    /**
+     * Applies this theme.
+     */
     void apply();
 
+    /**
+     * Display an optional message to the user when they switch to this theme. Currently unused.
+     */
     void showOptionalMessage();
 }

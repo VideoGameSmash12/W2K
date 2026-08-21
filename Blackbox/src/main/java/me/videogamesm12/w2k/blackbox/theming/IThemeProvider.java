@@ -25,9 +25,22 @@ package me.videogamesm12.w2k.blackbox.theming;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * <h1>IThemeProvider</h1>
+ * <p>Entrypoint interface that is used to load in themes from other mods, using the <code>w2k-blackbox</code>
+ *  entrypoint.</p>
+ */
 public interface IThemeProvider
 {
+    /**
+     * Get a map of themes and their internal IDs.
+     * @return  Map
+     */
     Map<String, ITheme> getThemes();
 
+    /**
+     * Get a list of theme types to categorize the themes with.
+     * @return  List<IThemeType>
+     */
     List<IThemeType> getTypes();
 }
