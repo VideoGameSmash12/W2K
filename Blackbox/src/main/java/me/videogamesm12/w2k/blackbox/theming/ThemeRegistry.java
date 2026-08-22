@@ -28,10 +28,7 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
 import org.spongepowered.asm.mixin.injection.At;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class ThemeRegistry
@@ -84,5 +81,15 @@ public class ThemeRegistry
     public static ITheme getTheme(String id)
     {
         return themes.getOrDefault(id, null);
+    }
+
+    public static Optional<ITheme> getThemeSafe(String id)
+    {
+        if (id == null)
+        {
+            return Optional.empty();
+        }
+
+        return Optional.ofNullable(themes.get(id));
     }
 }

@@ -4,6 +4,7 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import lombok.Getter;
 import me.videogamesm12.w2k.blackbox.command.BlackboxCmd;
+import me.videogamesm12.w2k.blackbox.theming.ITheme;
 import me.videogamesm12.w2k.blackbox.window.tool.crashpad.Crashpad;
 import me.videogamesm12.w2k.kernel.experiment.ExperimentManager;
 import me.videogamesm12.w2k.kernel.experiment.Experiment;
@@ -24,6 +25,7 @@ import javax.swing.plaf.metal.MetalLookAndFeel;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Blackbox extends Thread
@@ -77,10 +79,7 @@ public class Blackbox extends Thread
                 config.setTheme(System.getProperty("me.videogamesm12.w2k.blackbox_theme"));
             }
 
-            if (config.getTheme() != null && ThemeRegistry.getTheme(config.getTheme()) != null)
-            {
-                ThemeRegistry.getTheme(config.getTheme()).apply();
-            }
+            ThemeRegistry.getThemeSafe(config.getTheme()).ifPresent(ITheme::apply);
         }
         catch (Exception ex)
         {
@@ -230,6 +229,11 @@ public class Blackbox extends Thread
         }
 
         mainWindow.setVisible(true);
+
+        if (!ThemeRegistry.getThemeSafe(config.getTheme()).isPresent())
+        {
+            JOptionPane.showMessageDialog(mainWindow, "There was a problem with the theme you had set, so we have defaulted to a fallback. Please reset the theme in the settings.", "Warning", JOptionPane.WARNING_MESSAGE);
+        }
     }
 
     public void setupSystemTrayIcon()

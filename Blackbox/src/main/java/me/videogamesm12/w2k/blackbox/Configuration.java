@@ -40,18 +40,18 @@ public class Configuration
                 // Windows XP to Windows 8.1
                 if (version.getMajor() == 5 && version.getMinor() > 0 || version.getMajor() == 6 && version.getMinor() <= 0)
                 {
-                    return "WINDOWS";
+                    return "java-system:com.sun.java.swing.plaf.windows.WindowsLookAndFeel";
                 }
                 // Windows 95 to Windows ME, Windows NT 4.0 to Windows 2000
                 else if (version.getMajor() < 5 || version.getMajor() == 5 && version.getMinor() == 0)
                 {
-                    return "WINDOWS_CLASSIC";
+                    return "java-system:com.sun.java.swing.plaf.windows.WindowsClassicLookAndFeel";
                 }
                 // Windows 10+
                 else if (version.getMajor() >= 10)
                 {
                     // Read the registry values related to light and dark themes to figure it out
-                    return Advapi32Util.registryGetIntValue(WinReg.HKEY_CURRENT_USER, "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize", "AppsUseLightTheme") == 1 ? "LIGHT" : "DARK";
+                    return Advapi32Util.registryGetIntValue(WinReg.HKEY_CURRENT_USER, "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize", "AppsUseLightTheme") == 1 ? "flatlaf-builtin:light" : "flatlaf-builtin:dark";
                 }
             }
             case MAC_OS:
@@ -62,7 +62,7 @@ public class Configuration
                 // Fallback for in case the user is somehow on Mac OS 9
                 if (version.getMajor() < 10)
                 {
-                    return "SYSTEM";
+                    return "java-metal:steel";
                 }
 
                 /* Mac OS X Yosemite, in addition to scrapping the skeuomorphic look of the previous iterations, also
@@ -75,26 +75,21 @@ public class Configuration
                     try
                     {
                         final Process proc = SysUtils.execute("defaults", "read", "-g", "AppleInterfaceStyle");
-                        return proc.waitFor() == 0 ? "MAC_DARK" : "MAC_LIGHT";
+                        return proc.waitFor() == 0 ? "flatlaf-builtin:macos_dark" : "flatlaf-builtin:macos_light";
                     }
                     catch (Throwable ex)
                     {
-                        return "MAC_LIGHT";
+                        return "flatlaf-builtin:macos_light";
                     }
                 }
                 else
                 {
-                    return "NIMBUS";
+                    return "java:nimbus";
                 }
             }
-            /*case LINUX:
-            case SOLARIS:
-            {
-                return "GTK";
-            }*/
             default:
             {
-                return "DARK";
+                return "flatlaf-builtin:dark";
             }
         }
     }
