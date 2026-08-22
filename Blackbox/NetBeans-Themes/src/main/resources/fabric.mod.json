@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "id": "w2k-blackbox-netbeans-themes",
+  "version": "${version}",
+  "name": "NetBeans Dark Themes",
+  "description": "Adds support for NetBeans' dark themes to the Blackbox.",
+  "authors": [
+    "videogamesm12"
+  ],
+  "contact": {},
+  "license": "MIT",
+  "icon": "assets/w2k-blackbox/icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "w2k-blackbox": [
+      "me.videogamesm12.w2k.blackbox.theming.netbeans.NetBeansThemesProvider"
+    ]
+  },
+  "depends": {
+    "w2k-blackbox": "*"
+  },
+  "custom": {
+    "modmenu": {
+      "parent": "w2k-blackbox"
+    }
+  }
+}

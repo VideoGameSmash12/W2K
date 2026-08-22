@@ -14,13 +14,13 @@ import me.videogamesm12.w2k.kernel.event.lifecycle.ClientStoppedEvent;
 import me.videogamesm12.w2k.kernel.util.SysUtils;
 import me.videogamesm12.w2k.supervisor.Supervisor;
 import me.videogamesm12.w2k.blackbox.theming.ThemeRegistry;
-import me.videogamesm12.w2k.blackbox.theming.inbuilt.IBThemes;
 import me.videogamesm12.w2k.blackbox.window.GUI;
 import me.videogamesm12.w2k.blackbox.window.SysTray;
 import me.videogamesm12.w2k.supervisor.api.event.ClientFreezeEvent;
 import net.fabricmc.loader.api.FabricLoader;
 
 import javax.swing.*;
+import javax.swing.plaf.metal.MetalLookAndFeel;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
@@ -32,7 +32,12 @@ public class Blackbox extends Thread
     private static final EventBus eventBus = new EventBus();
     @Getter
     private static Blackbox instance;
-    //--
+
+    public Blackbox()
+    {
+        super("Blackbox");
+    }
+
     public static void setup()
     {
         System.setProperty("java.awt.headless", "false");
@@ -72,12 +77,21 @@ public class Blackbox extends Thread
                 config.setTheme(System.getProperty("me.videogamesm12.w2k.blackbox_theme"));
             }
 
-            ThemeRegistry.getTheme(config.getTheme()).apply();
+            if (config.getTheme() != null && ThemeRegistry.getTheme(config.getTheme()) != null)
+            {
+                ThemeRegistry.getTheme(config.getTheme()).apply();
+            }
         }
         catch (Exception ex)
         {
             W2K.getLogger().error("Failed to apply selected theme", ex);
-            ThemeRegistry.getTheme(IBThemes.METAL.getInternalName()).apply();
+            try
+            {
+                UIManager.setLookAndFeel(new MetalLookAndFeel());
+            }
+            catch (UnsupportedLookAndFeelException ignored)
+            {
+            }
         }
 
         // Optional late start-up mode just in case something prevents the client from booting normally

@@ -48,3 +48,6 @@ include "Integrator:ReplayMod"
 include "Integrator:Meteor"
 include "Integrator:Wurst"
 include "Integrator:Litematica"
+//--
+include "Blackbox:FlatLAF-Themes"
+include "Blackbox:NetBeans-Themes"

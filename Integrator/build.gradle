@@ -28,8 +28,4 @@ subprojects {
         api project(":Blackbox")
         api project(":Integrator")
     }
-
-    each {
-        it.name = it.name + "Integrations"
-    }
 }

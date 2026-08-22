@@ -13,8 +13,4 @@ dependencies {
     implementation project(":Supervisor")
     implementation project(":Toolbox")
     implementation "net.kyori:adventure-api:4.17.0"
-
-    include compileOnly("com.formdev:flatlaf:3.0")
-    include compileOnly("com.formdev:flatlaf-intellij-themes:3.0")
-    include compileOnly("org.netbeans.modules:org-netbeans-swing-laf-dark:RELEASE130")
 }

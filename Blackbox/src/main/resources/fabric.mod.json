@@ -16,11 +16,10 @@
       "me.videogamesm12.w2k.blackbox.Entrypoints"
     ],
     "w2k-blackbox": [
-      "me.videogamesm12.w2k.blackbox.theming.inbuilt.IBThemeProvider",
-      "me.videogamesm12.w2k.blackbox.theming.flatlaf.FThemeProvider",
-      "me.videogamesm12.w2k.blackbox.theming.custom.flatlaf.CFThemeProvider",
-      "me.videogamesm12.w2k.blackbox.theming.custom.intellij.CIThemeProvider",
-      "me.videogamesm12.w2k.blackbox.theming.custom.synth.CSThemeProvider"
+      "me.videogamesm12.w2k.blackbox.theming.java.SystemThemesProvider",
+      "me.videogamesm12.w2k.blackbox.theming.java.MetalThemesProvider",
+      "me.videogamesm12.w2k.blackbox.theming.java.MiscellaneousThemesProvider",
+      "me.videogamesm12.w2k.blackbox.theming.java.SynthThemesProvider"
     ]
   },
   "depends": {

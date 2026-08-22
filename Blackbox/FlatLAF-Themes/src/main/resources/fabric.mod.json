@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "id": "w2k-blackbox-flatlaf-themes",
+  "version": "${version}",
+  "name": "FlatLAF Look and Feel",
+  "description": "Adds support for the FlatLAF look and feel to the Blackbox.",
+  "authors": [
+    "videogamesm12"
+  ],
+  "contact": {},
+  "license": "MIT",
+  "icon": "assets/w2k-blackbox/icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "w2k-blackbox": [
+      "me.videogamesm12.w2k.blackbox.theming.flatlaf.FlatLAFBuiltInThemesProvider",
+      "me.videogamesm12.w2k.blackbox.theming.flatlaf.FlatLAFIntelliJThemePackProvider",
+      "me.videogamesm12.w2k.blackbox.theming.flatlaf.FlatLAFCustomThemesProvider",
+      "me.videogamesm12.w2k.blackbox.theming.flatlaf.FlatLAFCustomIntelliJThemesProvider"
+    ]
+  },
+  "depends": {
+    "w2k-blackbox": "*"
+  },
+  "custom": {
+    "modmenu": {
+      "parent": "w2k-blackbox"
+    }
+  }
+}
