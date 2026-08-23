@@ -37,21 +37,9 @@ public class DumpMenu extends JMenu
 
 				if (prompt == JOptionPane.YES_OPTION)
 				{
-					String[] fileViewerCommand = {"xdg-open", results.getOutputDirectory().getAbsolutePath()};
-
-					if (SysUtils.getOperatingSystem() == SysUtils.OperatingSystem.WINDOWS)
-					{
-						fileViewerCommand = new String[] {"rundll32", "url.dll,FileProtocolHandler",
-								results.getOutputDirectory().getAbsolutePath()};
-					}
-					else if (SysUtils.getOperatingSystem() == SysUtils.OperatingSystem.MAC_OS)
-					{
-						fileViewerCommand = new String[] {"open", results.getOutputDirectory().getAbsolutePath()};
-					}
-
 					try
 					{
-						SysUtils.execute(fileViewerCommand);
+						SysUtils.getOperatingSystem().openFolder(results.getOutputDirectory());
 					}
 					catch (Throwable ignored)
 					{
@@ -82,20 +70,9 @@ public class DumpMenu extends JMenu
 
 				if (prompt == JOptionPane.YES_OPTION)
 				{
-					String[] fileViewerCommand = {"xdg-open", results.getOutputDirectory().getAbsolutePath()};
-
-					if (SysUtils.getOperatingSystem() == SysUtils.OperatingSystem.WINDOWS)
-					{
-						fileViewerCommand = new String[] {"rundll32", "url.dll,FileProtocolHandler", results.getOutputDirectory().getAbsolutePath()};
-					}
-					else if (SysUtils.getOperatingSystem() == SysUtils.OperatingSystem.MAC_OS)
-					{
-						fileViewerCommand = new String[] {"open", results.getOutputDirectory().getAbsolutePath()};
-					}
-
 					try
 					{
-						SysUtils.execute(fileViewerCommand);
+						SysUtils.getOperatingSystem().openFolder(results.getOutputDirectory());
 					}
 					catch (Throwable ignored)
 					{
@@ -126,21 +103,9 @@ public class DumpMenu extends JMenu
 
 				if (prompt == JOptionPane.YES_OPTION)
 				{
-					String[] fileViewerCommand = {"xdg-open", results.getOutputDirectory().getAbsolutePath()};
-
-					if (SysUtils.getOperatingSystem() == SysUtils.OperatingSystem.WINDOWS)
-					{
-						fileViewerCommand = new String[] {"rundll32", "url.dll,FileProtocolHandler",
-								results.getOutputDirectory().getAbsolutePath()};
-					}
-					else if (SysUtils.getOperatingSystem() == SysUtils.OperatingSystem.MAC_OS)
-					{
-						fileViewerCommand = new String[] {"open", results.getOutputDirectory().getAbsolutePath()};
-					}
-
 					try
 					{
-						SysUtils.execute(fileViewerCommand);
+						SysUtils.getOperatingSystem().openFolder(results.getOutputDirectory());
 					}
 					catch (Throwable ignored)
 					{
@@ -171,21 +136,9 @@ public class DumpMenu extends JMenu
 
 				if (prompt == JOptionPane.YES_OPTION)
 				{
-					String[] fileViewerCommand = {"xdg-open", results.getOutputDirectory().getAbsolutePath()};
-
-					if (SysUtils.getOperatingSystem() == SysUtils.OperatingSystem.WINDOWS)
-					{
-						fileViewerCommand = new String[] {"rundll32", "url.dll,FileProtocolHandler",
-								results.getOutputDirectory().getAbsolutePath()};
-					}
-					else if (SysUtils.getOperatingSystem() == SysUtils.OperatingSystem.MAC_OS)
-					{
-						fileViewerCommand = new String[] {"open", results.getOutputDirectory().getAbsolutePath()};
-					}
-
 					try
 					{
-						SysUtils.execute(fileViewerCommand);
+						SysUtils.getOperatingSystem().openFolder(results.getOutputDirectory());
 					}
 					catch (Throwable ignored)
 					{
@@ -194,5 +147,11 @@ public class DumpMenu extends JMenu
 			});
 		}));
 		add(dumpEntities);
+
+		addSeparator();
+
+		final JMenuItem openDumpFolder = new JMenuItem("Browse dump folder");
+		openDumpFolder.addActionListener(e -> SysUtils.getOperatingSystem().openFolder(DumpUtil.getDumpsFolder()));
+		add(openDumpFolder);
 	}
 }

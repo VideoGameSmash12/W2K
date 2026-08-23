@@ -1,11 +1,13 @@
 package me.videogamesm12.w2k.integrator.integrations.wurst.menu;
 
 import me.videogamesm12.w2k.blackbox.Blackbox;
+import me.videogamesm12.w2k.integrator.core.gui.PModOption;
 import net.wurstclient.hack.Hack;
 import net.wurstclient.settings.*;
 
 import javax.swing.*;
 import java.awt.*;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Map;
 
@@ -57,127 +59,75 @@ public class WurstHackSettingsDialog extends JDialog
 
     public JComponent getSettingComponent(Setting setting)
     {
-        JComponent settingComponent;
+        final Class<? extends Setting> clazz = setting.getClass();
 
-        switch (setting.getClass().getSimpleName())
+        if (clazz == CheckboxSetting.class || CheckboxSetting.class.isAssignableFrom(clazz))
         {
-            case "FilterArmorStandsSetting":
-            case "FilterNamedSetting":
-            case "FilterInvisibleSetting":
-            case "FilterGolemsSetting":
-            case "FilterTradersSetting":
-            case "FilterAnimalsSetting":
-            case "FilterMonstersSetting":
-            case "FilterPlayersSetting":
-            case "CheckboxSetting":
+            final CheckboxSetting checkbox = (CheckboxSetting) setting;
+            return PModOption.forBoolean(checkbox::isChecked, checkbox::setChecked);
+        }
+        else if (setting instanceof ColorSetting)
+        {
+            final ColorSetting color = (ColorSetting) setting;
+            return PModOption.forColor(this, color::getColor, color::setColor);
+        }
+        else if (setting instanceof EnumSetting)
+        {
+            final EnumSetting<?> enumSetting = (EnumSetting<?>) setting;
+            return PModOption.forEnum(enumSetting.getValues(), enumSetting::getSelected, value -> enumSetting.setSelected(value.name()));
+        }
+        else if (SliderSetting.class.isAssignableFrom(clazz))
+        {
+            final SliderSetting slider = (SliderSetting) setting;
+            return PModOption.forInteger(slider::getValueI, slider::setValue, (int) slider.getMinimum(), (int) slider.getMaximum());
+        }
+        else if (setting instanceof FileSetting)
+        {
+            final FileSetting file = (FileSetting) setting;
+            return PModOption.forFile(this, () -> file.getSelectedFile().toFile(), newFile -> file.setSelectedFile(newFile.getAbsolutePath()));
+        }
+        else if (clazz.getSimpleName().equalsIgnoreCase("TextFieldSetting"))
+        {
+            try
             {
-                final CheckboxSetting chkBox = (CheckboxSetting) setting;
-                settingComponent = new JCheckBox("", chkBox.isChecked());
-                final JCheckBox checkBoxComponent = (JCheckBox) settingComponent;
-
-                checkBoxComponent.addActionListener(e -> chkBox.setChecked(checkBoxComponent.isSelected()));
-                break;
-            }
-            case "SliderSetting":
-            {
-                final SliderSetting slider = (SliderSetting) setting;
-                settingComponent = new JSlider((int) slider.getMinimum(), (int) slider.getMaximum(), slider.getValueI());
-                final JSlider sliderComponent = (JSlider) settingComponent;
-
-                sliderComponent.addChangeListener(e -> slider.setValue((sliderComponent.getValue())));
-                break;
-            }
-            case "ColorSetting":
-            {
-                final ColorSetting color = (ColorSetting) setting;
-                settingComponent = new JButton();
-                final JButton button = (JButton) settingComponent;
-
-                button.setBackground(color.getColor());
-                button.addActionListener(e -> {
-                    Color newColor = JColorChooser.showDialog(this, "Choose a color", color.getColor());
-                    if (newColor != null)
-                    {
-                        button.setBackground(newColor);
-                        color.setColor(newColor);
-                    }
-                });
-                break;
-            }
-            case "EnumSetting":
-            {
-                final EnumSetting enumSetting = (EnumSetting) setting;
-                settingComponent = new JComboBox<Enum<?>>(enumSetting.getValues());
-                final JComboBox comboBox = (JComboBox) settingComponent;
-
-                comboBox.setSelectedItem(enumSetting.getSelected());
-                comboBox.addItemListener(e -> enumSetting.setSelected((Enum<?>) e.getItem()));
-                break;
-            }
-            case "FileSetting":
-            {
-                final FileSetting file = (FileSetting) setting;
-                settingComponent = new JButton("Select File");
-                final JButton button = (JButton) settingComponent;
-
-                button.addActionListener(e ->
+                final Class<? extends Setting> textFieldClass = (Class<? extends Setting>) Class.forName("net.wurstclient.settings.TextFieldSetting");
+                if (textFieldClass.isInstance(setting))
                 {
-                    final JFileChooser chooser = file.getSelectedFile() != null ?
-                            new JFileChooser(file.getSelectedFile().toFile()) : new JFileChooser();
+                    Setting casted = textFieldClass.cast(setting);
+                    Method getValueMethod = casted.getClass().getMethod("getValue");
+                    Method setValueMethod = casted.getClass().getMethod("setValue", String.class);
 
-                    if (chooser.showDialog(this, "Select") == JFileChooser.APPROVE_OPTION)
+                    return PModOption.forString(() ->
                     {
-                        file.setSelectedFile(chooser.getSelectedFile().getAbsolutePath());
-                    }
-                });
-                break;
-            }
-            case "TextFieldSetting":
-            {
-                try
-                {
-                    Class<? extends Setting> textFieldClass = (Class<? extends Setting>) Class.forName("net.wurstclient.settings.TextFieldSetting");
-                    if (textFieldClass.isInstance(setting))
-                    {
-                        Setting casted = textFieldClass.cast(setting);
-                        Method getValueMethod = casted.getClass().getMethod("getValue");
-                        Method setValueMethod = casted.getClass().getMethod("setValue", String.class);
-
-                        String value = (String) getValueMethod.invoke(casted);
-                        settingComponent = new JTextField(value);
-                        final JTextField textField = (JTextField) settingComponent;
-
-                        textField.addActionListener(e ->
+                        try
                         {
-                            try
-                            {
-                                setValueMethod.invoke(casted, textField.getText());
-                            }
-                            catch (Throwable ex)
-                            {
-                                ex.printStackTrace();
-                            }
-                        });
-                    }
-                    else
+                            return (String) getValueMethod.invoke(setting);
+                        }
+                        catch (IllegalAccessException | InvocationTargetException ex)
+                        {
+                            ex.printStackTrace();
+                            return "getValue returned null, please report this as a bug to W2K!";
+                        }
+                    }, value ->
                     {
-                        settingComponent = null;
-                    }
+                        try
+                        {
+                            setValueMethod.invoke(setting, value);
+                        }
+                        catch (IllegalAccessException | InvocationTargetException ex)
+                        {
+                            ex.printStackTrace();
+                        }
+                    });
                 }
-                catch (Throwable ex)
-                {
-                    settingComponent = new JLabel("Not supported");
-                    ex.printStackTrace();
-                }
-                break;
             }
-            default:
+            catch (Throwable ex)
             {
-                settingComponent = new JLabel("Not supported");
-                System.out.println(setting.getName() + " - " + setting.getClass().getSimpleName());
+                ex.printStackTrace();
             }
         }
 
-        return settingComponent;
+        System.out.println(setting.getName() + " - " + setting.getClass().getSimpleName());
+        return PModOption.fallback();
     }
 }

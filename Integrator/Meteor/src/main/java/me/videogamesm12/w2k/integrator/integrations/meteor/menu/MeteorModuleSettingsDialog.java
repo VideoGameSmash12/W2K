@@ -1,12 +1,20 @@
 package me.videogamesm12.w2k.integrator.integrations.meteor.menu;
 
+import com.google.common.base.Enums;
 import me.videogamesm12.w2k.blackbox.Blackbox;
+import me.videogamesm12.w2k.integrator.core.gui.PModOption;
 import meteordevelopment.meteorclient.settings.*;
 import meteordevelopment.meteorclient.systems.modules.Module;
+import meteordevelopment.meteorclient.systems.modules.render.Chams;
 import meteordevelopment.meteorclient.utils.render.color.SettingColor;
+import org.apache.commons.lang3.EnumUtils;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 public class MeteorModuleSettingsDialog extends JDialog
 {
@@ -66,89 +74,59 @@ public class MeteorModuleSettingsDialog extends JDialog
     @SuppressWarnings("unchecked")
     public JComponent getSettingComponent(Setting<?> setting)
     {
-        JComponent settingComponent;
-
         if (setting.get() instanceof String)
         {
             final Setting<String> stringSetting = (Setting<String>) setting;
-            settingComponent = new JTextField(stringSetting.get());
-            final JTextField textField = (JTextField) settingComponent;
-            textField.addActionListener((e) -> stringSetting.set(textField.getText()));
+            return PModOption.forString(stringSetting::get, stringSetting::set);
         }
         else if (setting.get() instanceof Boolean)
         {
             final Setting<Boolean> booleanSetting = (Setting<Boolean>) setting;
-            settingComponent = new JCheckBox("", booleanSetting.get());
-            final JCheckBox checkBox = (JCheckBox) settingComponent;
-            checkBox.addActionListener((e) -> booleanSetting.set(checkBox.isSelected()));
+            return PModOption.forBoolean(booleanSetting::get, booleanSetting::set);
         }
         else if (setting.get() instanceof SettingColor)
         {
             final Setting<SettingColor> colorSetting = (Setting<SettingColor>) setting;
-            settingComponent = new JButton();
-            final JButton button = (JButton) settingComponent;
-
-            button.setBackground(new Color(colorSetting.get().r, colorSetting.get().g, colorSetting.get().b, colorSetting.get().a));
-            button.addActionListener(e -> {
-                Color newColor = JColorChooser.showDialog(this, "Choose a color", button.getBackground());
-                if (newColor != null)
-                {
-                    button.setBackground(newColor);
-                    colorSetting.get().r(newColor.getRed());
-                    colorSetting.get().g(newColor.getGreen());
-                    colorSetting.get().b(newColor.getBlue());
-                    colorSetting.get().a(newColor.getAlpha());
-                }
-            });
+            return PModOption.forColor(this, () ->
+                    new Color(colorSetting.get().r, colorSetting.get().g, colorSetting.get().b),
+                    color -> colorSetting.set(new SettingColor(color)));
         }
         else if (setting.get() instanceof Integer)
         {
             final IntSetting integer = (IntSetting) setting;
-
-            if (!integer.noSlider)
-            {
-                settingComponent = new JSlider(integer.sliderMin, integer.sliderMax, integer.get());
-                final JSlider slider = (JSlider) settingComponent;
-                slider.addChangeListener(e -> integer.set(slider.getValue()));
-            }
-            else
-            {
-                settingComponent = new JSpinner(new SpinnerNumberModel((int) integer.get(), integer.min, integer.max, 1));
-                final JSpinner spinner = (JSpinner) settingComponent;
-                spinner.addChangeListener(e -> integer.set((Integer) spinner.getValue()));
-            }
+            return integer.noSlider ?
+                    PModOption.forIntegerSpinner(integer::get, integer::set, integer.min, integer.max) :
+                    PModOption.forInteger(integer::get, integer::set, integer.sliderMin, integer.sliderMax);
         }
         else if (setting.get() instanceof Double)
         {
             final DoubleSetting doubleSetting = (DoubleSetting) setting;
-
-            if (!doubleSetting.noSlider)
-            {
-                settingComponent = new JSlider((int) doubleSetting.sliderMin, (int) doubleSetting.sliderMax, (int) doubleSetting.get().doubleValue());
-                final JSlider slider = (JSlider) settingComponent;
-                slider.addChangeListener(e -> doubleSetting.set((double) slider.getValue()));
-            }
-            else
-            {
-                settingComponent = new JSpinner(new SpinnerNumberModel((double) doubleSetting.get(), doubleSetting.min, doubleSetting.max, 0.1d));
-                final JSpinner spinner = (JSpinner) settingComponent;
-                spinner.addChangeListener(e -> doubleSetting.set((Double) spinner.getValue()));
-            }
+            return doubleSetting.noSlider ?
+                    PModOption.forDoubleSinner(doubleSetting::get, doubleSetting::set, doubleSetting.min, doubleSetting.max, 0.1) :
+                    PModOption.forDouble(doubleSetting::get, doubleSetting::set, (int) Math.floor(doubleSetting.min), (int) Math.floor(doubleSetting.max));
         }
-        else if (setting.get() instanceof Enum<?>)
+        else if (setting.get() instanceof Enum)
         {
-            final EnumSetting<Enum<?>> enumSetting = (EnumSetting<Enum<?>>) setting;
-            settingComponent = new JComboBox<>(enumSetting.getSuggestions().toArray(new String[0]));
-            final JComboBox<String> comboBox = (JComboBox<String>) settingComponent;
-            comboBox.setSelectedItem(enumSetting.get().name());
-            comboBox.addItemListener(e -> enumSetting.set(Enum.valueOf(enumSetting.get().getClass(),
-                    (String) comboBox.getSelectedItem())));
-        }
-        else
-        {
-            settingComponent = new JLabel("Not supported");
+            // This code is painted with an hour of frustratingly debugging a problem that later turned out to be caused
+            //  by something completely unrelated altogether (see below). Unless you figure out a better way to
+            //  implement this, DON'T TOUCH THIS IF YOU VALUE YOUR SANITY.
+            EnumSetting<Enum<?>> enumSetting = (EnumSetting) setting;
+            return PModOption.forEnum(new ArrayList(EnumSet.allOf(((Enum) enumSetting.get()).getDeclaringClass())), enumSetting::get, value ->
+            {
+                try
+                {
+                    enumSetting.set(value);
+                }
+                // Some settings call code that needs to be handled in the render thread. This doesn't work since we're
+                //  on another thread, so we basically ignore it.
+                // TODO: Make it run the "set" code again on the render thread if it fails before
+                catch (IllegalStateException ignored)
+                {
+                    JOptionPane.showMessageDialog(this, "You will need to either restart your Minecraft client or set this setting manually in Meteor's configuration menu for it to take full effect.", "Notice", JOptionPane.INFORMATION_MESSAGE);
+                }
+            });
         }
 
-        return settingComponent;
+        return PModOption.fallback();
     }
 }

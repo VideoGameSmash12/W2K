@@ -5,6 +5,7 @@ import fi.dy.masa.malilib.config.IConfigBase;
 import fi.dy.masa.malilib.config.options.*;
 import fi.dy.masa.malilib.util.Color4f;
 import me.videogamesm12.w2k.blackbox.Blackbox;
+import me.videogamesm12.w2k.integrator.core.gui.PModOption;
 
 import javax.swing.*;
 import java.awt.*;
@@ -110,72 +111,36 @@ public class LitematicaSettingsDialog extends JDialog
 
         public JComponent getSettingComponent(IConfigBase entry)
         {
-            JComponent settingComponent;
-
             if (entry instanceof ConfigString)
             {
                 final ConfigString string = (ConfigString) entry;
-                settingComponent = new JTextField(string.getStringValue(), 12);
-                JTextField textField = (JTextField) settingComponent;
-                textField.addActionListener((e) -> string.setValueFromString(textField.getText()));
+                return PModOption.forString(string::getStringValue, string::setValueFromString);
             }
             else if (entry instanceof ConfigBoolean)
             {
                 final ConfigBoolean bool = (ConfigBoolean) entry;
-                settingComponent = new JCheckBox("", bool.getBooleanValue());
-                JCheckBox checkBox = (JCheckBox) settingComponent;
-                checkBox.addActionListener((e) -> bool.setBooleanValue(checkBox.isSelected()));
+                return PModOption.forBoolean(bool::getBooleanValue, bool::setBooleanValue);
             }
             else if (entry instanceof ConfigColor)
             {
-                final ConfigColor color = (ConfigColor) entry;
-                settingComponent = new JButton();
-                JButton button = (JButton) settingComponent;
+                final ConfigColor configColor = (ConfigColor) entry;
+                return PModOption.forColor(this,
+                        () -> new Color(configColor.getColor().r, configColor.getColor().g, configColor.getColor().b, configColor.getColor().a),
+                        color -> configColor.setIntegerValue(new Color4f(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).intValue));
 
-                Color convertedColor;
-                try
-                {
-                    convertedColor = new Color(color.getColor().r, color.getColor().g, color.getColor().b, color.getColor().a);
-                    button.setBackground(convertedColor);
-                }
-                catch (IllegalArgumentException ignored)
-                {
-                    convertedColor = null;
-                }
-
-                // needs to be final because lambdas are goofy i guess
-                final Color finalConvertedColor = convertedColor;
-
-                button.addActionListener(e -> {
-                    Color newColor = JColorChooser.showDialog(this, "Choose a color", finalConvertedColor);
-                    if (newColor != null)
-                    {
-                        button.setBackground(newColor);
-                        color.setIntegerValue(new Color4f(newColor.getRed(), newColor.getGreen(), newColor.getBlue(),
-                                newColor.getAlpha()).intValue);
-                    }
-                });
             }
             else if (entry instanceof ConfigDouble)
             {
                 final ConfigDouble doubleEntry = (ConfigDouble) entry;
-                settingComponent = new JSpinner(new SpinnerNumberModel(doubleEntry.getDoubleValue(), doubleEntry.getMinDoubleValue(), doubleEntry.getMaxDoubleValue(), 0.1));
-                JSpinner spinner = (JSpinner) settingComponent;
-                spinner.addChangeListener(e -> doubleEntry.setDoubleValue((double) spinner.getValue()));
+                return PModOption.forDoubleSinner(doubleEntry::getDoubleValue, doubleEntry::setDoubleValue, doubleEntry.getMinDoubleValue(), doubleEntry.getMaxDoubleValue(), 0.1);
             }
             else if (entry instanceof ConfigInteger)
             {
                 final ConfigInteger integer = (ConfigInteger) entry;
-                settingComponent = new JSpinner(new SpinnerNumberModel(integer.getIntegerValue(), integer.getMinIntegerValue(), integer.getMaxIntegerValue(), 1));
-                JSpinner spinner = (JSpinner) settingComponent;
-                spinner.addChangeListener(e -> integer.setIntegerValue((int) spinner.getValue()));
-            }
-            else
-            {
-                settingComponent = new JLabel("Option type not implemented");
+                return PModOption.forIntegerSpinner(integer::getIntegerValue, integer::setIntegerValue, integer.getMinIntegerValue(), integer.getMaxIntegerValue());
             }
 
-            return settingComponent;
+            return PModOption.fallback();
         }
     }
 }

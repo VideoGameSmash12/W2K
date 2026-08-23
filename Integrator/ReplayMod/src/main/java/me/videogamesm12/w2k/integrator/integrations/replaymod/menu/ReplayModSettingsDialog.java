@@ -4,6 +4,7 @@ import com.replaymod.core.ReplayMod;
 import com.replaymod.core.SettingsRegistry;
 import com.replaymod.replaystudio.util.I18n;
 import me.videogamesm12.w2k.blackbox.Blackbox;
+import me.videogamesm12.w2k.integrator.core.gui.PModOption;
 
 import javax.swing.*;
 import java.awt.*;
@@ -48,10 +49,9 @@ public class ReplayModSettingsDialog extends JDialog
             if (choiceKey.getDefault() instanceof String)
             {
                 final SettingsRegistry.MultipleChoiceSettingKey<String> multiString = (SettingsRegistry.MultipleChoiceSettingKey<String>) choiceKey;
-                settingComponent = new JComboBox<>(multiString.getChoices().toArray(new String[0]));
-                final JComboBox<String> comboBox = (JComboBox<String>) settingComponent;
-                comboBox.setSelectedItem(registry.get(multiString));
-                comboBox.addActionListener((e) -> registry.set(multiString, (String) comboBox.getSelectedItem()));
+                return PModOption.forPracticalEnum(multiString.getChoices(),
+                        () -> registry.get(multiString),
+                        value -> registry.set(multiString, value));
             }
             else
             {
@@ -63,23 +63,22 @@ public class ReplayModSettingsDialog extends JDialog
             if (key.getDefault() instanceof Integer)
             {
                 final SettingsRegistry.SettingKey<Integer> integerKey = (SettingsRegistry.SettingKey<Integer>) key;
-                settingComponent = new JSpinner(new SpinnerNumberModel((int) integerKey.getDefault(), 0, Integer.MAX_VALUE, 1));
-                final JSpinner spinner = (JSpinner) settingComponent;
-                spinner.addChangeListener((e) -> registry.set(integerKey, (int) spinner.getValue()));
+                return PModOption.forIntegerSpinner(() -> registry.get(integerKey),
+                        value -> registry.set(integerKey, value),
+                        0,
+                        Integer.MAX_VALUE);
             }
             else if (key.getDefault() instanceof String)
             {
                 final SettingsRegistry.SettingKey<String> stringKey = (SettingsRegistry.SettingKey<String>) key;
-                settingComponent = new JTextField(registry.get(stringKey));
-                final JTextField textField = (JTextField) settingComponent;
-                textField.addActionListener((e) -> registry.set(stringKey, textField.getText()));
+                return PModOption.forString(() -> registry.get(stringKey),
+                        value -> registry.set(stringKey, value));
             }
             else if (key.getDefault() instanceof Boolean)
             {
                 final SettingsRegistry.SettingKey<Boolean> boolKey = (SettingsRegistry.SettingKey<Boolean>) key;
-                settingComponent = new JCheckBox("", registry.get(boolKey));
-                final JCheckBox checkBox = (JCheckBox) settingComponent;
-                checkBox.addActionListener((e) -> registry.set(boolKey, checkBox.isSelected()));
+                return PModOption.forBoolean(() -> registry.get(boolKey),
+                        value -> registry.set(boolKey, value));
             }
             else
             {

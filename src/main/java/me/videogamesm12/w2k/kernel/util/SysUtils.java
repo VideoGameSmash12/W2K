@@ -1,11 +1,17 @@
 package me.videogamesm12.w2k.kernel.util;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.fabricmc.loader.api.SemanticVersion;
 import net.fabricmc.loader.api.VersionParsingException;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 /**
  * <h1>SysUtils</h1>
@@ -57,13 +63,30 @@ public class SysUtils
         return System.getenv("XDG_SESSION_TYPE").equalsIgnoreCase("wayland");
     }
 
+    @RequiredArgsConstructor
     public enum OperatingSystem
     {
-        WINDOWS,
-        MAC_OS,
-        LINUX,
-        SOLARIS,
-        OTHER
+        WINDOWS(path -> new String[]{"rundll32", "url.dll,FileProtocolHandler", path}),
+        MAC_OS(path -> new String[]{"open", path}),
+        LINUX(path -> new String[]{"xdg-open", path}),
+        SOLARIS(null),
+        OTHER(null);
+
+        private final Function<String, String[]> openPath;
+
+        public void openFolder(File file)
+        {
+            if (openPath != null)
+            {
+                try
+                {
+                    execute(openPath.apply(file.getAbsolutePath()));
+                }
+                catch (IOException ignored)
+                {
+                }
+            }
+        }
     }
 
     /**
