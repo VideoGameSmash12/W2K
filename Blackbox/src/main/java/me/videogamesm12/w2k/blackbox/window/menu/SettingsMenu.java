@@ -2,6 +2,7 @@ package me.videogamesm12.w2k.blackbox.window.menu;
 
 import me.videogamesm12.w2k.blackbox.Blackbox;
 import me.videogamesm12.w2k.blackbox.window.menu.settings.ThemeMenu;
+import me.videogamesm12.w2k.blackbox.window.tab.PlayersTab;
 
 import javax.swing.*;
 
@@ -24,8 +25,8 @@ public class SettingsMenu extends JMenu
         enhancedLists.setToolTipText("Provides more information in the current tab you're on. Requires a restart to take effect.");
         enhancedLists.addActionListener(e ->
         {
-            JOptionPane.showMessageDialog(this, "You will need to restart your Minecraft client for this to take effect.", "Restart Required", JOptionPane.INFORMATION_MESSAGE);
             Blackbox.getInstance().getConfig().setEnhancedListingEnabled(enhancedLists.isSelected());
+            Blackbox.getInstance().getMainWindow().setupTabs();
         });
         //--
         add(new ThemeMenu());

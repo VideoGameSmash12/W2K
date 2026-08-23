@@ -10,23 +10,17 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.function.Consumer;
 
-public abstract class AbstractTab extends JPanel
+public abstract class AbstractTab<T extends JComponent> extends JPanel
 {
-    private final JTextArea textArea = new JTextArea();
+    public final T outputBox;
 
-    public AbstractTab()
+    public AbstractTab(final T outputBox)
     {
         final JScrollPane scroll = new JScrollPane();
-
-        textArea.setEditable(false);
-        textArea.setColumns(20);
-        textArea.setRows(5);
-        textArea.setLineWrap(true);
-        textArea.setWrapStyleWord(true);
-        textArea.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
-
-        scroll.setViewportView(textArea);
+        this.outputBox = outputBox;
+        scroll.setViewportView(outputBox);
 
         final JLabel besidesField = new JLabel("Input:");
         final JTextField field = new JTextField();
@@ -100,20 +94,9 @@ public abstract class AbstractTab extends JPanel
         }
     }
 
-    public void showMessage(String text)
-    {
-        textArea.append(text + "\n");
+    public abstract void showMessage(String text);
 
-        if (textArea.getSelectedText() == null)
-        {
-            textArea.setCaretPosition(textArea.getDocument().getLength());
-        }
-    }
-
-    public void clear()
-    {
-        textArea.setText(null);
-    }
+    public abstract void clear();
 
     protected void send(String messageOrCommand)
     {

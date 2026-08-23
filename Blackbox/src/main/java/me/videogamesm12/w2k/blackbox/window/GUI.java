@@ -30,6 +30,7 @@ public class GUI extends JFrame
     private Helper helper;
     //--
     private final JMenuBar menuBar;
+    @Getter
     private final JTabbedPane tabbedPane;
     //--
     private final Timer timer;
@@ -61,15 +62,7 @@ public class GUI extends JFrame
                 GroupLayout.Alignment.TRAILING));
         layout.setVerticalGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(tabbedPane,
                 GroupLayout.Alignment.TRAILING));
-        // TODO: Consider adding icons for each tab. It might make the UI look fancier.
-        tabbedPane.addTab("General", new MainTab());
-        tabbedPane.addTab("Players", new PlayersTab());
-        tabbedPane.addTab("Entities", new EntitiesTab());
-        tabbedPane.addTab("Tile Entities", new BlockEntitiesTab());
-        tabbedPane.addTab("Maps", new MapsTab());
-        tabbedPane.addTab("Inventory", new InventoryTab());
-        if (ExperimentManager.isExperimentEnabled(Experiment.BLACKBOX_RUNTIME_PROPERTIES_TAB))
-            tabbedPane.addTab("Properties", new PropertiesTab());
+        setupTabs();
         // End of component setup
 
         // Sets up timers
@@ -158,5 +151,28 @@ public class GUI extends JFrame
         {
             W2K.getLogger().error("Failed to load icon image", ex);
         }
+    }
+
+    public void setupTabs()
+    {
+        // TODO: Consider adding icons for each tab. It might make the UI look fancier.
+
+        // Remove all tabs currently present (necessary for "refreshing")
+        int tabId = tabbedPane.getSelectedIndex();
+        tabbedPane.removeAll();
+
+        // Add the tabs we need
+        tabbedPane.addTab("General", new MainTab());
+        tabbedPane.addTab("Players", new PlayersTab());
+        tabbedPane.addTab("Entities", new EntitiesTab());
+        tabbedPane.addTab("Tile Entities", new BlockEntitiesTab());
+        tabbedPane.addTab("Maps", new MapsTab());
+        tabbedPane.addTab("Inventory", new InventoryTab());
+        if (ExperimentManager.isExperimentEnabled(Experiment.BLACKBOX_RUNTIME_PROPERTIES_TAB))
+            tabbedPane.addTab("Properties", new PropertiesTab());
+
+        // Go back to the tab we were at before if we haven't already
+        if (tabId != -1)
+            tabbedPane.setSelectedIndex(tabId);
     }
 }

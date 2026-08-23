@@ -16,7 +16,16 @@ public class ToolsMenu extends JMenu
         //--
         final JMenuItem chatWindow = new JMenuItem("Open Console");
         chatWindow.setToolTipText("Opens the Blackbox Console.");
-        chatWindow.addActionListener((e) -> Blackbox.getInstance().getMainWindow().openConsoleWindow());
+        chatWindow.addActionListener((e) -> {
+            try
+            {
+                Blackbox.getInstance().getMainWindow().openConsoleWindow();
+            }
+            catch (Throwable ex)
+            {
+                ex.printStackTrace();
+            }
+        });
         add(chatWindow);
         //--
         final JMenuItem dumpThreads = new JMenuItem("Dump thread information");

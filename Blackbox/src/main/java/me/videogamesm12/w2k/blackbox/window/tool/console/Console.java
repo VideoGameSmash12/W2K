@@ -68,7 +68,7 @@ public class Console extends JFrame
         }
     }
 
-    public void addTab(AbstractTab tab)
+    public void addTab(AbstractTab<?> tab)
     {
         tabs.addTab(tab.name(), tab);
     }

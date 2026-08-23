@@ -12,13 +12,24 @@ import me.videogamesm12.w2k.supervisor.components.fantasia.session.CommandSender
 import me.videogamesm12.w2k.supervisor.components.fantasia.session.ISession;
 import net.minecraft.text.Text;
 
-public class FantasiaTab extends AbstractTab
+import javax.swing.*;
+import java.awt.*;
+
+public class FantasiaTab extends AbstractTab<JTextArea>
 {
     private final BlackboxSession session;
 
     public FantasiaTab()
     {
-        super();
+        super(new JTextArea());
+
+        outputBox.setEditable(false);
+        outputBox.setColumns(20);
+        outputBox.setRows(5);
+        outputBox.setLineWrap(true);
+        outputBox.setWrapStyleWord(true);
+        outputBox.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
+
         session = new BlackboxSession(this);
         //--
         Fantasia.getInstance().getServer().addSession(session);
@@ -34,6 +45,23 @@ public class FantasiaTab extends AbstractTab
     public String name()
     {
         return "Fantasia";
+    }
+
+    @Override
+    public void showMessage(String text)
+    {
+        outputBox.append(text + "\n");
+
+        if (outputBox.getSelectedText() == null)
+        {
+            outputBox.setCaretPosition(outputBox.getDocument().getLength());
+        }
+    }
+
+    @Override
+    public void clear()
+    {
+        outputBox.setText(null);
     }
 
     @Override
