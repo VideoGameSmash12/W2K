@@ -32,7 +32,9 @@ public abstract class BlockEntityWrapper implements IBlockEntityEntry
     @Override
     public String w2k$type()
     {
-        return Objects.requireNonNull(Registries.BLOCK_ENTITY_TYPE.getKey(getType())).toString();
+        return Objects.requireNonNull(Registries.BLOCK_ENTITY_TYPE.getKey(getType()))
+                .map(key -> key.getValue().toString())
+                .orElse("minecraft:unknown");
     }
 
     @Override
