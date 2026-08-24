@@ -24,6 +24,7 @@
   "mixins": [
     "accessor.WorldAccessor",
     "injector.CrashReportMixin",
+    "injector.PlayerEntityMixin",
     "wrapper.BlockEntityWrapper",
     "wrapper.EntityWrapper",
     "wrapper.ItemStackWrapper",

@@ -1,12 +1,10 @@
-package me.videogamesm12.w2k.drivers.v1_20_1.mixin.injector;
+package me.videogamesm12.w2k.drivers.v1_21_4.mixin.injector;
 
 import com.llamalad7.mixinextras.sugar.Local;
 import me.videogamesm12.w2k.kernel.W2K;
 import me.videogamesm12.w2k.kernel.data.IEntityEntry;
 import me.videogamesm12.w2k.kernel.data.IItemStackEntry;
-import me.videogamesm12.w2k.toolbox.modules.AntiLockup;
 import me.videogamesm12.w2k.toolbox.modules.BanHammer;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
