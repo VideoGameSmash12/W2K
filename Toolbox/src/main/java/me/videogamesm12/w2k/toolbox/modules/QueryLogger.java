@@ -25,7 +25,7 @@ public class QueryLogger extends WModule
 
     public QueryLogger()
     {
-        super("QueryLogger",
+        super("Query Logger",
                 "Dumps 'F3 + I' query responses received from the server to their own dedicated dump files.");
     }
 

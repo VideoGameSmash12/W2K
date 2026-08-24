@@ -33,7 +33,7 @@ public class WModuleManager
 
             // Get the relevant registry for this mod
             final Map<String, WModule> modModuleRegistry = registry.get(mod);
-            modModuleRegistry.put(mod.getMetadata().getId() + ":" + module.getId(), module);
+            modModuleRegistry.put(mod.getMetadata().getId() + ":" + module.getId().replace(" ", "_"), module);
         });
     }
 

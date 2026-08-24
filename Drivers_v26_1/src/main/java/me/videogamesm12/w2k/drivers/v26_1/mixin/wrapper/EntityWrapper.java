@@ -64,10 +64,19 @@ public abstract class EntityWrapper implements IEntityEntry
     @Shadow
     public abstract void saveWithoutId(ValueOutput output);
 
+    @Shadow
+    public abstract String getScoreboardName();
+
     @Unique
     private JsonElement cachedName = null;
     @Unique
     private int nameHash = 0;
+
+    @Override
+    public String w2k$internalName()
+    {
+        return getScoreboardName();
+    }
 
     @Override
     public JsonElement w2k$name()

@@ -16,6 +16,7 @@
     ],
     "w2k-modules": [
       "me.videogamesm12.w2k.toolbox.modules.AntiLockup",
+      "me.videogamesm12.w2k.toolbox.modules.BanHammer",
       "me.videogamesm12.w2k.toolbox.modules.QueryLogger"
     ]
   },

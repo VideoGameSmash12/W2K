@@ -9,6 +9,8 @@ import java.util.UUID;
 
 public interface IEntityEntry
 {
+    String w2k$internalName();
+
     JsonElement w2k$name();
 
     String w2k$type();

@@ -98,22 +98,7 @@ public class ClientPlayNetworkHandlerMixin
                 && packet.getTitle().contains(net.minecraft.network.chat.Component.literal("Player")))
         {
             ci.cancel();
-
-            if (antiLockup.showAlert.get())
-            {
-                antiLockup.setPacketCount(antiLockup.getPacketCount() + 1);
-
-                if ((System.currentTimeMillis() - antiLockup.getTimeSinceLastAlert() >= antiLockup.alertInterval.get()))
-                {
-                    final Component message = Component.translatable("w2k.toolbox.module.antilockup.blocked", Component.text(antiLockup.getPacketCount()))
-                            .color(NamedTextColor.YELLOW);
-
-                    W2K.getInstance().getDriverManager().getVersionBridge().displayMessage(message);
-
-                    antiLockup.setTimeSinceLastAlert(System.currentTimeMillis());
-                    antiLockup.setPacketCount(0);
-                }
-            }
+            antiLockup.handleAlerts();
         }
     }
 }

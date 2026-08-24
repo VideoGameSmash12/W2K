@@ -43,10 +43,19 @@ public abstract class EntityWrapper implements IEntityEntry
     @Shadow
     public abstract NbtCompound writeNbt(NbtCompound nbt);
 
+    @Shadow
+    public abstract String getEntityName();
+
     @Unique
     private JsonElement cachedName = null;
     @Unique
     private int nameHash = 0;
+
+    @Override
+    public String w2k$internalName()
+    {
+        return getEntityName();
+    }
 
     @Override
     public JsonElement w2k$name()
