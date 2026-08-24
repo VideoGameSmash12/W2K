@@ -1,5 +1,6 @@
 package me.videogamesm12.w2k.blackbox.window.menu;
 
+import me.videogamesm12.w2k.blackbox.util.JComponents;
 import me.videogamesm12.w2k.kernel.experiment.ExperimentManager;
 import me.videogamesm12.w2k.kernel.experiment.Experiment;
 import me.videogamesm12.w2k.kernel.W2K;
@@ -14,32 +15,29 @@ public class ToolsMenu extends JMenu
     {
         super("Tools");
         //--
-        final JMenuItem chatWindow = new JMenuItem("Open Console");
-        chatWindow.setToolTipText("Opens the Blackbox Console.");
-        chatWindow.addActionListener((e) -> {
-            try
-            {
-                Blackbox.getInstance().getMainWindow().openConsoleWindow();
-            }
-            catch (Throwable ex)
-            {
-                ex.printStackTrace();
-            }
-        });
-        add(chatWindow);
-        //--
-        final JMenuItem dumpThreads = new JMenuItem("Dump thread information");
-        dumpThreads.setToolTipText("Dumps current thread information to disk.");
-        dumpThreads.addActionListener((e) -> Supervisor.getInstance().dumpThreads().forEach(line -> W2K.getLogger().info(line)));
-        add(dumpThreads);
+        add(JComponents.createMenuItem("Open Console",
+                "Opens the Blackbox Console.",
+                () ->
+                {
+                    try
+                    {
+                        Blackbox.getInstance().getMainWindow().openConsoleWindow();
+                    }
+                    catch (Throwable ex)
+                    {
+                        W2K.getLogger().error("Failed to open the Blackbox Console", ex);
+                    }
+                }));
+        add(JComponents.createMenuItem("Dump thread information",
+                "Dumps information about all threads in the client process to your latest.log file.",
+                () -> Supervisor.getInstance().dumpThreads().forEach(line -> W2K.getLogger().info(line))));
         //--
         if (ExperimentManager.isExperimentEnabled(Experiment.BLACKBOX_HELP_WINDOW))
         {
             addSeparator();
-            final JMenuItem helpWindow = new JMenuItem("Help");
-            helpWindow.setToolTipText("Opens a help menu to guide you through the Blackbox.");
-            helpWindow.addActionListener((e) -> Blackbox.getInstance().getMainWindow().openHelperWindow());
-            add(helpWindow);
+            add(JComponents.createMenuItem("Help",
+                    "Opens a help window containing information about W2K.",
+                    () -> Blackbox.getInstance().getMainWindow().openHelperWindow()));
         }
     }
 }

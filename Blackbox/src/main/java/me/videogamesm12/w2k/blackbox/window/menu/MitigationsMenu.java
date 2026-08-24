@@ -1,10 +1,13 @@
 package me.videogamesm12.w2k.blackbox.window.menu;
 
+import me.videogamesm12.w2k.blackbox.util.JComponents;
 import me.videogamesm12.w2k.kernel.util.VersionUtils;
 import me.videogamesm12.w2k.supervisor.Configuration;
 import me.videogamesm12.w2k.supervisor.Supervisor;
 
 import javax.swing.*;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public class MitigationsMenu extends JMenu
 {
@@ -27,45 +30,39 @@ public class MitigationsMenu extends JMenu
         final JMenu menu = new JMenu("Drastic");
         menu.setToolTipText("Drastic actions you can take if necessary.");
 
-        final JMenuItem crash = new JMenuItem("Crash");
-        crash.setToolTipText("Forces the client to crash the next time it tries to render something.");
-        crash.addActionListener((e) -> Supervisor.getInstance().getFlags().setSupposedToCrash(true));
-        menu.add(crash);
+        menu.add(JComponents.createMenuItem("Crash",
+                "Forces the client to crash within the next render tick.",
+                () -> Supervisor.getInstance().getFlags().setSupposedToCrash(true)));
         //--
-        final JMenuItem disconnect = new JMenuItem("Disconnect");
-        disconnect.setToolTipText("Disconnects you from the server you are currently connected to.");
-        disconnect.addActionListener((e) ->
-        {
-            try
-            {
-                Supervisor.getInstance().disconnect();
-            }
-            catch (IllegalStateException | IllegalArgumentException ex)
-            {
-                JOptionPane.showMessageDialog(this, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-            }
-        });
-        menu.add(disconnect);
+        menu.add(JComponents.createMenuItem("Disconnect",
+                "Immediately disconnects you from the server.",
+                () ->
+                {
+                    try
+                    {
+                        Supervisor.getInstance().disconnect();
+                    }
+                    catch (IllegalStateException | IllegalArgumentException ex)
+                    {
+                        JOptionPane.showMessageDialog(this, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                }));
         //--
-        final JMenuItem closeScreen = new JMenuItem("Close Current Screen");
-        closeScreen.setToolTipText("Closes whatever screen is currently open in-game.");
-        closeScreen.addActionListener((e) -> Supervisor.getInstance().closeCurrentScreen());
-        menu.add(closeScreen);
+        menu.add(JComponents.createMenuItem("Close Screen",
+                "Closes whatever screen is currently open in-game.",
+                () -> Supervisor.getInstance().closeCurrentScreen()));
         //--
-        final JMenuItem shutdownSafe = new JMenuItem("Shutdown");
-        shutdownSafe.setToolTipText("Safely closes the game.");
-        shutdownSafe.addActionListener((e) -> Supervisor.getInstance().shutdownSafely());
-        menu.add(shutdownSafe);
+        menu.add(JComponents.createMenuItem("Shutdown",
+                "Safely closes the game.",
+                () -> Supervisor.getInstance().shutdownSafely()));
         //--
-        final JMenuItem shutdownForce = new JMenuItem("Shutdown (Forcefully)");
-        shutdownForce.setToolTipText("Forcefully closes the game whilst still running necessary shutdown hooks.");
-        shutdownForce.addActionListener((e) -> Supervisor.getInstance().shutdownForcefully());
-        menu.add(shutdownForce);
+        menu.add(JComponents.createMenuItem("Shutdown (Forcefully)",
+                "Forcefully closes the game whilst still running necessary shutdown hooks.",
+                () -> Supervisor.getInstance().shutdownForcefully()));
         //--
-        final JMenuItem shutdownNuclear = new JMenuItem("Shutdown (Nuclear)");
-        shutdownNuclear.setToolTipText("Forcefully closes the game without running the necessary shutdown hooks.\nYou should never do this unless all else has failed. This will cause problems.");
-        shutdownNuclear.addActionListener((e) -> Supervisor.getInstance().shutdownNuclear());
-        menu.add(shutdownNuclear);
+        menu.add(JComponents.createMenuItem("Shutdown (Nuclear)",
+                "Terminates the game process before running any necessary shutdown hooks.\nThis will cause problems, so you should only do this if all else has failed.",
+                () -> Supervisor.getInstance().shutdownNuclear()));
 
         return menu;
     }
@@ -76,34 +73,34 @@ public class MitigationsMenu extends JMenu
         menu.setToolTipText("Network-related mitigations");
         final Configuration.Network network = config.getNetworkSettings();
 
-        final JCheckBoxMenuItem entitySpawning = new JCheckBoxMenuItem("Ignore entity spawning", network.isIgnoringEntitySpawns());
-        entitySpawning.setToolTipText("Ignores packets for entity spawning.");
-        entitySpawning.addActionListener((e) -> network.setIgnoringEntitySpawns(entitySpawning.isSelected()));
-        menu.add(entitySpawning);
+        menu.add(JComponents.createCheckboxMenuItem("Ignore entity spawning",
+                "Ignores packets for spawning entities. This does not prevent players from spawning, as that is an entirely separate packet.",
+                network::isIgnoringEntitySpawns,
+                network::setIgnoringEntitySpawns));
         //--
-        final JCheckBoxMenuItem explosionSpawning = new JCheckBoxMenuItem("Ignore explosions", network.isIgnoringExplosions());
-        explosionSpawning.setToolTipText("Ignores packets for spawning explosions. Block updates do still occur.");
-        explosionSpawning.addActionListener((e) -> network.setIgnoringExplosions(explosionSpawning.isSelected()));
-        menu.add(explosionSpawning);
+        menu.add(JComponents.createCheckboxMenuItem("Ignore explosions",
+                "Ignores packets for spawning explosions. This does not prevent the block updates caused by explosions.",
+                network::isIgnoringExplosions,
+                network::setIgnoringExplosions));
         //--
         // Light update packets were introduced in 1.16, so this mitigation doesn't work on anything older than that
         if (VersionUtils.isNewerThanOrRunning("1.16.5"))
         {
-            final JCheckBoxMenuItem lightUpdates = new JCheckBoxMenuItem("Ignore light updates", network.isIgnoringLightUpdates());
-            lightUpdates.setToolTipText("Ignores packets for light updates. Combats a known client lag exploit related to this.");
-            lightUpdates.addActionListener((e) -> network.setIgnoringLightUpdates(lightUpdates.isSelected()));
-            menu.add(lightUpdates);
+            menu.add(JComponents.createCheckboxMenuItem("Ignore light updates",
+                    "Ignores packets for light updates. Combats a known client lag exploit related to this.",
+                    network::isIgnoringLightUpdates,
+                    network::setIgnoringLightUpdates));
         }
         //--
-        final JCheckBoxMenuItem particleSpawning = new JCheckBoxMenuItem("Ignore particle spawning", network.isIgnoringParticleSpawns());
-        particleSpawning.setToolTipText("Ignores packets for particle spawning.");
-        particleSpawning.addActionListener((e) -> network.setIgnoringParticleSpawns(particleSpawning.isSelected()));
-        menu.add(particleSpawning);
+        menu.add(JComponents.createCheckboxMenuItem("Ignore particle spawning",
+                "Ignores packets for particle spawning. This does NOT affect particles generated by area effect clouds.",
+                network::isIgnoringParticleSpawns,
+                network::setIgnoringParticleSpawns));
         //--
-        final JCheckBoxMenuItem mapUpdates = new JCheckBoxMenuItem("Ignore map updates", network.isIgnoringMapUpdates());
-        mapUpdates.setToolTipText("Ignores packets for map data updates.");
-        mapUpdates.addActionListener((e) -> network.setIgnoringMapUpdates(mapUpdates.isSelected()));
-        menu.add(mapUpdates);
+        menu.add(JComponents.createCheckboxMenuItem("Ignore map updates",
+                "Ignores packets for map data updates.\nUseful for preventing memory exhaustion exploits related to it.",
+                network::isIgnoringMapUpdates,
+                network::setIgnoringMapUpdates));
 
         return menu;
     }
@@ -114,30 +111,30 @@ public class MitigationsMenu extends JMenu
         menu.setToolTipText("Rendering-related mitigations");
         final Configuration.Rendering rendering = config.getRenderingSettings();
 
-        final JCheckBoxMenuItem gameRendering = new JCheckBoxMenuItem("Disable rendering completely", rendering.isGameRenderingDisabled());
-        gameRendering.setToolTipText("Entirely disables any and all rendering for the game.");
-        gameRendering.addActionListener((e) -> rendering.setGameRenderingDisabled(gameRendering.isSelected()));
-        menu.add(gameRendering);
-        //--
-        final JCheckBoxMenuItem worldRendering = new JCheckBoxMenuItem("Disable world rendering", rendering.isWorldRenderingDisabled());
-        worldRendering.setToolTipText("Prevents the game from rendering the world itself.");
-        worldRendering.addActionListener((e) -> rendering.setWorldRenderingDisabled(worldRendering.isSelected()));
-        menu.add(worldRendering);
-        //--
-        final JCheckBoxMenuItem weatherRendering = new JCheckBoxMenuItem("Disable weather rendering", rendering.isWeatherRenderingDisabled());
-        weatherRendering.setToolTipText("Prevents the game from rendering the weather. Helpful in case the particles cause FPS drops.");
-        weatherRendering.addActionListener((e) -> rendering.setWeatherRenderingDisabled(weatherRendering.isSelected()));
-        menu.add(weatherRendering);
-        //--
-        final JCheckBoxMenuItem entityRendering = new JCheckBoxMenuItem("Disable entity rendering", rendering.isEntityRenderingDisabled());
-        entityRendering.setToolTipText("Prevents the game from rendering entities.");
-        entityRendering.addActionListener((e) -> rendering.setEntityRenderingDisabled(entityRendering.isSelected()));
-        menu.add(entityRendering);
-        //--
-        final JCheckBoxMenuItem tileEntityRendering = new JCheckBoxMenuItem("Disable tile entity rendering", rendering.isTileEntityRenderingDisabled());
-        tileEntityRendering.setToolTipText("Prevents the game from rendering tile entities (e.g. chests, shulker boxes, skulls, etc).");
-        tileEntityRendering.addActionListener((e) -> rendering.setTileEntityRenderingDisabled(tileEntityRendering.isSelected()));
-        menu.add(tileEntityRendering);
+        menu.add(JComponents.createCheckboxMenuItem("Disable rendering completely",
+                "Entirely disables any and all rendering for the game.",
+                rendering::isGameRenderingDisabled,
+                rendering::setGameRenderingDisabled));
+
+        menu.add(JComponents.createCheckboxMenuItem("Disable world rendering",
+                "Prevents the game from rendering the world itself.\nThis can create some pretty wacky visual effects.",
+                rendering::isWorldRenderingDisabled,
+                rendering::setWorldRenderingDisabled));
+
+        menu.add(JComponents.createCheckboxMenuItem("Disable weather rendering",
+                "Prevents the game from rendering the weather.\nHelpful for weaker hardware or in case the particles cause noticeable FPS drops.",
+                rendering::isWeatherRenderingDisabled,
+                rendering::setWeatherRenderingDisabled));
+
+        menu.add(JComponents.createCheckboxMenuItem("Disable entity rendering",
+                "Prevents the game from rendering entities.",
+                rendering::isEntityRenderingDisabled,
+                rendering::setEntityRenderingDisabled));
+
+        menu.add(JComponents.createCheckboxMenuItem("Disable tile entity rendering",
+                "Prevents the game from rendering tile entities (e.g. chests, shulker boxes, skulls, signs, etc).",
+                rendering::isTileEntityRenderingDisabled,
+                rendering::setTileEntityRenderingDisabled));
 
         return menu;
     }
