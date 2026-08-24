@@ -85,6 +85,8 @@ public class Configuration
 
         private boolean ignoringMapUpdates;
 
+        private boolean ignoringScreens;
+
         public Map<String, Boolean> getSettings()
         {
             final Map<String, Boolean> map = new WeakHashMap<>();

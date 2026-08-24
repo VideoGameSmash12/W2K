@@ -94,26 +94,32 @@ public class ClientPlayNetworkHandlerMixin
     @Inject(method = "onOpenScreen", at = @At("HEAD"), cancellable = true)
     public void onOpenScreen(OpenScreenS2CPacket packet, CallbackInfo ci)
     {
-        final AntiLockup module = W2K.getInstance().getModuleManager().getModule(AntiLockup.class);
-        if (module.isEnabled()
+        if (Supervisor.getConfig().getNetworkSettings().isIgnoringScreens())
+        {
+            ci.cancel();
+            return;
+        }
+
+        final AntiLockup antiLockup = W2K.getInstance().getModuleManager().getModule(AntiLockup.class);
+        if (antiLockup.isEnabled()
                 && packet.getScreenHandlerType() == ScreenHandlerType.GENERIC_9X4
                 && packet.getName().contains(Text.literal("Player")))
         {
             ci.cancel();
 
-            if (module.showAlert.get())
+            if (antiLockup.showAlert.get())
             {
-                w2k$lockupCount++;
+                antiLockup.setPacketCount(antiLockup.getPacketCount() + 1);
 
-                if ((System.currentTimeMillis() - w2k$lastAntiLockupAlert >= module.alertInterval.get()))
+                if ((System.currentTimeMillis() - antiLockup.getTimeSinceLastAlert() >= antiLockup.alertInterval.get()))
                 {
-                    final Component message = Component.translatable("w2k.toolbox.module.antilockup.blocked", Component.text(w2k$lockupCount))
+                    final Component message = Component.translatable("w2k.toolbox.module.antilockup.blocked", Component.text(antiLockup.getPacketCount()))
                             .color(NamedTextColor.YELLOW);
 
                     W2K.getInstance().getDriverManager().getVersionBridge().displayMessage(message);
 
-                    w2k$lastAntiLockupAlert = System.currentTimeMillis();
-                    w2k$lockupCount = 0;
+                    antiLockup.setTimeSinceLastAlert(System.currentTimeMillis());
+                    antiLockup.setPacketCount(0);
                 }
             }
         }

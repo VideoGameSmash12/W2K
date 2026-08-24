@@ -102,6 +102,11 @@ public class MitigationsMenu extends JMenu
                 network::isIgnoringMapUpdates,
                 network::setIgnoringMapUpdates));
 
+        menu.add(JComponents.createCheckboxMenuItem("Ignore inventory screens",
+                "Ignores packets instructing the client to open inventory screens.",
+                network::isIgnoringScreens,
+                network::setIgnoringScreens));
+
         return menu;
     }
 

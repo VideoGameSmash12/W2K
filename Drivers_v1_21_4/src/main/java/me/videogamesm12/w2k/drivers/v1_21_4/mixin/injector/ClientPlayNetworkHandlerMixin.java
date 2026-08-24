@@ -22,9 +22,15 @@
 
 package me.videogamesm12.w2k.drivers.v1_21_4.mixin.injector;
 
+import me.videogamesm12.w2k.kernel.W2K;
 import me.videogamesm12.w2k.supervisor.Supervisor;
+import me.videogamesm12.w2k.toolbox.modules.AntiLockup;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.network.packet.s2c.play.*;
+import net.minecraft.screen.ScreenHandlerType;
+import net.minecraft.text.Text;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -75,6 +81,40 @@ public class ClientPlayNetworkHandlerMixin
         if (Supervisor.getConfig().getNetworkSettings().isIgnoringMapUpdates())
         {
             ci.cancel();
+        }
+    }
+
+    @Inject(method = "onOpenScreen", at = @At("HEAD"), cancellable = true)
+    public void onOpenScreen(OpenScreenS2CPacket packet, CallbackInfo ci)
+    {
+        if (Supervisor.getConfig().getNetworkSettings().isIgnoringScreens())
+        {
+            ci.cancel();
+            return;
+        }
+
+        final AntiLockup antiLockup = W2K.getInstance().getModuleManager().getModule(AntiLockup.class);
+        if (antiLockup.isEnabled()
+                && packet.getScreenHandlerType() == ScreenHandlerType.GENERIC_9X4
+                && packet.getName().contains(Text.literal("Player")))
+        {
+            ci.cancel();
+
+            if (antiLockup.showAlert.get())
+            {
+                antiLockup.setPacketCount(antiLockup.getPacketCount() + 1);
+
+                if ((System.currentTimeMillis() - antiLockup.getTimeSinceLastAlert() >= antiLockup.alertInterval.get()))
+                {
+                    final Component message = Component.translatable("w2k.toolbox.module.antilockup.blocked", Component.text(antiLockup.getPacketCount()))
+                            .color(NamedTextColor.YELLOW);
+
+                    W2K.getInstance().getDriverManager().getVersionBridge().displayMessage(message);
+
+                    antiLockup.setTimeSinceLastAlert(System.currentTimeMillis());
+                    antiLockup.setPacketCount(0);
+                }
+            }
         }
     }
 }

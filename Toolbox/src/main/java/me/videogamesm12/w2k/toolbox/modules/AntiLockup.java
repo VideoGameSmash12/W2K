@@ -1,5 +1,7 @@
 package me.videogamesm12.w2k.toolbox.modules;
 
+import lombok.Getter;
+import lombok.Setter;
 import me.videogamesm12.w2k.kernel.module.WModule;
 import me.videogamesm12.w2k.kernel.module.setting.BooleanSetting;
 import me.videogamesm12.w2k.kernel.module.setting.LongSetting;
@@ -8,6 +10,13 @@ public class AntiLockup extends WModule
 {
     public final BooleanSetting showAlert = register(new BooleanSetting("show_alert", "Show Alert", true));
     public final LongSetting alertInterval = register(new LongSetting("alert_interval", "Alert Inverval (in ms)", 5000, 0, Long.MAX_VALUE));
+    //--
+    @Getter
+    @Setter
+    private long timeSinceLastAlert;
+    @Getter
+    @Setter
+    private int packetCount;
 
     public AntiLockup()
     {

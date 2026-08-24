@@ -1,30 +1,30 @@
-package me.videogamesm12.w2k.drivers.v1_20_1.mixin.injector;
+package me.videogamesm12.w2k.drivers.v26_1.mixin.injector;
 
 import me.videogamesm12.w2k.kernel.W2K;
 import me.videogamesm12.w2k.toolbox.modules.QueryLogger;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import net.minecraft.block.BlockState;
-import net.minecraft.client.Keyboard;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.client.KeyboardHandler;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(Keyboard.class)
+@Mixin(KeyboardHandler.class)
 public class KeyboardMixin
 {
-    @Inject(method = "copyEntity", at = @At("HEAD"))
-    public void onCopyEntity(Identifier id, Vec3d pos, NbtCompound nbt, CallbackInfo ci)
+    @Inject(method = "copyCreateEntityCommand", at = @At("HEAD"))
+    public void onCopyEntity(Identifier id, Vec3 pos, CompoundTag entityTag, CallbackInfo ci)
     {
         final QueryLogger module = W2K.getInstance().getModuleManager().getModule(QueryLogger.class);
         if (module.isEnabled())
         {
-            module.logQueryResult(id.toString(), nbt.toString()).whenComplete((result, error) ->
+            module.logQueryResult(id.toString(), entityTag.toString()).whenComplete((result, error) ->
             {
                 if (error != null)
                 {
@@ -44,13 +44,13 @@ public class KeyboardMixin
         }
     }
 
-    @Inject(method = "copyBlock", at = @At("HEAD"))
-    public void onCopyBlock(BlockState state, BlockPos pos, NbtCompound nbt, CallbackInfo ci)
+    @Inject(method = "copyCreateBlockCommand", at = @At("HEAD"))
+    public void onCopyBlock(BlockState state, BlockPos blockPos, CompoundTag entityTag, CallbackInfo ci)
     {
         final QueryLogger module = W2K.getInstance().getModuleManager().getModule(QueryLogger.class);
         if (module.isEnabled())
         {
-            module.logQueryResult(state.getRegistryEntry().getKey().map(value -> value.getValue().toString()).orElse("air"), nbt.toString()).whenComplete((result, error) ->
+            module.logQueryResult(state.typeHolder().unwrapKey().map(value -> value.identifier().toString()).orElse("air"), entityTag.toString()).whenComplete((result, error) ->
             {
                 if (error != null)
                 {
