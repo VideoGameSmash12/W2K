@@ -10,7 +10,9 @@ import me.videogamesm12.w2k.kernel.commands.W2KCmd;
 import me.videogamesm12.w2k.kernel.data.BuildMetadata;
 import me.videogamesm12.w2k.kernel.driver.WDriverManager;
 import me.videogamesm12.w2k.kernel.event.diagnostics.PopulateCrashReportEvent;
+import me.videogamesm12.w2k.kernel.event.lifecycle.ClientStoppedEvent;
 import me.videogamesm12.w2k.kernel.experiment.ExperimentManager;
+import me.videogamesm12.w2k.kernel.module.WModuleManager;
 import me.videogamesm12.w2k.kernel.util.VersionUtils;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
@@ -48,6 +50,8 @@ public class W2K implements ModInitializer
     private WDriverManager driverManager;
     @Getter
     private WCommandManager commandManager;
+    @Getter
+    private WModuleManager moduleManager;
 
     @Override
     public void onInitialize()
@@ -58,6 +62,8 @@ public class W2K implements ModInitializer
         driverManager = new WDriverManager();
         logger.info("Setting up command manager");
         commandManager = new WCommandManager();
+        logger.info("Setting up module manager");
+        moduleManager = new WModuleManager();
         logger.info("Kernel successfully initialized");
 
         logger.info("Loading required drivers");
@@ -76,6 +82,11 @@ public class W2K implements ModInitializer
             logger.warn("[!] Experiments have been enabled. Expect some instability. List of enabled experiments:");
             ExperimentManager.getEnabledExperiments().forEach(experiment -> logger.warn("[!]  - {}", experiment.name()));
         }
+
+        logger.info("Initializing modules");
+        moduleManager.registerModules();
+        moduleManager.loadModules();
+        logger.info("Modules successfully initialized");
 
         getEventBus().register(this);
     }
@@ -123,5 +134,16 @@ public class W2K implements ModInitializer
                     .map(experiment -> "\t" + experiment.name()).collect(Collectors.toList()));
             event.appendSection("Experiment Manager", experimentManager.toArray(new String[0]));
         }
+    }
+
+    @Subscribe
+    public void onShutdown(ClientStoppedEvent event)
+    {
+        // Save our module settings
+       if (moduleManager != null)
+       {
+           logger.info("Saving module settings");
+           moduleManager.saveModules();
+       }
     }
 }

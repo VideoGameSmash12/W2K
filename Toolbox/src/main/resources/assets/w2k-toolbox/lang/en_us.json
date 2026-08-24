@@ -14,5 +14,6 @@
   "w2k.toolbox.dump.success.entities": "Entity dump complete (%1$s successful, %2$s failed).",
   "w2k.toolbox.dump.success.maps": "Map dump complete (%1$s successful, %2$s failed).",
   "w2k.toolbox.dump.success.screen": "Inventory dump complete (%1$s successful, %2$s failed, %3$s ignored).",
-  "w2k.toolbox.dump.success.tiles": "Tile entity dump complete (%1$s successful, %2$s failed, %3$s ignored)."
+  "w2k.toolbox.dump.success.tiles": "Tile entity dump complete (%1$s successful, %2$s failed, %3$s ignored).",
+  "w2k.toolbox.module.antilockup.blocked": "Blocked %1$d suspicious inventory packet(s) (suspected lockup attempt?)"
 }

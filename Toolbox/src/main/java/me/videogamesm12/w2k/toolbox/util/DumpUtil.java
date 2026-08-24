@@ -10,6 +10,7 @@ import net.kyori.adventure.nbt.TagStringIO;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 

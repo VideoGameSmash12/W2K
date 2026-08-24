@@ -22,10 +22,18 @@
 
 package me.videogamesm12.w2k.drivers.v1_20_1.mixin.injector;
 
+import me.videogamesm12.w2k.kernel.W2K;
 import me.videogamesm12.w2k.supervisor.Supervisor;
+import me.videogamesm12.w2k.toolbox.modules.AntiLockup;
+import me.videogamesm12.w2k.toolbox.modules.QueryLogger;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.network.packet.s2c.play.*;
+import net.minecraft.screen.ScreenHandlerType;
+import net.minecraft.text.Text;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -33,6 +41,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(ClientPlayNetworkHandler.class)
 public class ClientPlayNetworkHandlerMixin
 {
+    @Unique
+    private long w2k$lastAntiLockupAlert;
+    @Unique
+    private int w2k$lockupCount;
+
     @Inject(method = "onEntitySpawn", at = @At("HEAD"), cancellable = true)
     public void onEntitySpawn(EntitySpawnS2CPacket packet, CallbackInfo ci)
     {
@@ -70,11 +83,39 @@ public class ClientPlayNetworkHandlerMixin
     }
 
     @Inject(method = "onMapUpdate", at = @At("HEAD"), cancellable = true)
-    public void onParticleSpawn(MapUpdateS2CPacket packet, CallbackInfo ci)
+    public void onMapUpdate(MapUpdateS2CPacket packet, CallbackInfo ci)
     {
         if (Supervisor.getConfig().getNetworkSettings().isIgnoringMapUpdates())
         {
             ci.cancel();
+        }
+    }
+
+    @Inject(method = "onOpenScreen", at = @At("HEAD"), cancellable = true)
+    public void onOpenScreen(OpenScreenS2CPacket packet, CallbackInfo ci)
+    {
+        final AntiLockup module = W2K.getInstance().getModuleManager().getModule(AntiLockup.class);
+        if (module.isEnabled()
+                && packet.getScreenHandlerType() == ScreenHandlerType.GENERIC_9X4
+                && packet.getName().contains(Text.literal("Player")))
+        {
+            ci.cancel();
+
+            if (module.showAlert.get())
+            {
+                w2k$lockupCount++;
+
+                if ((System.currentTimeMillis() - w2k$lastAntiLockupAlert >= module.alertInterval.get()))
+                {
+                    final Component message = Component.translatable("w2k.toolbox.module.antilockup.blocked", Component.text(w2k$lockupCount))
+                            .color(NamedTextColor.YELLOW);
+
+                    W2K.getInstance().getDriverManager().getVersionBridge().displayMessage(message);
+
+                    w2k$lastAntiLockupAlert = System.currentTimeMillis();
+                    w2k$lockupCount = 0;
+                }
+            }
         }
     }
 }
