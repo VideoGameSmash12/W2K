@@ -25,8 +25,8 @@ public class BanHammer extends WModule
     public boolean handleClick(final IEntityEntry entity, final IItemStackEntry stack, final boolean hit)
     {
         if (!stack.w2k$isNotEmpty()
-                || !stack.w2k$name().toString().contains(itemName)
                 || !stack.w2k$type().equalsIgnoreCase(itemType.get())
+                || !(stack.w2k$name() != null && stack.w2k$name().toString().contains(itemName))
                 || !entity.w2k$type().equalsIgnoreCase("minecraft:player"))
         {
             return false;
