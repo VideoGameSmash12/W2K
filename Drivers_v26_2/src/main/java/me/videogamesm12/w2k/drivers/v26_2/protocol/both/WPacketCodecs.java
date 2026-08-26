@@ -11,6 +11,7 @@ public class WPacketCodecs
         buffer.writeLong(instance.getTransactionId());
         buffer.writeInt(instance.getError().ordinal());
         buffer.writeUtf(instance.getMessage());
-    }, (b) -> new WCommonErrorPacket(b.readLong(), b.readInt(), b.readUtf()));
+        buffer.writeBoolean(instance.isTerminationWorthy());
+    }, (b) -> new WCommonErrorPacket(b.readLong(), b.readInt(), b.readUtf(), b.readBoolean()));
 
 }

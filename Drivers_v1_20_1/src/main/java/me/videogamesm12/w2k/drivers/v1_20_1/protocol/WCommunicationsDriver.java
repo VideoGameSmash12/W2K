@@ -14,8 +14,10 @@ import me.videogamesm12.w2k.kernel.protocol.common.WCommonErrorPacket;
 import me.videogamesm12.w2k.kernel.protocol.serverbound.WServerboundCommandPacket;
 import me.videogamesm12.w2k.kernel.protocol.serverbound.WServerboundConfigurePacket;
 import me.videogamesm12.w2k.kernel.protocol.serverbound.WServerboundHelloPacket;
+import net.fabricmc.fabric.api.client.networking.v1.C2SPlayChannelEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.kyori.adventure.nbt.CompoundBinaryTag;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.Identifier;
 
@@ -37,13 +39,14 @@ public class WCommunicationsDriver implements WAmbassadorDriver
     {
         // COMMON
         register(WCommonErrorPacket.class,
-                byteBuf -> new WCommonErrorPacket(byteBuf.readLong(), byteBuf.readInt(), byteBuf.readString()),
+                byteBuf -> new WCommonErrorPacket(byteBuf.readLong(), byteBuf.readInt(), byteBuf.readString(), byteBuf.readBoolean()),
                 packet ->
                 {
                     final PacketByteBuf buffer = new PacketByteBuf(Unpooled.buffer());
                     buffer.writeLong(packet.getTransactionId());
                     buffer.writeInt(packet.getError().ordinal());
                     buffer.writeString(packet.getMessage());
+                    buffer.writeBoolean(packet.isTerminationWorthy());
                     return buffer;
                 });
         // CLIENT-BOUND
@@ -107,11 +110,13 @@ public class WCommunicationsDriver implements WAmbassadorDriver
                     return buffer;
                 });
 
-        // Initiate handshake upon joining the server
-        ClientPlayConnectionEvents.JOIN.register((handler, sender, client) ->
+        C2SPlayChannelEvents.REGISTER.register((handler, sender, client, identifiers) ->
         {
             // insert check here for setting, that doesn't exist
-            sendPacket(new WServerboundHelloPacket(nextTransactionId(), WPacket.protocolVersion, "1.20.1"));
+            if (stage == Stage.HELLO)
+            {
+                sendPacket(new WServerboundHelloPacket(nextTransactionId(), WPacket.protocolVersion, "1.20.1"));
+            }
         });
 
         // Reset everything upon disconnecting
@@ -140,8 +145,15 @@ public class WCommunicationsDriver implements WAmbassadorDriver
         // Mismatched stages cause problems. Respond immediately with an error
         if (packetStage != Stage.ANY && stage != packet.getPacketMeta().stage())
         {
-            W2K.getLogger().info("Received mismatched packet stage from server (expected {}, got {})", stage, packetStage);
-            sendPacket(new WCommonErrorPacket(packet.getTransactionId(), WCommonErrorPacket.Error.INVALID_STAGE, "Packet is for stage " + packetStage + ", but I am on stage " + stage));
+            W2K.getLogger().warn("Received mismatched packet stage from server (expected {}, got {})", stage, packetStage);
+            sendPacket(new WCommonErrorPacket(packet.getTransactionId(), WCommonErrorPacket.Error.INVALID_STAGE, "Packet is for stage " + packetStage + ", but I am on stage " + stage, true));
+            return;
+        }
+
+        if (packet instanceof WCommonErrorPacket error && error.isTerminationWorthy())
+        {
+            W2K.getLogger().warn("Received unrecoverable, non-negotiable error from server, entering \"error\" state -> {}: {}", error.getError(), error.getMessage());
+            stage = Stage.ERROR;
             return;
         }
 
@@ -152,7 +164,7 @@ public class WCommunicationsDriver implements WAmbassadorDriver
                 // An error occurred from the server side. Enter error state as this is likely a blunt refusal from the server
                 if (packet instanceof WCommonErrorPacket)
                 {
-                    W2K.getLogger().info("Server replied with an error during the initial handshake, entering \"error\" state -> {}",
+                    W2K.getLogger().warn("Server replied with an error during the initial handshake, entering \"error\" state -> {}",
                             ((WCommonErrorPacket) packet).getError().toString());
                     stage = Stage.ERROR;
                     return;
@@ -163,8 +175,8 @@ public class WCommunicationsDriver implements WAmbassadorDriver
                     // Already received a hello packet?
                     if (helloPacket != null)
                     {
-                        W2K.getLogger().info("Already received valid hello packet from server. Entering error state");
-                        sendPacket(new WCommonErrorPacket(packet.getTransactionId(), WCommonErrorPacket.Error.ILLEGAL_REQUEST, "I have already received a hello packet!"));
+                        W2K.getLogger().warn("Already received valid hello packet from server. Entering error state");
+                        sendPacket(new WCommonErrorPacket(packet.getTransactionId(), WCommonErrorPacket.Error.ILLEGAL_REQUEST, "I have already received a hello packet!", true));
                         stage = Stage.ERROR;
                         return;
                     }
@@ -173,8 +185,8 @@ public class WCommunicationsDriver implements WAmbassadorDriver
                     helloPacket = (WClientboundHelloPacket) packet;
                     if (helloPacket.getProtocolVersion() != WPacket.protocolVersion)
                     {
-                        W2K.getLogger().info("Server is using the wrong version of the protocol. Entering error state");
-                        sendPacket(new WCommonErrorPacket(packet.getTransactionId(), WCommonErrorPacket.Error.UNSUPPORTED_W2K_VERSION, "I can only handle protocol version " + WPacket.protocolVersion));
+                        W2K.getLogger().warn("Server is using the wrong version of the protocol. Entering error state");
+                        sendPacket(new WCommonErrorPacket(packet.getTransactionId(), WCommonErrorPacket.Error.UNSUPPORTED_W2K_VERSION, "I can only handle protocol version " + WPacket.protocolVersion, true));
                         stage = Stage.ERROR;
                         return;
                     }
@@ -182,13 +194,14 @@ public class WCommunicationsDriver implements WAmbassadorDriver
                     // Enter communication stage
                     // TODO: Add demands for the server to meet lol
                     W2K.getLogger().info("Received valid hello packet from server. Sending configuration packet");
-                    sendPacket(new WServerboundConfigurePacket(nextTransactionId(), ""));
+                    final CompoundBinaryTag demands = CompoundBinaryTag.builder().putBoolean("command_spy", true).build();
+                    sendPacket(new WServerboundConfigurePacket(nextTransactionId(), demands));
                     stage = Stage.CONFIGURATION;
                     return;
                 }
                 else
                 {
-                    W2K.getLogger().info("Server replied with an unrecognized packet during handshake. Entering error state");
+                    W2K.getLogger().warn("Server replied with an unrecognized packet during handshake. Entering error state");
                     stage = Stage.ERROR;
                     return;
                 }
@@ -197,7 +210,7 @@ public class WCommunicationsDriver implements WAmbassadorDriver
             {
                 if (packet instanceof WCommonErrorPacket)
                 {
-                    W2K.getLogger().info("Server replied with an error during the configuration stage, entering \"error\" state -> {}",
+                    W2K.getLogger().warn("Server replied with an error during the configuration stage, entering \"error\" state -> {}",
                             ((WCommonErrorPacket) packet).getError().toString());
                     stage = Stage.ERROR;
                     return;
@@ -206,7 +219,7 @@ public class WCommunicationsDriver implements WAmbassadorDriver
                 {
                     // TODO: add server demand processing
                     configureAcknowledgePacket = (WClientboundConfigureAcknowledgePacket) packet;
-                    W2K.getLogger().info("Server replied with a valid configuration acknowledgement packet. Handshake completed");
+                    W2K.getLogger().warn("Server replied with a valid configuration acknowledgement packet. Handshake completed");
                     stage = Stage.READY;
                     return;
                 }
@@ -271,13 +284,10 @@ public class WCommunicationsDriver implements WAmbassadorDriver
 
         if (direction != WPacket.PacketMeta.Direction.SERVER_BOUND)
         {
-            boolean register = ClientPlayNetworking.registerGlobalReceiver(identifier, (client, handler, buf, responseSender) ->
+            ClientPlayNetworking.registerGlobalReceiver(identifier, (client, handler, buf, responseSender) ->
             {
-                W2K.getLogger().info("What the fuck?");
-
                 if (stage == Stage.ERROR)
                 {
-                    W2K.getLogger().info("Ignoring packet sent to client as we are in an error state");
                     return;
                 }
 
@@ -285,13 +295,11 @@ public class WCommunicationsDriver implements WAmbassadorDriver
 
                 try
                 {
-                    W2K.getLogger().info("Receiving packet from server of type {}", identifier.toString());
                     packet = reader.apply(buf);
-                    W2K.getLogger().info("Packet received");
                 }
                 catch (Exception ex)
                 {
-                    sendPacket(new WCommonErrorPacket(-1, WCommonErrorPacket.Error.INVALID_PARAMETER, ex.getMessage()));
+                    sendPacket(new WCommonErrorPacket(-1, WCommonErrorPacket.Error.INVALID_PARAMETER, ex.getMessage(), true));
                     W2K.getLogger().error("Server sent invalid packet to client", ex);
 
                     if (stage != Stage.READY && stage != Stage.ANY)
@@ -311,8 +319,6 @@ public class WCommunicationsDriver implements WAmbassadorDriver
                     W2K.getLogger().error("Failed to receive packet", ex);
                 }
             });
-
-            W2K.getLogger().warn("Registered packet {}? {}", identifier.toString(), register);
         }
     }
 }

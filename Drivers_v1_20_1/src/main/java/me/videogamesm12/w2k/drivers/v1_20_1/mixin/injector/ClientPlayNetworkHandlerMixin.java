@@ -104,11 +104,4 @@ public class ClientPlayNetworkHandlerMixin
             antiLockup.handleAlerts();
         }
     }
-
-    @Inject(method = "onCustomPayload", at = @At("HEAD"))
-    public void onCustomPayload(CustomPayloadS2CPacket packet, CallbackInfo ci)
-    {
-        W2K.getLogger().warn("Debug - Received custom payload: {}", packet.getChannel().toString());
-    }
-
 }

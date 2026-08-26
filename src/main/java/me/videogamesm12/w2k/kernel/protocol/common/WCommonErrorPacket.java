@@ -12,17 +12,24 @@ public class WCommonErrorPacket extends WPacket
 {
     private final Error error;
     private final String message;
+    private final boolean terminationWorthy;
 
-    public WCommonErrorPacket(final long transactionId, final Error error, final String message)
+    public WCommonErrorPacket(final long transactionId, final Error error, final String message, final boolean terminationWorthy)
     {
         super(transactionId);
         this.error = error;
         this.message = message;
+        this.terminationWorthy = terminationWorthy;
     }
 
-    public WCommonErrorPacket(final long transactionId, final int error, final String message)
+    public WCommonErrorPacket(final long transactionId, final int error, final String message, final boolean terminationWorthy)
     {
-        this(transactionId, Error.fromCode(error), message);
+        this(transactionId, Error.fromCode(error), message, terminationWorthy);
+    }
+
+    public WCommonErrorPacket(final long transactionId, final Error error, final String message)
+    {
+        this(transactionId, error, message, false);
     }
 
     @Override
