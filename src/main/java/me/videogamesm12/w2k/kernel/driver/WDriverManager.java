@@ -39,6 +39,7 @@ public class WDriverManager
     private WVersionFetcherDriver versionFetcher;
     private WEventPassThruDriver eventPassThru;
     private WCommandDriver commandWrapper;
+    private WAmbassadorDriver communicationsDriver;
     private final Map<String, WDriver> optionalDrivers = new HashMap<>();
 
     public void loadRequiredDrivers()
@@ -55,6 +56,8 @@ public class WDriverManager
 
         commandWrapper = FabricLoader.getInstance().getEntrypoints("w2k-command-wrapper-driver",
                 WCommandDriver.class).stream().filter(WDriver::isSupported).findAny().orElse(null);
+        communicationsDriver = FabricLoader.getInstance().getEntrypoints("w2k-communications-driver",
+                WAmbassadorDriver.class).stream().filter(WDriver::isSupported).findAny().orElse(null);
 
         eventPassThru.setupEvents();
     }

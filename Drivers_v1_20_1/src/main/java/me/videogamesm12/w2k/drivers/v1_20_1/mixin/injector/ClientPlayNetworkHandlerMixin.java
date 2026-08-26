@@ -41,11 +41,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(ClientPlayNetworkHandler.class)
 public class ClientPlayNetworkHandlerMixin
 {
-    @Unique
-    private long w2k$lastAntiLockupAlert;
-    @Unique
-    private int w2k$lockupCount;
-
     @Inject(method = "onEntitySpawn", at = @At("HEAD"), cancellable = true)
     public void onEntitySpawn(EntitySpawnS2CPacket packet, CallbackInfo ci)
     {
@@ -109,4 +104,11 @@ public class ClientPlayNetworkHandlerMixin
             antiLockup.handleAlerts();
         }
     }
+
+    @Inject(method = "onCustomPayload", at = @At("HEAD"))
+    public void onCustomPayload(CustomPayloadS2CPacket packet, CallbackInfo ci)
+    {
+        W2K.getLogger().warn("Debug - Received custom payload: {}", packet.getChannel().toString());
+    }
+
 }

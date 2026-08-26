@@ -26,6 +26,8 @@ public abstract class WModule
         this.name = name;
         this.description = description;
         this.onToggle = null;
+        //--
+        W2K.getEventBus().register(this);
     }
 
     public WModule(final String id, final String name, final String description, final Consumer<Boolean> onToggle)
@@ -34,6 +36,8 @@ public abstract class WModule
         this.name = name;
         this.description = description;
         this.onToggle = onToggle;
+        //--
+        W2K.getEventBus().register(this);
     }
 
     public <T extends BinaryTag, R, W extends WModuleSetting<T, R>> W register(W setting)

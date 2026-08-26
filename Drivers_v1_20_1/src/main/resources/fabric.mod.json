@@ -22,6 +22,9 @@
     ],
     "w2k-command-wrapper-driver": [
       "me.videogamesm12.w2k.drivers.v1_20_1.required.W120CommandDriver"
+    ],
+    "w2k-communications-driver": [
+      "me.videogamesm12.w2k.drivers.v1_20_1.protocol.WCommunicationsDriver"
     ]
   },
   "mixins": [
