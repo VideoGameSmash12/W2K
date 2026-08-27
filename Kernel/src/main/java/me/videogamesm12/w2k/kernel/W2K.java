@@ -3,7 +3,6 @@ package me.videogamesm12.w2k.kernel;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import lombok.Getter;
-import lombok.extern.log4j.Log4j2;
 import me.videogamesm12.w2k.kernel.command.WCommandManager;
 import me.videogamesm12.w2k.kernel.commands.ExperimentsCmd;
 import me.videogamesm12.w2k.kernel.commands.W2KCmd;
@@ -24,7 +23,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-@Log4j2
 public class W2K implements ModInitializer
 {
     @Getter

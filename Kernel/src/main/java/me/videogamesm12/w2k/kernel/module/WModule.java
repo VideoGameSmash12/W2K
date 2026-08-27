@@ -2,7 +2,9 @@ package me.videogamesm12.w2k.kernel.module;
 
 import lombok.Getter;
 import me.videogamesm12.w2k.kernel.W2K;
+import me.videogamesm12.w2k.kernel.driver.base.WAmbassadorDriver;
 import me.videogamesm12.w2k.kernel.driver.base.WVersionBridgeDriver;
+import me.videogamesm12.w2k.kernel.event.module.ModuleStateUpdateEvent;
 import me.videogamesm12.w2k.kernel.module.setting.WModuleSetting;
 import net.kyori.adventure.nbt.*;
 
@@ -46,10 +48,13 @@ public abstract class WModule
         return setting;
     }
 
-    public void setEnabled(boolean value)
+    public <T extends WModule> void setEnabled(boolean value)
     {
-        this.enabled = value;
-        // TODO: Setup event for this lol
+        final ModuleStateUpdateEvent<T> event = new ModuleStateUpdateEvent<>((T) this, this.enabled, value);
+        if (!event.isCancelled())
+        {
+            this.enabled = value;
+        }
     }
 
     public CompoundBinaryTag serialize()
@@ -118,6 +123,11 @@ public abstract class WModule
     protected W2K w2k()
     {
         return W2K.getInstance();
+    }
+
+    protected WAmbassadorDriver communicationsDriver()
+    {
+        return w2k().getDriverManager().getCommunicationsDriver();
     }
 
     protected WVersionBridgeDriver versionBridge()
