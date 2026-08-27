@@ -7,7 +7,7 @@ version = project.mod_version
 group = "me.videogamesm12"
 
 dependencies {
-    minecraft "com.mojang:minecraft:26.2"
+    minecraft "com.mojang:minecraft:1.20.1"
 
     include "net.kyori:adventure-api:${project.adventure_version}"
     include "net.kyori:adventure-key:${project.adventure_version}"
