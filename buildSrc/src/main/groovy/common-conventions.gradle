@@ -1,0 +1,42 @@
+plugins {
+    id 'java-library'
+    id 'com.gorylenko.gradle-git-properties'
+}
+
+ext {
+    java_version = 8
+}
+
+tasks.withType(JavaCompile).configureEach {
+    it.options.release.set((Integer) java_version)
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    if (!project.getName().equalsIgnoreCase("Kernel"))
+        implementation(project(":Kernel"))
+
+    compileOnly "net.kyori:adventure-api:4.17.0"
+    compileOnly "net.kyori:adventure-key:4.17.0"
+    compileOnly "net.kyori:adventure-nbt:4.17.0"
+    compileOnly "net.kyori:adventure-text-serializer-gson:4.17.0"
+    compileOnly "net.kyori:adventure-text-serializer-plain:4.17.0"
+    compileOnly "net.kyori:examination-api:1.3.0"
+
+    compileOnly 'org.projectlombok:lombok:1.18.42'
+    annotationProcessor 'org.projectlombok:lombok:1.18.42'
+}
+
+gitProperties {
+    keys = [
+            'git.branch',
+            'git.commit.id',
+            'git.commit.id.abbrev',
+            'git.commit.time',
+            'git.remote.origin.url',
+            'git.dirty'
+    ]
+}

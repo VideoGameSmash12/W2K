@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
-  "id": "w2k",
+  "id": "w2k-kernel",
   "version": "${version}",
-  "name": "W2K",
-  "description": "Client tools for the technically inclined",
+  "name": "Kernel",
+  "description": "The core codebase of W2K",
   "authors": [
     "videogamesm12"
   ],
@@ -13,13 +13,16 @@
     "sources": "https://github.com/videogamesm12/W2K"
   },
   "license": "MIT",
-  "icon": "assets/w2k/icon.png",
+  "icon": "assets/w2k-kernel/icon.png",
   "environment": "client",
-  "depends": {
-    "minecraft": "*"
+  "entrypoints": {
+    "main": [
+      "me.videogamesm12.w2k.kernel.W2K"
+    ]
   },
-  "breaks": {
-    "wnt": "*",
-    "w95": "*"
+  "custom": {
+    "modmenu": {
+      "parent": "w2k"
+    }
   }
 }

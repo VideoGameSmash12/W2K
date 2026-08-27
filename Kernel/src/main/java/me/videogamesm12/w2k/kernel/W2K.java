@@ -13,7 +13,6 @@ import me.videogamesm12.w2k.kernel.event.diagnostics.PopulateCrashReportEvent;
 import me.videogamesm12.w2k.kernel.event.lifecycle.ClientStoppedEvent;
 import me.videogamesm12.w2k.kernel.experiment.ExperimentManager;
 import me.videogamesm12.w2k.kernel.module.WModuleManager;
-import me.videogamesm12.w2k.kernel.util.VersionUtils;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
 import org.apache.logging.log4j.LogManager;
@@ -72,7 +71,7 @@ public class W2K implements ModInitializer
         logger.info("Loading optional drivers");
         driverManager.loadOptionalDrivers();
 
-        logger.info("We are running version {}!", driverManager.getVersionFetcher().getGameVersion());
+        logger.info("Registering commands");
         commandManager.registerCommand(W2KCmd.class);
         commandManager.registerCommand(ExperimentsCmd.class);
 
@@ -107,8 +106,6 @@ public class W2K implements ModInitializer
                 driverManager.getEventPassThru().getClass().getName() : "(not loaded)").append("\n");
         driverList.append("\tWVersionBridgeDriver: ").append(driverManager.getVersionBridge() != null ?
                 driverManager.getVersionBridge().getClass().getName() : "(not loaded)").append("\n");
-        driverList.append("\tWVersionFetcherDriver: ").append(driverManager.getVersionFetcher() != null ?
-                driverManager.getVersionFetcher().getClass().getName() : "(not loaded)");
         if (!driverManager.getOptionalDrivers().isEmpty())
         {
             driverList.append("\nOptional Drivers:\n");

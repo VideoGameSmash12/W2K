@@ -1,6 +1,10 @@
+plugins {
+    id("common-conventions")
+    id("remapped-minecraft-conventions")
+}
+
 ext {
     java_version = 21
-    remap = true
 }
 
 dependencies {

@@ -1,0 +1,15 @@
+repositories {
+    exclusiveContent {
+        forRepository { maven { url = "https://api.modrinth.com/maven" } }
+        filter { includeGroup "maven.modrinth" }
+    }
+    exclusiveContent {
+        forRepository { maven { url = "https://jitpack.io/" } }
+        filter { includeGroup "com.github.VideoGameSmash12" }
+    }
+}
+
+dependencies {
+    api project(":Blackbox")
+    api project(":Integrator")
+}

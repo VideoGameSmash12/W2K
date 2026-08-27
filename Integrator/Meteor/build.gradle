@@ -1,5 +1,7 @@
-ext {
-    remap = true
+plugins {
+    id("common-conventions")
+    id("remapped-minecraft-conventions")
+    id("intermod-dependency-conventions")
 }
 
 repositories {
@@ -10,5 +12,5 @@ repositories {
 dependencies {
     minecraft "com.mojang:minecraft:1.20.1"
     mappings "net.fabricmc:yarn:1.20.1+build.10:v2"
-    modApi "meteordevelopment:meteor-client:0.5.8-SNAPSHOT"
+    modImplementation "meteordevelopment:meteor-client:0.6.0-SNAPSHOT"
 }

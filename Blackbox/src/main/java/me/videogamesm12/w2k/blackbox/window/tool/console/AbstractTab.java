@@ -3,14 +3,11 @@ package me.videogamesm12.w2k.blackbox.window.tool.console;
 import com.google.gson.JsonElement;
 import me.videogamesm12.w2k.kernel.W2K;
 import me.videogamesm12.w2k.supervisor.Supervisor;
-import net.kyori.adventure.text.Component;
-import net.minecraft.text.Text;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.util.function.Consumer;
 
 public abstract class AbstractTab<T extends JComponent> extends JPanel
 {

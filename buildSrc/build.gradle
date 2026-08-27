@@ -1,0 +1,18 @@
+plugins {
+    id 'com.gorylenko.gradle-git-properties' version '4.0.1'
+    id 'groovy-gradle-plugin'
+}
+
+repositories {
+    gradlePluginPortal()
+    maven {
+        name = "Fabric"
+        url = "https://maven.fabricmc.net/"
+    }
+}
+
+dependencies {
+    implementation 'com.gorylenko.gradle-git-properties:com.gorylenko.gradle-git-properties.gradle.plugin:4.0.1'
+    implementation 'net.fabricmc.fabric-loom-remap:net.fabricmc.fabric-loom-remap.gradle.plugin:1.15-SNAPSHOT'
+    implementation 'net.fabricmc.fabric-loom:net.fabricmc.fabric-loom.gradle.plugin:1.15-SNAPSHOT'
+}

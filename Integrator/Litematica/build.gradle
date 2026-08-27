@@ -1,11 +1,12 @@
-ext {
-    remap = true
+plugins {
+    id("common-conventions")
+    id("modern-minecraft-conventions")
+    id("intermod-dependency-conventions")
 }
 
 dependencies {
     minecraft "com.mojang:minecraft:1.20.1"
-    mappings "net.fabricmc:yarn:1.20.1+build.10:v2"
 
-    modApi "maven.modrinth:litematica:0.9.0"
-    modApi "maven.modrinth:malilib:HljUtdhE"
+    api "maven.modrinth:litematica:0.9.0"
+    api "maven.modrinth:malilib:HljUtdhE"
 }
