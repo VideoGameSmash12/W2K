@@ -1,0 +1,3 @@
+[submodule "WCom"]
+	path = WCom
+	url = https://github.com/VideoGameSmash12/WCom.git

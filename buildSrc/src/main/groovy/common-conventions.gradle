@@ -19,6 +19,8 @@ dependencies {
     if (!project.getName().equalsIgnoreCase("Kernel"))
         implementation(project(":Kernel"))
 
+    compileOnly project(":WCom")
+
     compileOnly "net.kyori:adventure-api:${project.adventure_version}"
     compileOnly "net.kyori:adventure-key:${project.adventure_version}"
     compileOnly "net.kyori:adventure-nbt:${project.adventure_version}"

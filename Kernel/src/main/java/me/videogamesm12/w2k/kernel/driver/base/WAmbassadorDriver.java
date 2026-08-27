@@ -1,7 +1,7 @@
 package me.videogamesm12.w2k.kernel.driver.base;
 
-import me.videogamesm12.w2k.kernel.protocol.Stage;
-import me.videogamesm12.w2k.kernel.protocol.WPacket;
+import me.videogamesm12.wcom.Stage;
+import me.videogamesm12.wcom.WPacket;
 
 public interface WAmbassadorDriver extends WDriver
 {
