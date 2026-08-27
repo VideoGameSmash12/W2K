@@ -10,7 +10,6 @@ import me.videogamesm12.w2k.supervisor.components.fantasia.event.SessionStartedE
 import me.videogamesm12.w2k.supervisor.components.fantasia.event.SessionStartedPreSetupEvent;
 import me.videogamesm12.w2k.supervisor.components.fantasia.session.CommandSender;
 import me.videogamesm12.w2k.supervisor.components.fantasia.session.ISession;
-import net.minecraft.text.Text;
 
 import javax.swing.*;
 import java.awt.*;

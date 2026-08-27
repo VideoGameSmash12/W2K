@@ -17,9 +17,6 @@ import java.util.Map;
  *     <li>{@link WVersionBridgeDriver} ({@code w2k-version-bridge-driver}): A driver to call any Minecraft code.
  *     Implementations should never be re-used across versions unless you are <i>absolutely confident</i> that it
  *     will work and that nothing could possibly go wrong as a result of doing so.</li>
- *     <li>{@link WVersionFetcherDriver} ({@code w2k-version-fetcher-driver}): A driver to fetch the current version of
- *     the game. This usually doesn't need to be implemented yourself as a generic driver from the
- *     {@code Drivers_Generic} subproject is used.</li>
  *     <li>{@link WEventPassThruDriver} ({@code w2k-event-passthru-driver}): A driver to pass through client start and
  *     stop events from a Fabric API.</li>
  * </ul>
@@ -36,7 +33,6 @@ import java.util.Map;
 public class WDriverManager
 {
     private WVersionBridgeDriver versionBridge;
-    private WVersionFetcherDriver versionFetcher;
     private WEventPassThruDriver eventPassThru;
     private WCommandDriver commandWrapper;
     private WAmbassadorDriver communicationsDriver;
@@ -50,9 +46,6 @@ public class WDriverManager
         versionBridge = FabricLoader.getInstance().getEntrypoints("w2k-version-bridge-driver",
                 WVersionBridgeDriver.class).stream().filter(WDriver::isSupported).findAny()
                 .orElseThrow(() -> new IllegalStateException("Version bridge driver not found!"));
-        versionFetcher = FabricLoader.getInstance().getEntrypoints("w2k-version-fetcher-driver",
-                WVersionFetcherDriver.class).stream().filter(WDriver::isSupported).findAny()
-                .orElseThrow(() -> new IllegalStateException("Version fetcher driver not found!"));
 
         commandWrapper = FabricLoader.getInstance().getEntrypoints("w2k-command-wrapper-driver",
                 WCommandDriver.class).stream().filter(WDriver::isSupported).findAny().orElse(null);

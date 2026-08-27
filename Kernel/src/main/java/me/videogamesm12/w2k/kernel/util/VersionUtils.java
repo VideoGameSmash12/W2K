@@ -1,9 +1,19 @@
 package me.videogamesm12.w2k.kernel.util;
 
+import com.google.gson.Gson;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.Getter;
 import me.videogamesm12.w2k.kernel.W2K;
+import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.SemanticVersion;
 import net.fabricmc.loader.api.Version;
 import net.fabricmc.loader.api.VersionParsingException;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.Objects;
 
 /**
  * <h1>VersionUtils</h1>
@@ -11,6 +21,21 @@ import net.fabricmc.loader.api.VersionParsingException;
  */
 public class VersionUtils
 {
+    @Getter
+    private static MinecraftVersion gameVersion;
+
+    static
+    {
+        try (InputStream stream = FabricLoader.class.getClassLoader().getResourceAsStream("version.json"))
+        {
+            gameVersion = new Gson().fromJson(new InputStreamReader(Objects.requireNonNull(stream)), MinecraftVersion.class);
+        }
+        catch (NullPointerException | IOException ignored)
+        {
+            gameVersion = new MinecraftVersion("0.0.0", "0.0.0");
+        }
+    }
+
     /**
      * Checks whether the currently running version of Minecraft is newer than or equal to a provided version string.
      * @param versionString String
@@ -21,7 +46,7 @@ public class VersionUtils
         final SemanticVersion currentVersion;
         try
         {
-            currentVersion = SemanticVersion.parse(W2K.getInstance().getDriverManager().getVersionFetcher().getGameVersion());
+            currentVersion = SemanticVersion.parse(gameVersion.getId());
         }
         catch (VersionParsingException ex)
         {
@@ -52,7 +77,7 @@ public class VersionUtils
         final SemanticVersion currentVersion;
         try
         {
-            currentVersion = SemanticVersion.parse(W2K.getInstance().getDriverManager().getVersionFetcher().getGameVersion());
+            currentVersion = SemanticVersion.parse(gameVersion.getId());
         }
         catch (VersionParsingException ex)
         {
@@ -71,5 +96,14 @@ public class VersionUtils
         }
 
         return currentVersion.compareTo((Version) version) <= 0;
+    }
+
+    @AllArgsConstructor
+    @Data
+    public static class MinecraftVersion
+    {
+        private String id;
+
+        private String name;
     }
 }

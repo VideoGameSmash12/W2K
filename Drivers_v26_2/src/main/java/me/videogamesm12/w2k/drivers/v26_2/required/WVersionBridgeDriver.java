@@ -8,6 +8,7 @@ import me.videogamesm12.w2k.kernel.W2K;
 import me.videogamesm12.w2k.kernel.data.*;
 import me.videogamesm12.w2k.kernel.driver.base.WDriverMetadata;
 import me.videogamesm12.w2k.kernel.util.ComponentUtils;
+import me.videogamesm12.w2k.kernel.util.VersionUtils;
 import net.kyori.adventure.text.Component;
 import net.minecraft.client.ClientBrandRetriever;
 import net.minecraft.client.Minecraft;
@@ -122,7 +123,7 @@ public class WVersionBridgeDriver implements me.videogamesm12.w2k.kernel.driver.
         {
             ignored.printStackTrace();
 
-            final String version = W2K.getInstance().getDriverManager().getVersionFetcher().getGameVersion();
+            final String version = VersionUtils.getGameVersion().getId();
 
             return String.join("\n", String.format("Minecraft %s (%s/%s)", version, version, ClientBrandRetriever.getClientModName()),
                 String.valueOf(Minecraft.getInstance().getFps()));

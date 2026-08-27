@@ -3,7 +3,6 @@ package me.videogamesm12.w2k.kernel.event.lifecycle;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import me.videogamesm12.w2k.kernel.event.CustomEvent;
-import net.minecraft.client.MinecraftClient;
 
 /**
  * <h1>ClientStoppedEvent</h1>

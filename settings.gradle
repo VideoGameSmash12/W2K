@@ -16,7 +16,7 @@ pluginManagement {
     }
 }
 
-include "Drivers_Generic"
+include "Kernel"
 //include "Drivers_v1_8"
 //include "Drivers_v1_12"
 //include "Drivers_v1_13"

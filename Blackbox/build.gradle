@@ -1,5 +1,6 @@
-ext {
-    remap = true
+plugins {
+    id("common-conventions")
+    id("modern-minecraft-conventions")
 }
 
 repositories {
@@ -8,9 +9,7 @@ repositories {
 
 dependencies {
     minecraft "com.mojang:minecraft:1.20.1"
-    mappings "net.fabricmc:yarn:1.20.1+build.10:v2"
 
-    implementation project(":Supervisor")
-    implementation project(":Toolbox")
-    implementation "net.kyori:adventure-api:4.17.0"
+    compileOnly project(":Supervisor")
+    compileOnly project(":Toolbox")
 }

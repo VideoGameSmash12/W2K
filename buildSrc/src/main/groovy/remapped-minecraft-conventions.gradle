@@ -1,0 +1,26 @@
+plugins {
+    id 'net.fabricmc.fabric-loom-remap'
+}
+
+dependencies {
+    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+
+    subprojects.each {
+        // Only include the subprojects not included by anything else
+        if (project != rootProject || it.getPath().split(":").size() <= 2)
+            include(it)
+    }
+}
+
+processResources {
+    inputs.property "version", rootProject.version
+    filteringCharset "UTF-8"
+
+    filesMatching("fabric.mod.json") {
+        expand "version": rootProject.version
+    }
+}
+
+subprojects.each {
+    remapJar.dependsOn("${it.path}:remapJar")
+}

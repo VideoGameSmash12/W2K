@@ -1,12 +1,12 @@
-ext {
-    remap = true
+plugins {
+    id("common-conventions")
+    id("modern-minecraft-conventions")
 }
 
 dependencies {
     minecraft "com.mojang:minecraft:1.20.1"
-    mappings "net.fabricmc:yarn:1.20.1+build.10:v2"
 
-    implementation project(":Blackbox")
+    compileOnly project(":Blackbox")
 
     include compileOnly("com.formdev:flatlaf:3.7.2")
     include compileOnly("com.formdev:flatlaf-intellij-themes:3.7.2")
