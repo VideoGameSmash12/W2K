@@ -1,8 +1,10 @@
 package me.videogamesm12.w2k.kernel.module.setting;
 
+import lombok.Getter;
 import net.kyori.adventure.nbt.BinaryTagTypes;
 import net.kyori.adventure.nbt.LongBinaryTag;
 
+@Getter
 public class LongSetting extends WModuleSetting<LongBinaryTag, Long>
 {
     private final long minimum;

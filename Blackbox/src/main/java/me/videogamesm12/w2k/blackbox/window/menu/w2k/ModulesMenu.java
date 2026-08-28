@@ -1,9 +1,12 @@
 package me.videogamesm12.w2k.blackbox.window.menu.w2k;
 
+import com.google.common.eventbus.Subscribe;
 import lombok.Getter;
 import me.videogamesm12.w2k.blackbox.Blackbox;
 import me.videogamesm12.w2k.blackbox.util.JComponents;
+import me.videogamesm12.w2k.blackbox.window.ModuleSettingsWindow;
 import me.videogamesm12.w2k.kernel.W2K;
+import me.videogamesm12.w2k.kernel.event.module.ModuleStateUpdateEvent;
 import me.videogamesm12.w2k.kernel.module.WModule;
 import net.fabricmc.loader.api.ModContainer;
 
@@ -56,6 +59,7 @@ public class ModulesMenu extends JMenu
         @Getter
         private final T module;
         private final JCheckBoxMenuItem enabledItem;
+        private final JMenuItem settingsItem;
 
         public ModuleMenu(final T module)
         {
@@ -65,18 +69,31 @@ public class ModulesMenu extends JMenu
             this.module = module;
             this.enabledItem = JComponents.createCheckboxMenuItem("Enabled",
                     null,
-                    () -> this.module.isEnabled(),
+                    this.module::isEnabled,
                     this.module::setEnabled);
             add(enabledItem);
+
+            if (!module.getSettings().isEmpty())
+            {
+                addSeparator();
+                settingsItem = JComponents.createMenuItem("Settings",
+                        "View the settings for this module.",
+                        () -> new ModuleSettingsWindow<>(module).setVisible(true));
+                add(settingsItem);
+            }
+            else
+            {
+                settingsItem = null;
+            }
+
             W2K.getEventBus().register(this);
         }
 
-        /*@Subscribe
-        public void onModuleToggled(ModuleToggledEvent event)
+        @Subscribe
+        public void onModuleStateUpdate(ModuleStateUpdateEvent<T> event)
         {
-            if (event.getModuleClass().equals(module.getClass()))
-                enabledItem.setSelected(event.isEnabledNow());
-        }*/
+            enabledItem.setSelected(event.getNewValue());
+        }
     }
 
     /*private final List<Class<? extends Module>> inList = new ArrayList<>();
