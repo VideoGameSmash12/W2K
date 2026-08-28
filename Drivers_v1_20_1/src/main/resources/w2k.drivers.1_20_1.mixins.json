@@ -15,6 +15,7 @@
     "injector.InGameHudMixin",
     "injector.MainMixin",
     "injector.MinecraftClientMixin",
+    "injector.WorldRendererMixin",
     "wrapper.PlayerEntryWrapper"
   ],
   "injectors": {

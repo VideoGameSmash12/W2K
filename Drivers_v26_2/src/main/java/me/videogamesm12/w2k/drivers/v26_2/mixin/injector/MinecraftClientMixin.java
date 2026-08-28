@@ -107,7 +107,7 @@ public class MinecraftClientMixin
                 && crosshairPickEntity != null
                 && crosshairPickEntity.equals(entity)
                 && ((IEntityEntry) crosshairPickEntity).w2k$type().equalsIgnoreCase("minecraft:player")
-                && ((banHammer.isEnabled() && banHammer.isHammerActive(IItemStackEntry.class.cast(player.getInventory().getSelectedItem())) && banHammer.getOutlineTarget().get()) || targetHighlighter.isEnabled()))
+                && ((banHammer.isEnabled() && banHammer.isHammerActive(IItemStackEntry.class.cast(player.getInventory().getSelectedItem())) && banHammer.outlineTarget.get()) || targetHighlighter.isEnabled()))
         {
             cir.setReturnValue(true);
         }

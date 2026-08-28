@@ -110,7 +110,7 @@ public abstract class MinecraftClientMixin
                 && targetedEntity != null
                 && targetedEntity.equals(entity)
                 && ((IEntityEntry) targetedEntity).w2k$type().equalsIgnoreCase("minecraft:player")
-                && ((banHammer.isEnabled() && banHammer.isHammerActive(IItemStackEntry.class.cast(player.getInventory().getMainHandStack())) && banHammer.getOutlineTarget().get()) || targetHighlighter.isEnabled()))
+                && ((banHammer.isEnabled() && banHammer.isHammerActive(IItemStackEntry.class.cast(player.getInventory().getMainHandStack())) && banHammer.outlineTarget.get()) || targetHighlighter.isEnabled()))
         {
             cir.setReturnValue(true);
         }

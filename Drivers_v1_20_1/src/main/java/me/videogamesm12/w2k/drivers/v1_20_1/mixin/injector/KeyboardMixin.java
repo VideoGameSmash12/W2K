@@ -33,7 +33,7 @@ public class KeyboardMixin
                 else
                 {
                     final String path = result.getSuccessful().get(0);
-                    W2K.getLogger().info("Successfully dumped entity query response to " + path);
+                    W2K.getLogger().info("Successfully dumped entity query response to {}", path);
 
                     if (module.alert.get())
                     {
@@ -59,7 +59,7 @@ public class KeyboardMixin
                 else
                 {
                     final String path = result.getSuccessful().get(0);
-                    W2K.getLogger().info("Successfully dumped block query response to " + path);
+                    W2K.getLogger().info("Successfully dumped block query response to {}", path);
 
                     if (module.alert.get())
                     {

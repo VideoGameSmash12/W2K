@@ -5,8 +5,11 @@ import me.videogamesm12.w2k.kernel.data.IEntityEntry;
 import me.videogamesm12.w2k.kernel.data.IItemStackEntry;
 import me.videogamesm12.w2k.kernel.module.WModule;
 import me.videogamesm12.w2k.kernel.module.setting.BooleanSetting;
+import me.videogamesm12.w2k.kernel.module.setting.ColorSetting;
 import me.videogamesm12.w2k.kernel.module.setting.StringSetting;
 import me.videogamesm12.w2k.kernel.util.VersionUtils;
+
+import java.awt.*;
 
 public class BanHammer extends WModule
 {
@@ -17,10 +20,11 @@ public class BanHammer extends WModule
     private final StringSetting banIpCommand = register(new StringSetting("ban_ip_command", "Ban IP Command", "banip %uuid%"));
     private final StringSetting itemType = register(new StringSetting("item_type", "Item Type",
             VersionUtils.isNewerThanOrRunning("1.16.5") ? "minecraft:netherite_axe" : "minecraft:diamond_axe"));
-    @Getter
-    private final BooleanSetting showOverlay = register(new BooleanSetting("show_overlay", "Show Overlay", true));
-    @Getter
-    private final BooleanSetting outlineTarget = register(new BooleanSetting("outline_target", "Outline Target", true));
+
+    public final BooleanSetting showOverlay = register(new BooleanSetting("show_overlay", "Show Overlay", true));
+    public final BooleanSetting outlineTarget = register(new BooleanSetting("outline_target", "Outline Target", true));
+    public final BooleanSetting useCustomHighlightColor = register(new BooleanSetting("use_custom_highlight_color", "Use Custom Highlight Color", true));
+    public final ColorSetting highlightColor = register(new ColorSetting("custom_highlight_color", "Custom Highlight Color", new Color(255, 0, 0)));
 
     public BanHammer()
     {

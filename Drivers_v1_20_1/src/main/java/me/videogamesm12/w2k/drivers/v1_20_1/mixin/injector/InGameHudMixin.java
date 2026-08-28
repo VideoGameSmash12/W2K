@@ -51,7 +51,7 @@ public abstract class InGameHudMixin
     {
         final BanHammer banHammer = W2K.getInstance().getModuleManager().getModule(BanHammer.class);
         final TargetHighlighter targetHighlighter = W2K.getInstance().getModuleManager().getModule(TargetHighlighter.class);
-        if (((banHammer.isEnabled() && banHammer.isHammerActive(IItemStackEntry.class.cast(currentStack)) && banHammer.getShowOverlay().get()) || targetHighlighter.isEnabled())
+        if (((banHammer.isEnabled() && banHammer.isHammerActive(IItemStackEntry.class.cast(currentStack)) && banHammer.showOverlay.get()) || targetHighlighter.isEnabled())
                 && client.targetedEntity != null)
         {
             final Entity target = client.targetedEntity;

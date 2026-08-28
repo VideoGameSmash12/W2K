@@ -42,7 +42,7 @@ public abstract class HudMixin
         final BanHammer banHammer = W2K.getInstance().getModuleManager().getModule(BanHammer.class);
         final TargetHighlighter targetHighlighter = W2K.getInstance().getModuleManager().getModule(TargetHighlighter.class);
         if (minecraft.player != null
-                && ((banHammer.isEnabled() && banHammer.isHammerActive(IItemStackEntry.class.cast(minecraft.player.getInventory().getSelectedItem())) && banHammer.getShowOverlay().get()) || targetHighlighter.isEnabled())
+                && ((banHammer.isEnabled() && banHammer.isHammerActive(IItemStackEntry.class.cast(minecraft.player.getInventory().getSelectedItem())) && banHammer.showOverlay.get()) || targetHighlighter.isEnabled())
                 && minecraft.crosshairPickEntity != null)
         {
             final Entity target = minecraft.crosshairPickEntity;

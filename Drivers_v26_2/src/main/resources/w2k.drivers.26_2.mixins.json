@@ -10,6 +10,7 @@
     "injector.BlockEntityRendererMixin",
     "injector.ChatHudMixin",
     "injector.ClientPlayNetworkHandlerMixin",
+    "injector.EntityRenderDispatcherMixin",
     "injector.EntityRendererMixin",
     "injector.GameRendererMixin",
     "injector.HudMixin",
