@@ -12,6 +12,7 @@
     "injector.ClientPlayNetworkHandlerMixin",
     "injector.EntityRendererMixin",
     "injector.GameRendererMixin",
+    "injector.InGameHudMixin",
     "injector.MainMixin",
     "injector.MinecraftClientMixin",
     "wrapper.PlayerEntryWrapper"
@@ -22,8 +23,8 @@
   "mixins": [
     "accessor.WorldAccessor",
     "injector.CrashReportMixin",
-    "injector.PlayerEntityMixin",
     "injector.KeyboardMixin",
+    "injector.PlayerEntityMixin",
     "wrapper.BlockEntityWrapper",
     "wrapper.EntityWrapper",
     "wrapper.ItemStackWrapper",

@@ -1,8 +1,10 @@
 package me.videogamesm12.w2k.toolbox.modules;
 
+import lombok.Getter;
 import me.videogamesm12.w2k.kernel.data.IEntityEntry;
 import me.videogamesm12.w2k.kernel.data.IItemStackEntry;
 import me.videogamesm12.w2k.kernel.module.WModule;
+import me.videogamesm12.w2k.kernel.module.setting.BooleanSetting;
 import me.videogamesm12.w2k.kernel.module.setting.StringSetting;
 import me.videogamesm12.w2k.kernel.util.VersionUtils;
 
@@ -15,6 +17,10 @@ public class BanHammer extends WModule
     private final StringSetting banIpCommand = register(new StringSetting("ban_ip_command", "Ban IP Command", "banip %uuid%"));
     private final StringSetting itemType = register(new StringSetting("item_type", "Item Type",
             VersionUtils.isNewerThanOrRunning("1.16.5") ? "minecraft:netherite_axe" : "minecraft:diamond_axe"));
+    @Getter
+    private final BooleanSetting showOverlay = register(new BooleanSetting("show_overlay", "Show Overlay", true));
+    @Getter
+    private final BooleanSetting outlineTarget = register(new BooleanSetting("outline_target", "Outline Target", true));
 
     public BanHammer()
     {
@@ -24,9 +30,7 @@ public class BanHammer extends WModule
 
     public boolean handleClick(final IEntityEntry entity, final IItemStackEntry stack, final boolean hit)
     {
-        if (!stack.w2k$isNotEmpty()
-                || !stack.w2k$type().equalsIgnoreCase(itemType.get())
-                || !(stack.w2k$name() != null && stack.w2k$name().toString().contains(itemName))
+        if (!isHammerActive(stack)
                 || !entity.w2k$type().equalsIgnoreCase("minecraft:player"))
         {
             return false;
@@ -37,5 +41,14 @@ public class BanHammer extends WModule
                 .replaceAll("%username%", entity.w2k$internalName());
         versionBridge().runCommand(command);
         return true;
+    }
+
+    public boolean isHammerActive(final IItemStackEntry stack)
+    {
+        return stack != null
+                && stack.w2k$isNotEmpty()
+                && stack.w2k$type().equalsIgnoreCase(itemType.get())
+                && stack.w2k$name() != null
+                && stack.w2k$name().toString().contains(itemName);
     }
 }

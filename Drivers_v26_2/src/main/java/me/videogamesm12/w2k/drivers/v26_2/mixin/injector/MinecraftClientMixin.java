@@ -2,14 +2,22 @@ package me.videogamesm12.w2k.drivers.v26_2.mixin.injector;
 
 import com.llamalad7.mixinextras.sugar.Local;
 import me.videogamesm12.w2k.kernel.W2K;
+import me.videogamesm12.w2k.kernel.data.IEntityEntry;
+import me.videogamesm12.w2k.kernel.data.IItemStackEntry;
 import me.videogamesm12.w2k.kernel.event.lifecycle.ClientCrashedEvent;
 import me.videogamesm12.w2k.supervisor.Supervisor;
 import me.videogamesm12.w2k.supervisor.components.flags.Flags;
 import me.videogamesm12.w2k.supervisor.components.watchdog.Watchdog;
+import me.videogamesm12.w2k.toolbox.modules.BanHammer;
+import me.videogamesm12.w2k.toolbox.modules.TargetHighlighter;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.CrashReport;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.world.entity.Entity;
+import org.jspecify.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -21,6 +29,15 @@ import java.nio.file.Path;
 @Mixin(Minecraft.class)
 public class MinecraftClientMixin
 {
+
+    @Shadow
+    @Nullable
+    public LocalPlayer player;
+
+    @Shadow
+    @Nullable
+    public Entity crosshairPickEntity;
+
     /**
      * <p>Supervisor's freeze detection works by injecting some code at the tail-end of the game's rendering method to
      *  store a timestamp for when the last time a frame successfully rendered occurs, then periodically checking
@@ -79,5 +96,20 @@ public class MinecraftClientMixin
     {
         final ClientCrashedEvent event = new ClientCrashedEvent(Minecraft.getInstance(), crash.getException(), crashFile.toFile());
         Supervisor.getEventBus().post(event);
+    }
+
+    @Inject(method = "shouldEntityAppearGlowing", at = @At("HEAD"), cancellable = true)
+    private void outlineTargetedPlayer(Entity entity, CallbackInfoReturnable<Boolean> cir)
+    {
+        final BanHammer banHammer = W2K.getInstance().getModuleManager().getModule(BanHammer.class);
+        final TargetHighlighter targetHighlighter = W2K.getInstance().getModuleManager().getModule(TargetHighlighter.class);
+        if (player != null
+                && crosshairPickEntity != null
+                && crosshairPickEntity.equals(entity)
+                && ((IEntityEntry) crosshairPickEntity).w2k$type().equalsIgnoreCase("minecraft:player")
+                && ((banHammer.isEnabled() && banHammer.isHammerActive(IItemStackEntry.class.cast(player.getInventory().getSelectedItem())) && banHammer.getOutlineTarget().get()) || targetHighlighter.isEnabled()))
+        {
+            cir.setReturnValue(true);
+        }
     }
 }

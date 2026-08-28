@@ -18,6 +18,7 @@
       "me.videogamesm12.w2k.toolbox.modules.AntiLockup",
       "me.videogamesm12.w2k.toolbox.modules.BanHammer",
       "me.videogamesm12.w2k.toolbox.modules.QueryLogger",
+      "me.videogamesm12.w2k.toolbox.modules.TargetHighlighter",
       "me.videogamesm12.w2k.toolbox.modules.WPacketLogger"
     ]
   },

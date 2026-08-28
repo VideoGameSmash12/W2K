@@ -12,6 +12,7 @@
     "injector.ClientPlayNetworkHandlerMixin",
     "injector.EntityRendererMixin",
     "injector.GameRendererMixin",
+    "injector.InGameHudMixin",
     "injector.KeyboardMixin",
     "injector.MainMixin",
     "injector.MinecraftClientMixin",

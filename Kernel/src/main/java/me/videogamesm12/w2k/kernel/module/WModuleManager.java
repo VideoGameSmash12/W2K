@@ -18,6 +18,8 @@ public class WModuleManager
     private static final File modulesFile = new File(W2K.getModFolder(), "modules.nbt");
     @Getter
     private final Map<ModContainer, Map<String, WModule>> registry = new HashMap<>();
+    @Getter
+    private final Map<Class<? extends WModule>, WModule> classRegistry = new HashMap<>();
 
     public void registerModules()
     {
@@ -34,10 +36,11 @@ public class WModuleManager
             // Get the relevant registry for this mod
             final Map<String, WModule> modModuleRegistry = registry.get(mod);
             modModuleRegistry.put(mod.getMetadata().getId() + ":" + module.getId().replace(" ", "_"), module);
+            classRegistry.put(module.getClass(), module);
         });
     }
 
-    public <T extends WModule> T getModule(final Class<T> id)
+    /*public <T extends WModule> T getModule(final Class<T> id)
     {
         return registry.values().stream()
                 .flatMap(map -> map.values().stream())
@@ -45,6 +48,11 @@ public class WModuleManager
                 .findAny()
                 .map(module -> (T) module)
                 .orElseThrow(() -> new IllegalArgumentException("Module " + id.getName() + " has not been registered"));
+    }*/
+
+    public <T extends WModule> T getModule(final Class<T> id)
+    {
+        return (T) classRegistry.get(id);
     }
 
     public void loadModules()

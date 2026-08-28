@@ -18,6 +18,7 @@ import net.fabricmc.fabric.api.client.networking.v1.C2SPlayChannelEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.kyori.adventure.nbt.CompoundBinaryTag;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.Identifier;
 
@@ -113,7 +114,7 @@ public class WCommunicationsDriver implements WAmbassadorDriver
         C2SPlayChannelEvents.REGISTER.register((handler, sender, client, identifiers) ->
         {
             // insert check here for setting, that doesn't exist
-            if (stage == Stage.HELLO)
+            if (stage == Stage.HELLO && MinecraftClient.getInstance().getNetworkHandler() != null)
             {
                 sendPacket(new WServerboundHelloPacket(nextTransactionId(), WPacket.protocolVersion, "1.20.1"));
             }
