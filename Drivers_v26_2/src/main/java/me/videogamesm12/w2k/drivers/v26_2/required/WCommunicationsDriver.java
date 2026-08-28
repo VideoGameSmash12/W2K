@@ -110,7 +110,7 @@ public class WCommunicationsDriver implements WAmbassadorDriver
 
         ServerboundPlayChannelEvents.REGISTER.register((handler, s, c, identifiers) ->
         {
-            if (stage == Stage.HELLO)
+            if (stage == Stage.HELLO && Minecraft.getInstance().getConnection() != null)
             {
                 sendPacket(new WServerboundHelloPacket(nextTransactionId(), WPacket.protocolVersion, "26.2"));
             }
