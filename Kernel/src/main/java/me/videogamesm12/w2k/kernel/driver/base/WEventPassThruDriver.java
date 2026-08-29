@@ -11,11 +11,10 @@ public interface WEventPassThruDriver extends WDriver
 {
     default void setupEvents()
     {
-        setupStartedEvent();
-        setupStoppedEvent();
+        setupLifecycleEvents();
     }
 
-    void setupStartedEvent();
+    void setupLifecycleEvents();
 
-    void setupStoppedEvent();
+    void setupNetworkEvents();
 }

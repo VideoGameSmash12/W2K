@@ -21,9 +21,8 @@ public class WPacketLogger extends WModule
     }
 
     @Subscribe
-    public void onCommandSpyPacket(WPacketReceivedEvent<WClientboundCommandSpyPacket> event)
+    public void onCommandSpyPacket(WClientboundCommandSpyPacket commandSpyPacket)
     {
-        final WClientboundCommandSpyPacket commandSpyPacket = event.getPacket();
         W2K.getLogger().info("Received command from server - {} (UUID {}) executed server command {}", commandSpyPacket.getUsername(), commandSpyPacket.getUuid(), commandSpyPacket.getCommand());
     }
 }

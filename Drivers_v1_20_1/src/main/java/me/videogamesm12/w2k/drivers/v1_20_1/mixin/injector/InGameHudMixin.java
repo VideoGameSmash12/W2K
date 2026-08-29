@@ -4,7 +4,9 @@ import me.videogamesm12.w2k.kernel.W2K;
 import me.videogamesm12.w2k.kernel.data.IEntityEntry;
 import me.videogamesm12.w2k.kernel.data.IItemStackEntry;
 import me.videogamesm12.w2k.toolbox.modules.BanHammer;
+import me.videogamesm12.w2k.toolbox.modules.TPSOverlay;
 import me.videogamesm12.w2k.toolbox.modules.TargetHighlighter;
+import me.videogamesm12.wcom.Stage;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
@@ -19,6 +21,8 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import java.util.Arrays;
 
 @Mixin(InGameHud.class)
 public abstract class InGameHudMixin
@@ -51,6 +55,7 @@ public abstract class InGameHudMixin
     {
         final BanHammer banHammer = W2K.getInstance().getModuleManager().getModule(BanHammer.class);
         final TargetHighlighter targetHighlighter = W2K.getInstance().getModuleManager().getModule(TargetHighlighter.class);
+
         if (((banHammer.isEnabled() && banHammer.isHammerActive(IItemStackEntry.class.cast(currentStack)) && banHammer.showOverlay.get()) || targetHighlighter.isEnabled())
                 && client.targetedEntity != null)
         {
@@ -61,6 +66,14 @@ public abstract class InGameHudMixin
             {
                 context.drawCenteredTextWithShadow(getTextRenderer(), "Target: " + castedTarget.w2k$internalName(), scaledWidth / 2, (this.scaledHeight / 2) - 24, 0xFFFFFF);
             }
+        }
+
+        final TPSOverlay tpsOverlay = W2K.getInstance().getModuleManager().getModule(TPSOverlay.class);
+        if (tpsOverlay.isEnabled()
+                && W2K.getInstance().getDriverManager().getCommunicationsDriver() != null
+                && W2K.getInstance().getDriverManager().getCommunicationsDriver().getStage() == Stage.READY)
+        {
+            context.drawText(getTextRenderer(), "TPS (1m, 5m, 10m): " + Arrays.toString(tpsOverlay.ticks), 0, context.getScaledWindowHeight() - 16, 0xFFFFFF, false);
         }
     }
 }

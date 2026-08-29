@@ -116,7 +116,6 @@ public class WCommunicationsDriver implements WAmbassadorDriver
             }
         });
 
-
         // Reset everything upon disconnecting
         ClientPlayConnectionEvents.DISCONNECT.register((handler, client) ->
         {
@@ -358,6 +357,11 @@ public class WCommunicationsDriver implements WAmbassadorDriver
             this.reader = reader;
             this.writer = writer;
             this.buffer = buffer;
+
+            if (reader != null)
+            {
+                this.packet = reader.apply(buffer);
+            }
         }
 
         public WWrappedPacket(final String identifier,

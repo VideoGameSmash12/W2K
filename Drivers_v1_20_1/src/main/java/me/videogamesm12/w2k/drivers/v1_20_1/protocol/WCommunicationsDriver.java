@@ -5,10 +5,12 @@ import me.videogamesm12.w2k.kernel.W2K;
 import me.videogamesm12.w2k.kernel.driver.base.WAmbassadorDriver;
 import me.videogamesm12.w2k.kernel.driver.base.WDriverMetadata;
 import me.videogamesm12.w2k.kernel.event.protocol.WPacketReceivedEvent;
+import me.videogamesm12.w2k.toolbox.modules.TPSOverlay;
 import me.videogamesm12.wcom.Stage;
 import me.videogamesm12.wcom.WPacket;
 import me.videogamesm12.wcom.protocol.clientbound.WClientboundCommandSpyPacket;
 import me.videogamesm12.wcom.protocol.clientbound.WClientboundConfigureAcknowledgePacket;
+import me.videogamesm12.wcom.protocol.clientbound.WClientboundHeartbeatPacket;
 import me.videogamesm12.wcom.protocol.clientbound.WClientboundHelloPacket;
 import me.videogamesm12.wcom.protocol.common.WCommonErrorPacket;
 import me.videogamesm12.wcom.protocol.serverbound.WServerboundCommandPacket;
@@ -80,6 +82,17 @@ public class WCommunicationsDriver implements WAmbassadorDriver
                     buffer.writeString(packet.getUuid().toString());
                     buffer.writeString(packet.getUsername());
                     buffer.writeString(packet.getCommand());
+                    return buffer;
+                });
+        register(WClientboundHeartbeatPacket.class,
+                byteBuf -> new WClientboundHeartbeatPacket(byteBuf.readLong(), byteBuf.readDouble(), byteBuf.readDouble(), byteBuf.readDouble()),
+                packet ->
+                {
+                    final PacketByteBuf buffer = new PacketByteBuf(Unpooled.buffer());
+                    buffer.writeLong(packet.getTimestamp());
+                    buffer.writeDouble(packet.getOneMinute());
+                    buffer.writeDouble(packet.getFiveMinutes());
+                    buffer.writeDouble(packet.getTenMinutes());
                     return buffer;
                 });
         // SERVER-BOUND
@@ -195,7 +208,10 @@ public class WCommunicationsDriver implements WAmbassadorDriver
                     // Enter communication stage
                     // TODO: Add demands for the server to meet lol
                     W2K.getLogger().info("Received valid hello packet from server. Sending configuration packet");
-                    final CompoundBinaryTag demands = CompoundBinaryTag.builder().putBoolean("command_spy", true).build();
+                    final CompoundBinaryTag demands = CompoundBinaryTag.builder()
+                            .putBoolean("command_spy", true)
+                            .putBoolean("send_heartbeats", W2K.getInstance().getModuleManager().getModule(TPSOverlay.class).isEnabled())
+                            .build();
                     sendPacket(new WServerboundConfigurePacket(nextTransactionId(), demands));
                     stage = Stage.CONFIGURATION;
                     return;
@@ -235,7 +251,7 @@ public class WCommunicationsDriver implements WAmbassadorDriver
             case ANY:
             {
                 W2K.getLogger().info("Received packet, calling event");
-                W2K.getEventBus().post(new WPacketReceivedEvent<>(id, packet));
+                MinecraftClient.getInstance().executeTask(() -> W2K.getEventBus().post(packet));
             }
         }
     }
