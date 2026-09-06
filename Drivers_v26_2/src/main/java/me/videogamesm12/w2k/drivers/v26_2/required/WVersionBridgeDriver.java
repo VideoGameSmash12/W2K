@@ -4,7 +4,6 @@ import com.google.gson.JsonElement;
 import com.mojang.serialization.JsonOps;
 import me.videogamesm12.w2k.drivers.v26_2.mixin.accessor.ClientWorldAccessor;
 import me.videogamesm12.w2k.drivers.v26_2.mixin.accessor.WorldAccessor;
-import me.videogamesm12.w2k.kernel.W2K;
 import me.videogamesm12.w2k.kernel.data.*;
 import me.videogamesm12.w2k.kernel.driver.base.WDriverMetadata;
 import me.videogamesm12.w2k.kernel.util.ComponentUtils;
@@ -16,7 +15,6 @@ import net.minecraft.network.chat.ComponentSerialization;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
-import net.minecraft.world.level.ChunkPos;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -25,8 +23,6 @@ import java.util.stream.StreamSupport;
 @WDriverMetadata(identifier = "1212_version_bridge")
 public class WVersionBridgeDriver implements me.videogamesm12.w2k.kernel.driver.base.WVersionBridgeDriver
 {
-    private ChunkPos lastPos = null;
-
     @Override
     public void disconnect()
     {

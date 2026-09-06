@@ -120,9 +120,18 @@ public class Blackbox extends Thread
         {
             config.setWidth(mainWindow.getWidth());
             config.setHeight(mainWindow.getHeight());
+            mainWindow.getTimer().cancel();
+            mainWindow.dispose();
+        }
+
+        // Remove the icon if it's present
+        if (systemTrayIcon != null)
+        {
+            systemTrayIcon.removeIcon();
         }
 
         Configuration.save(config);
+        super.interrupt();
     }
 
     @Subscribe

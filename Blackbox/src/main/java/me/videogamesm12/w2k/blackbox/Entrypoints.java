@@ -11,7 +11,6 @@ public class Entrypoints implements ClientModInitializer
     {
         switch (SysUtils.getOperatingSystem())
         {
-            case MAC_OS:
             case LINUX:
             {
                 // https://bugs.openjdk.org/browse/JDK-8056151
@@ -20,6 +19,14 @@ public class Entrypoints implements ClientModInitializer
             case WINDOWS:
             {
                 break;
+            }
+            case MAC_OS:
+            {
+                W2K.getLogger().warn("Due to systemic issues in how the Blackbox operates (which will change... "
+                        + "eventually) which cause the client to hang up on start-up, in the interest of maintaining "
+                        + "client stability, it has been disabled.");
+                W2K.getLogger().warn("For more information, please see https://github.com/VideoGameSmash12/W2K/issues/7");
+                return;
             }
             case SOLARIS:
             case OTHER:

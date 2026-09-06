@@ -3,6 +3,7 @@ package me.videogamesm12.w2k.kernel;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import lombok.Getter;
+import me.videogamesm12.w2k.kernel.command.WCommand;
 import me.videogamesm12.w2k.kernel.command.WCommandManager;
 import me.videogamesm12.w2k.kernel.commands.ExperimentsCmd;
 import me.videogamesm12.w2k.kernel.commands.W2KCmd;
@@ -140,5 +141,7 @@ public class W2K implements ModInitializer
            logger.info("Saving module settings");
            moduleManager.saveModules();
        }
+
+        WCommand.cancelAllScheduledOperations();
     }
 }

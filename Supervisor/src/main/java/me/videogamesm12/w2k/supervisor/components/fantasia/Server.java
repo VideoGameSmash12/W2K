@@ -104,22 +104,6 @@ public class Server extends Thread
     @Override
     public void interrupt()
     {
-        shutdown();
-        super.interrupt();
-    }
-
-    public void addSession(ISession session)
-    {
-        sessions.add(session);
-    }
-
-    public void removeSession(ISession session)
-    {
-        sessions.remove(session);
-    }
-
-    public void shutdown()
-    {
         try
         {
             connectionListener.shutdown();
@@ -134,6 +118,17 @@ public class Server extends Thread
         }
 
         sessions.clear();
+        super.interrupt();
+    }
+
+    public void addSession(ISession session)
+    {
+        sessions.add(session);
+    }
+
+    public void removeSession(ISession session)
+    {
+        sessions.remove(session);
     }
 
     public void registerCommand(Class<? extends FCommand> cmd)

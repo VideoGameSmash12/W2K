@@ -33,6 +33,7 @@ public class GUI extends JFrame
     @Getter
     private final JTabbedPane tabbedPane;
     //--
+    @Getter
     private final Timer timer;
 
     public GUI()
@@ -112,6 +113,9 @@ public class GUI extends JFrame
                 }
             }
         }, 0, 1000);
+
+        // Hide it upon closing it
+        setDefaultCloseOperation(HIDE_ON_CLOSE);
 
         // Finally, we show the stuff now.
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();

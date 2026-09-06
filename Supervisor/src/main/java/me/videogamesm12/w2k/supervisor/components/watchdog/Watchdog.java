@@ -33,7 +33,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-public class Watchdog extends Thread implements SVComponent
+public class Watchdog implements SVComponent
 {
     public static long LAST_RENDERED_TIME = 0L;
     //--
@@ -47,12 +47,6 @@ public class Watchdog extends Thread implements SVComponent
 
     @Override
     public void setup()
-    {
-        start();
-    }
-
-    @Override
-    public void run()
     {
         W2K.getEventBus().register(this);
 

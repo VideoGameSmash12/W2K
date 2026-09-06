@@ -65,7 +65,7 @@ public class Fantasia implements SVComponent
     @Override
     public void shutdown()
     {
-        server.shutdown();
+        server.interrupt();
     }
 
     @Override

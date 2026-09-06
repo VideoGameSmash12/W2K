@@ -55,4 +55,9 @@ public abstract class WCommand
             }
         }, delay);
     }
+
+    public static void cancelAllScheduledOperations()
+    {
+        scheduler.cancel();
+    }
 }

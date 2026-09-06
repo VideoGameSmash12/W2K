@@ -38,4 +38,12 @@ public class SysTray
     {
         SystemTray.getSystemTray().add(icon);
     }
+
+    public void removeIcon()
+    {
+        if (icon != null)
+        {
+            SystemTray.getSystemTray().remove(icon);
+        }
+    }
 }

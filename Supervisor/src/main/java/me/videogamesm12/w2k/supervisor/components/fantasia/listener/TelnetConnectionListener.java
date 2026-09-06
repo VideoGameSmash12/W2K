@@ -116,5 +116,7 @@ public class TelnetConnectionListener extends IConnectionListener
         catch (Exception ignored)
         {
         }
+
+        interrupt();
     }
 }

@@ -92,6 +92,8 @@ public class UnixDomainConnectionListener extends IConnectionListener
         {
             Fantasia.getServerLogger().error("Failed to delete socket file", ex);
         }
+
+        interrupt();
     }
 
     public boolean socketIsAvailable(int number)
