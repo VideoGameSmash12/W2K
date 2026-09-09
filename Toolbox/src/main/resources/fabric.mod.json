@@ -17,6 +17,7 @@
     "w2k-modules": [
       "me.videogamesm12.w2k.toolbox.modules.AntiLockup",
       "me.videogamesm12.w2k.toolbox.modules.BanHammer",
+      "me.videogamesm12.w2k.toolbox.modules.DevelopmentBuildWatermark",
       "me.videogamesm12.w2k.toolbox.modules.QueryLogger",
       "me.videogamesm12.w2k.toolbox.modules.TargetHighlighter",
       "me.videogamesm12.w2k.toolbox.modules.TPSOverlay",

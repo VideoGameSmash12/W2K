@@ -94,7 +94,7 @@ public class SynthThemesProvider implements IThemeProvider
             try
             {
                 SynthLookAndFeel synth = new SynthLookAndFeel();
-                synth.load(file.toPath().toUri().toURL());
+                synth.load(file.toPath().toUri().toURL().openStream(), null);
                 UIManager.setLookAndFeel(synth);
             }
             catch (ParseException | UnsupportedLookAndFeelException | IOException ex)

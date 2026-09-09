@@ -1,3 +1,6 @@
+import java.time.Instant
+import java.time.format.DateTimeFormatter
+
 plugins {
     id 'java-library'
     id 'com.gorylenko.gradle-git-properties'
@@ -5,6 +8,7 @@ plugins {
 
 ext {
     java_version = 8
+    build_time = System.currentTimeMillis()
 }
 
 tasks.withType(JavaCompile).configureEach {
@@ -33,12 +37,16 @@ dependencies {
 }
 
 gitProperties {
+    customProperty "w2k.build.timestamp", build_time
+    customProperty "w2k.build.timestamp.formatted", new Date((long) build_time).toString()
     keys = [
             'git.branch',
             'git.commit.id',
             'git.commit.id.abbrev',
             'git.commit.time',
             'git.remote.origin.url',
-            'git.dirty'
+            'git.dirty',
+            'w2k.build.timestamp',
+            'w2k.build.timestamp.formatted'
     ]
 }

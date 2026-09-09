@@ -3,6 +3,7 @@ package me.videogamesm12.w2k.kernel.experiment;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import me.videogamesm12.w2k.kernel.util.VersionUtils;
 import net.fabricmc.loader.api.FabricLoader;
 import net.kyori.adventure.text.Component;
 
@@ -25,6 +26,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public enum Experiment
 {
+    KERNEL_COMMAND_SYSTEM_OVERHAUL("Kernel", true, Collections.singletonList(
+            Condition.of("Only available in 1.20.1", VersionUtils.isOlderThanOrRunning("1.20.1")))),
     BLACKBOX_HELP_WINDOW("Blackbox", true, Collections.EMPTY_LIST),
     BLACKBOX_COMMAND_LINE_LAF_OVERRIDE("Blackbox", true, Collections.EMPTY_LIST),
     BLACKBOX_RUNTIME_PROPERTIES_TAB("Blackbox", true, Collections.EMPTY_LIST),
