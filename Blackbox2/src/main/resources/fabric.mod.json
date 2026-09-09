@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "id": "w2k-blackbox2",
+  "version": "${version}",
+  "name": "Blackbox",
+  "description": "GUI for the Supervisor.",
+  "authors": [
+    "videogamesm12"
+  ],
+  "contact": {},
+  "license": "MIT",
+  "icon": "assets/w2k/blackbox/icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "w2k-optional-driver": [
+      "me.videogamesm12.w2k.blackbox2.Bootstrap"
+    ]
+  },
+  "depends": {
+    "minecraft": ">=1.8.9",
+    "w2k-supervisor": "*"
+  },
+  "custom": {
+    "modmenu": {
+      "parent": "w2k"
+    }
+  }
+}

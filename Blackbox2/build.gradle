@@ -1,0 +1,11 @@
+plugins {
+    id("common-conventions")
+    id("modern-minecraft-conventions")
+}
+
+dependencies {
+    minecraft "com.mojang:minecraft:1.20.1"
+
+    compileOnly project(":Supervisor")
+    compileOnly project(":Toolbox")
+}
