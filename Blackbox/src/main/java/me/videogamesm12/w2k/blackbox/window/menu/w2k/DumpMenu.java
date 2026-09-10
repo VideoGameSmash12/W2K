@@ -1,6 +1,7 @@
 package me.videogamesm12.w2k.blackbox.window.menu.w2k;
 
 import me.videogamesm12.w2k.blackbox.Blackbox;
+import me.videogamesm12.w2k.blackbox.util.JComponents;
 import me.videogamesm12.w2k.kernel.W2K;
 import me.videogamesm12.w2k.kernel.util.SysUtils;
 import me.videogamesm12.w2k.toolbox.util.DumpUtil;
@@ -147,6 +148,39 @@ public class DumpMenu extends JMenu
 			});
 		}));
 		add(dumpEntities);
+
+		final JMenuItem generateHeapDump = JComponents.createMenuItem("Generate heap dump",
+				"Instructs the JVM to generate a heap dump. Useful for diagnosing memory leaks.",
+				() -> DumpUtil.generateHeapDump(false).whenComplete((result, throwable) ->
+                {
+                    if (throwable != null)
+                    {
+                        W2K.getLogger().error("Stacktrace:", throwable);
+                        SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(Blackbox.getInstance().getMainWindow(),
+                                "An unrecoverable error occurred during the dump. Please check the logs for more "
+                                        + "information.", "Dump failed", JOptionPane.ERROR_MESSAGE));
+                        return;
+                    }
+
+                    SwingUtilities.invokeLater(() ->
+                    {
+                        int prompt = JOptionPane.showConfirmDialog(Blackbox.getInstance().getMainWindow(),
+                                "Heap dump completed. Would you like to open the folder it's in?",
+                                "Dump completed", JOptionPane.YES_NO_OPTION , JOptionPane.QUESTION_MESSAGE);
+
+                        if (prompt == JOptionPane.YES_OPTION)
+                        {
+                            try
+                            {
+                                SysUtils.getOperatingSystem().openFolder(DumpUtil.getDumpsFolder());
+                            }
+                            catch (Throwable ignored)
+                            {
+                            }
+                        }
+                    });
+                }));
+		add(generateHeapDump);
 
 		addSeparator();
 

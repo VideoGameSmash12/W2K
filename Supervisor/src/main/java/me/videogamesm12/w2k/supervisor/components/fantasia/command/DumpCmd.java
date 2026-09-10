@@ -9,7 +9,7 @@ public class DumpCmd extends FCommand
 {
 	public DumpCmd()
 	{
-		super("dump", "Dump various types of data in memory to disk.", "dump <entities | maps | screen | tiles> [parallel]");
+		super("dump", "Dump various types of data in memory to disk.", "dump <entities | maps | screen | tiles | heap> [parallel | live]");
 	}
 
 	@Override
@@ -27,6 +27,7 @@ public class DumpCmd extends FCommand
 		}
 
 		boolean parallel = args.length > 1 && args[1].equalsIgnoreCase("parallel");
+		boolean live = args.length > 1 && args[1].equalsIgnoreCase("live");
 
 		switch (args[0].toLowerCase())
 		{
@@ -99,6 +100,21 @@ public class DumpCmd extends FCommand
 					sender.sendMessage(String.format("Tile entity dump complete (%d successful, %d failed, %d ignored).",
 							result.getSuccessful().size(), result.getFailed().size(), result.getIgnored().size()));
 					sender.sendMessage("The dump is located at " + result.getOutputDirectory().getAbsolutePath());
+				});
+				break;
+			}
+			case "heap":
+			{
+				DumpUtil.generateHeapDump(live).whenComplete((result, exception) ->
+				{
+					if (exception != null)
+					{
+						sender.sendMessage("An unrecoverable error occurred during the dump. Check the client logs for more information.");
+						W2K.getLogger().error("Stacktrace:", exception);
+						return;
+					}
+
+					sender.sendMessage(String.format("Heap dump completed (located at %s).", result.getAbsolutePath()));
 				});
 				break;
 			}

@@ -9,6 +9,12 @@ public class Entrypoints implements ClientModInitializer
     @Override
     public void onInitializeClient()
     {
+        if (System.getProperties().getProperty("me.videogamesm12.w2k.no_blackbox", "f").toLowerCase().startsWith("t"))
+        {
+            W2K.getLogger().info("Not initializing Blackbox as by user request.");
+            return;
+        }
+
         switch (SysUtils.getOperatingSystem())
         {
             case LINUX:

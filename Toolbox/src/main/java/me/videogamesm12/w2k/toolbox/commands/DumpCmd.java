@@ -1,16 +1,69 @@
 package me.videogamesm12.w2k.toolbox.commands;
 
 import me.videogamesm12.w2k.kernel.W2K;
+import me.videogamesm12.w2k.kernel.command.Argument;
 import me.videogamesm12.w2k.kernel.command.ExecutionPath;
 import me.videogamesm12.w2k.kernel.command.Parameters;
 import me.videogamesm12.w2k.kernel.command.WCommand;
 import me.videogamesm12.w2k.toolbox.util.DumpUtil;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 
-@Parameters(name = "dump", usage = "/dump <entities | maps | screen | tiles>")
+@Parameters(name = "dump", usage = "/dump <entities | maps | screen | tiles | threads>")
 public class DumpCmd extends WCommand
 {
+	@ExecutionPath("heap")
+	public void heap()
+	{
+		heap(false);
+	}
+
+	@ExecutionPath("heap")
+	public void heap(final @Argument(label = "live objects?") boolean live)
+	{
+		msg(Component.translatable("w2k.toolbox.dump.starting.heap", NamedTextColor.GRAY));
+		DumpUtil.generateHeapDump(live).whenComplete((file, throwable) ->
+		{
+			if (throwable != null)
+			{
+				W2K.getLogger().error("Stacktrace:", throwable);
+				msg(Component.translatable("w2k.toolbox.dump.error", NamedTextColor.RED));
+				return;
+			}
+
+			msg(Component.translatable("w2k.toolbox.dump.success.heap",
+							Component.text(file.getAbsolutePath())
+									.color(NamedTextColor.WHITE)
+									.decorate(TextDecoration.UNDERLINED)
+									.clickEvent(ClickEvent.clickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, file.getAbsolutePath())))
+					.color(NamedTextColor.GRAY));
+		});
+	}
+
+	@ExecutionPath("threads")
+	public void threads()
+	{
+		msg(Component.translatable("w2k.toolbox.dump.starting.threads", NamedTextColor.GRAY));
+		DumpUtil.performStructuredThreadDump().whenComplete((file, throwable) ->
+		{
+			if (throwable != null)
+			{
+				W2K.getLogger().error("Stacktrace:", throwable);
+				msg(Component.translatable("w2k.toolbox.dump.error", NamedTextColor.RED));
+				return;
+			}
+
+			msg(Component.translatable("w2k.toolbox.dump.success.threads",
+					Component.text(file.getAbsolutePath())
+							.color(NamedTextColor.WHITE)
+							.decorate(TextDecoration.UNDERLINED)
+							.clickEvent(ClickEvent.clickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, file.getAbsolutePath())))
+					.color(NamedTextColor.GRAY));
+		});
+	}
+
 	@ExecutionPath("tiles")
 	public void tiles()
 	{

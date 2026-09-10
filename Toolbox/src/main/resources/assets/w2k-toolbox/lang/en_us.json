@@ -8,14 +8,20 @@
   "w2k.toolbox.ashcon.result.uuid": "%s's UUID is %s.",
   "w2k.toolbox.ashcon.not_premium": "%s is not a premium account.",
   "w2k.toolbox.ashcon.premium": "%s is a premium account.",
+
   "w2k.toolbox.dump.error": "An unrecoverable error occurred during the dump. Check the logs for more information.",
   "w2k.toolbox.dump.starting.entities": "Dumping entities...",
   "w2k.toolbox.dump.starting.screen": "Preparing dump. Open an inventory within the next 5 seconds to dump its contents.",
   "w2k.toolbox.dump.starting.maps": "Dumping maps...",
   "w2k.toolbox.dump.starting.tiles": "Dumping tile entities...",
+  "w2k.toolbox.dump.starting.threads": "Dumping threads...",
+  "w2k.toolbox.dump.starting.heap": "Generating heap dump...",
   "w2k.toolbox.dump.success.entities": "Entity dump complete (%1$s successful, %2$s failed).",
   "w2k.toolbox.dump.success.maps": "Map dump complete (%1$s successful, %2$s failed).",
   "w2k.toolbox.dump.success.screen": "Inventory dump complete (%1$s successful, %2$s failed, %3$s ignored).",
   "w2k.toolbox.dump.success.tiles": "Tile entity dump complete (%1$s successful, %2$s failed, %3$s ignored).",
+  "w2k.toolbox.dump.success.threads": "Thread dump complete (located at %1$s).",
+  "w2k.toolbox.dump.success.heap": "Heap dump complete (located at %1$s).",
+
   "w2k.toolbox.module.antilockup.blocked": "Blocked %1$d suspicious inventory packet(s) (suspected lockup attempt?)"
 }

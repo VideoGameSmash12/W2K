@@ -1,18 +1,22 @@
 package me.videogamesm12.w2k.toolbox.util;
 
+import com.sun.management.HotSpotDiagnosticMXBean;
 import lombok.Getter;
 import me.videogamesm12.w2k.kernel.W2K;
 import me.videogamesm12.w2k.kernel.data.*;
 import me.videogamesm12.w2k.toolbox.data.DumpResult;
-import net.kyori.adventure.nbt.BinaryTagIO;
-import net.kyori.adventure.nbt.CompoundBinaryTag;
-import net.kyori.adventure.nbt.TagStringIO;
+import net.kyori.adventure.nbt.*;
 
+import javax.management.MBeanServer;
 import java.io.*;
+import java.lang.management.ManagementFactory;
+import java.lang.management.ThreadInfo;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 public class DumpUtil
 {
@@ -226,6 +230,62 @@ public class DumpUtil
 		});
 	}
 
+	public static CompletableFuture<File> performStructuredThreadDump()
+	{
+		final CompletableFuture<File> future = new CompletableFuture<>();
+
+		CompletableFuture.runAsync(() ->
+		{
+			final File file = new File(getDumpsFolder(), "threads-" + System.currentTimeMillis() + ".dat");
+			final CompoundBinaryTag.Builder tag = CompoundBinaryTag.builder();
+
+			W2K.getLogger().error("Starting thread dump");
+
+			for (ThreadInfo thread : ManagementFactory.getThreadMXBean().dumpAllThreads(true, true))
+			{
+				W2K.getLogger().error("Debug - Dumping thread {}", thread.getThreadName());
+				tag.put(thread.getThreadName(), threadToElement(thread));
+			}
+
+			try (FileOutputStream stream = new FileOutputStream(file))
+			{
+				W2K.getLogger().error("Completing thread dump");
+				BinaryTagIO.writer().write(tag.build(), stream, BinaryTagIO.Compression.GZIP);
+				future.complete(file);
+				W2K.getLogger().error("Completed");
+			}
+			catch (IOException ex)
+			{
+				future.completeExceptionally(ex);
+			}
+		});
+
+		return future;
+	}
+
+	public static CompletableFuture<File> generateHeapDump(boolean live)
+	{
+		final CompletableFuture<File> future = new CompletableFuture<>();
+
+		CompletableFuture.runAsync(() ->
+		{
+			final File file = new File(getDumpsFolder(), "heapdump-" + System.currentTimeMillis() + ".hprof");
+			final MBeanServer server = ManagementFactory.getPlatformMBeanServer();
+			try
+			{
+				HotSpotDiagnosticMXBean hotspot = ManagementFactory.newPlatformMXBeanProxy(server, "com.sun.management:type=HotSpotDiagnostic", HotSpotDiagnosticMXBean.class);
+				hotspot.dumpHeap(file.getAbsolutePath(), live);
+				future.complete(file);
+			}
+			catch (IOException ex)
+			{
+				future.completeExceptionally(ex);
+			}
+		});
+
+		return future;
+	}
+
 	private static File generateDumpFolder()
 	{
 		final File dir = new File(dumpsFolder, String.valueOf(System.currentTimeMillis()));
@@ -234,5 +294,24 @@ public class DumpUtil
 			dir.mkdirs();
 		}
 		return dir;
+	}
+
+	private static CompoundBinaryTag threadToElement(final ThreadInfo thread)
+	{
+		final CompoundBinaryTag.Builder builder = CompoundBinaryTag.builder();
+		builder.putLong("id", thread.getThreadId());
+		builder.putLong("lockOwnerId", thread.getLockOwnerId());
+		builder.putString("state", thread.getThreadState().name());
+		builder.putBoolean("suspended", thread.isSuspended());
+		builder.putBoolean("native", thread.isInNative());
+		builder.put("stacktrace", ListBinaryTag.builder().add(
+				Arrays.stream(thread.getStackTrace())
+						.map(element -> StringBinaryTag.stringBinaryTag(element.toString()))
+						.collect(Collectors.toList())).build());
+		builder.putLong("blockedCount", thread.getBlockedCount());
+		builder.putLong("blockedTime", thread.getBlockedTime());
+		builder.putLong("waitedCount", thread.getWaitedCount());
+		builder.putLong("waitedTime", thread.getWaitedTime());
+		return builder.build();
 	}
 }
