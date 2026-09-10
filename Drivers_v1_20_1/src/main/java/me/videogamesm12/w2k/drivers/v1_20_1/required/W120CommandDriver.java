@@ -1,23 +1,21 @@
 package me.videogamesm12.w2k.drivers.v1_20_1.required;
 
-import com.google.common.base.Preconditions;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.arguments.ArgumentType;
-import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.ArgumentBuilder;
-import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import com.mojang.brigadier.builder.RequiredArgumentBuilder;
-import com.mojang.brigadier.exceptions.CommandExceptionType;
+import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.brigadier.suggestion.Suggestions;
+import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import com.mojang.brigadier.tree.CommandNode;
-import com.mojang.brigadier.tree.LiteralCommandNode;
-import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
+import lombok.Getter;
 import me.videogamesm12.w2k.kernel.W2K;
+import me.videogamesm12.w2k.kernel.command.Argument;
 import me.videogamesm12.w2k.kernel.command.ExecutionPath;
 import me.videogamesm12.w2k.kernel.command.WCommand;
+import me.videogamesm12.w2k.kernel.data.IPlayerEntry;
 import me.videogamesm12.w2k.kernel.driver.base.WCommandDriver;
 import me.videogamesm12.w2k.kernel.driver.base.WDriverMetadata;
 import me.videogamesm12.w2k.kernel.experiment.Experiment;
@@ -25,36 +23,58 @@ import me.videogamesm12.w2k.kernel.experiment.ExperimentManager;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
+import net.fabricmc.fabric.api.command.v2.ArgumentTypeRegistry;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.minecraft.command.CommandSource;
+import net.minecraft.command.argument.UuidArgumentType;
+import net.minecraft.command.argument.serialize.ConstantArgumentSerializer;
+import net.minecraft.registry.Registries;
+import net.minecraft.util.Identifier;
 import org.apache.commons.lang3.ArrayUtils;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.*;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.stream.Stream;
+import java.util.concurrent.CompletableFuture;
 
 @WDriverMetadata(identifier = "120_command_wrapper")
 public class W120CommandDriver implements WCommandDriver
 {
-    private final Map<Class<?>, ArgumentType<?>> argumentTypeMap = new HashMap<>();
+    private final Map<String, ArgumentResolver<?, ?>> resolverMap = new HashMap<>();
 
     public W120CommandDriver()
     {
-        argumentTypeMap.put(String.class, StringArgumentType.string());
-        //argumentTypeMap.put(String.class.getName() + " (greedy)", StringArgumentType.greedyString());
-        argumentTypeMap.put(Integer.class, IntegerArgumentType.integer());
-        argumentTypeMap.put(UUID.class, (ArgumentType<UUID>) reader ->
+        register(new ArgumentResolver<>(Identifier.of("brigadier", "string"), String.class, StringArgumentType.string()));
+        register(new ArgumentResolver<>(Identifier.of("w2k", "greedy_string"), String.class, StringArgumentType.greedyString(), true));
+        register(new ArgumentResolver<>(Identifier.of("w2k", "word_string"), String.class, StringArgumentType.word(), true));
+        register(new ArgumentResolver<>(Identifier.of("w2k", "online_players/name"), String.class, new ArgumentType<String>()
         {
-            try
+            @Override
+            public String parse(StringReader reader) throws CommandSyntaxException
             {
-                return UUID.fromString(reader.readString());
+                return reader.readString();
             }
-            catch (IllegalArgumentException ex)
+
+            @Override
+            public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context, SuggestionsBuilder builder)
             {
-                return null;
+                return CommandSource.suggestMatching(getOnlinePlayers().stream().map(entry -> entry.w2k$profile().getName()), builder);
             }
-        });
+
+            private List<IPlayerEntry> getOnlinePlayers()
+            {
+                return W2K.getInstance().getDriverManager().getVersionBridge().getPlayerList();
+            }
+        }, true));
+        register(new ArgumentResolver<>(Identifier.of("w2k", "online_players/uuid"), UUID.class, new UuidArgumentType()
+        {
+            @Override
+            public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context, SuggestionsBuilder builder)
+            {
+                return CommandSource.suggestMatching(W2K.getInstance().getDriverManager().getVersionBridge().getPlayerList().stream().map(entry -> entry.w2k$profile().getId().toString()), builder);
+            }
+        }, true));
     }
 
     @Override
@@ -103,6 +123,8 @@ public class W120CommandDriver implements WCommandDriver
 
             List<ArgumentBuilder<FabricClientCommandSource, ? extends ArgumentBuilder<FabricClientCommandSource, ?>>> tree = new ArrayList<>();
 
+            // -- COMMAND NODE BUILDING --
+
             tree.add(ClientCommandManager.literal(command.getName()));
 
             // Skip ahead
@@ -116,19 +138,54 @@ public class W120CommandDriver implements WCommandDriver
                 }
             }
 
-            final Map<String, Class<?>> map = new HashMap<>();
+            final Map<String, ArgumentResolver<?, ?>> resolvers = new HashMap<>(); // Argument Name, ArgumentResolver
 
             for (final Parameter parameter : method.getParameters())
             {
-                W2K.getLogger().warn("Debug - Parameter {} - getName {} - getType {}", parameter, parameter.getName(), parameter.getType());
-                if (!argumentTypeMap.containsKey(parameter.getType()))
+                ArgumentResolver<?, ?> resolver = null;
+                String name = null;
+
+                // Derive resolver and name from Argument annotation
+                if (parameter.isAnnotationPresent(Argument.class))
                 {
-                    W2K.getLogger().error("Invalid parameter type - {}", parameter.getType().getName());
+                    final Argument argument = parameter.getAnnotation(Argument.class);
+
+                    // Determine a resolver if one is manually specified
+                    if (!argument.resolver().trim().isBlank() && resolverMap.containsKey(argument.resolver()))
+                    {
+                        resolver = resolverMap.get(argument.resolver().trim());
+                    }
+
+                    if (!argument.label().trim().isBlank())
+                    {
+                        name = argument.label().trim();
+                    }
+                }
+
+                // Derive name from parameter name if missing or invalid Argument annotation (probably ugly, but whatever)
+                if (name == null)
+                {
+                    name = parameter.getName();
+                }
+
+                // Derive resolver from raw class type
+                if (resolver == null)
+                {
+                    resolver = resolverMap.values().stream()
+                            .filter(containedResolver -> containedResolver.getRawClass().equals(parameter.getType()))
+                            .findAny()
+                            .orElse(null);
+                }
+
+                // Well, we tried lol
+                if (resolver == null)
+                {
+                    W2K.getLogger().error("Invalid or unknown parameter type - {}", parameter.getType().getName());
                     return;
                 }
 
-                tree.add(ClientCommandManager.argument(parameter.getName(), argumentTypeMap.get(parameter.getType())));
-                map.put(parameter.getName(), parameter.getType());
+                resolvers.put(name, resolver);
+                tree.add(ClientCommandManager.argument(name, resolver.getArgumentType()));
             }
 
             // Add executable property to the last of the tree
@@ -136,47 +193,24 @@ public class W120CommandDriver implements WCommandDriver
             {
                 try
                 {
-                    method.invoke(command, map.entrySet().stream().map(entry -> ctx.getArgument(entry.getKey(), entry.getValue())).toArray());
+                    method.invoke(command, resolvers.entrySet().stream().map(entry -> ctx.getArgument(entry.getKey(), entry.getValue().getRawClass())).toArray());
                 }
                 catch (Throwable ex)
                 {
-                    W2K.getLogger().error("FUCK", ex);
+                    command.msg(Component.translatable("w2k.command.command_error", Component.text(ex.getLocalizedMessage()))
+                            .color(NamedTextColor.RED));
+                    W2K.getLogger().error("An error occurred whilst processing command '{}'", ctx.getInput(), ex);
                 }
 
                 return 1;
             }));
 
-            /*ArgumentBuilder<FabricClientCommandSource, ? extends ArgumentBuilder<FabricClientCommandSource, ?>> last = null;
-            for (ArgumentBuilder<FabricClientCommandSource, ? extends ArgumentBuilder<FabricClientCommandSource, ?>> object : tree)
-            {
-                if (last == null)
-                {
-                    last = object;
-                    continue;
-                }
-
-
-                W2K.getLogger().info("Debug - post-then arguments {}", object.getArguments());
-            }*/
-
-            List<CommandNode<FabricClientCommandSource>> builtTree = new ArrayList<>();
-            /*for (int i = tree.size() - 1; i > 0; i--)
-            {
-                final ArgumentBuilder<FabricClientCommandSource, ? extends ArgumentBuilder<FabricClientCommandSource, ?>> builder = tree.get(i);
-                if (builtTree.isEmpty())
-                {
-                    builtTree.add(builder.build());
-                    continue;
-                }
-
-
-            }*/
-
+            // -- REGISTRATION --
+            final List<CommandNode<FabricClientCommandSource>> builtTree = new ArrayList<>();
             for (ArgumentBuilder<FabricClientCommandSource, ? extends ArgumentBuilder<FabricClientCommandSource, ?>> object : tree)
             {
                 if (builtTree.isEmpty())
                 {
-                    W2K.getLogger().error("Debug - Built tree is empty, so just adding first entry");
                     builtTree.add(object.build());
                     continue;
                 }
@@ -184,44 +218,41 @@ public class W120CommandDriver implements WCommandDriver
                 CommandNode<FabricClientCommandSource> built = object.build();
                 builtTree.get(builtTree.size() - 1).addChild(built);
                 builtTree.add(built);
-
-                /*
-                W2K.getLogger().error("Debug - getArguments(): {}", builtTree.get(builtTree.size() - 1).getArguments());*/
             }
-
-            int lol = 0;
-            for (CommandNode<FabricClientCommandSource> node : builtTree)
-            {
-                W2K.getLogger().error("Debug - {} - getChildren(): {}", lol++, node.getChildren());
-            }
-
 
             ClientCommandRegistrationCallback.EVENT.register((dispatcher, access) ->
                     ((DispatcherHook<FabricClientCommandSource>) dispatcher).w2k$register(builtTree.get(0)));
-
-            /*
-            List<ArgumentBuilder<FabricClientCommandSource, ? extends ArgumentBuilder<FabricClientCommandSource, ?>>> builtTree = new ArrayList<>();
-
-            for (ArgumentBuilder<FabricClientCommandSource, ? extends ArgumentBuilder<FabricClientCommandSource, ?>> object : tree)
-            {
-                if (builtTree.isEmpty())
-                {
-                    W2K.getLogger().error("Debug - Built tree is empty, so just adding first entry");
-                    builtTree.add(object);
-                    continue;
-                }
-
-                builtTree.add(builtTree.get(builtTree.size() - 1).then(object));
-                W2K.getLogger().error("Debug - getArguments(): {}", builtTree.get(builtTree.size() - 1).getArguments());
-            }
-
-            ClientCommandRegistrationCallback.EVENT.register((dispatcher, access) ->
-                    dispatcher.register((LiteralArgumentBuilder<FabricClientCommandSource>) builtTree.get(builtTree.size() - 1)));
-             */
-
-            /*ClientCommandRegistrationCallback.EVENT.register((dispatcher, access) ->
-                    dispatcher.register((LiteralArgumentBuilder<FabricClientCommandSource>) tree.get(0)));*/
         });
+    }
+
+    public <T, AT extends ArgumentType<T>> void register(final ArgumentResolver<T, AT> resolver)
+    {
+        resolverMap.put(resolver.getName().toString(), resolver);
+    }
+
+    @Getter
+    public static class ArgumentResolver<T, AT extends ArgumentType<T>>
+    {
+        private final Identifier name;
+        private final Class<T> rawClass;
+        private final AT argumentType;
+
+        public ArgumentResolver(final Identifier name, final Class<T> rawClass, final AT argumentType)
+        {
+            this(name, rawClass, argumentType, false);
+        }
+
+        public ArgumentResolver(final Identifier name, final Class<T> rawClass, final AT argumentType, final boolean registerIfUnique)
+        {
+            this.name = name;
+            this.rawClass = rawClass;
+            this.argumentType = argumentType;
+
+            if (registerIfUnique && !Registries.COMMAND_ARGUMENT_TYPE.containsId(name))
+            {
+                ArgumentTypeRegistry.registerArgumentType(name, argumentType.getClass(), ConstantArgumentSerializer.of(() -> argumentType));
+            }
+        }
     }
 
     public interface DispatcherHook<S>

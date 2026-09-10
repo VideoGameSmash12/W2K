@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.concurrent.CompletableFuture;
 
 public class AshconUtil
 {
@@ -19,6 +20,27 @@ public class AshconUtil
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
         return gson.fromJson(new InputStreamReader(connection.getInputStream()), AshconResponse.class);
+    }
+
+    public static CompletableFuture<AshconResponse> getAshconDataAsync(String nameOrUuid)
+    {
+        final CompletableFuture<AshconResponse> future = new CompletableFuture<>();
+
+        CompletableFuture.runAsync(() ->
+        {
+            final AshconResponse response;
+            try
+            {
+                response = getAshconData(nameOrUuid);
+                future.complete(response);
+            }
+            catch (Throwable ex)
+            {
+                future.completeExceptionally(ex);
+            }
+        });
+
+        return future;
     }
 
     @Getter

@@ -1,5 +1,6 @@
 package me.videogamesm12.w2k.kernel.commands;
 
+import me.videogamesm12.w2k.kernel.command.Argument;
 import me.videogamesm12.w2k.kernel.command.ExecutionPath;
 import me.videogamesm12.w2k.kernel.command.Parameters;
 import me.videogamesm12.w2k.kernel.command.WCommand;
@@ -18,9 +19,9 @@ public class TestCmd extends WCommand
     }
 
     @ExecutionPath("argtree1 argtree2")
-    public void treeWithNoArguments(String argtree3)
+    public void treeWithGreedyArgument(@Argument(label = "greedy", resolver = "w2k:greedy_string") String greedy)
     {
-        msg(Component.text("This just executed /test argtree1 argtree2 " + argtree3 + "!"));
+        msg(Component.text("This just executed /test argtree1 argtree2 " + greedy + "!"));
     }
 
     @ExecutionPath
