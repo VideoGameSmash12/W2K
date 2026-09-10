@@ -6,6 +6,8 @@
   "w2k.toolbox.ashcon.error.unknown": "An error occurred whilst communicating with the API. Check the logs for more information.",
   "w2k.toolbox.ashcon.result.name": "%s resolves to %s.",
   "w2k.toolbox.ashcon.result.uuid": "%s's UUID is %s.",
+  "w2k.toolbox.ashcon.not_premium": "%s is not a premium account.",
+  "w2k.toolbox.ashcon.premium": "%s is a premium account.",
   "w2k.toolbox.dump.error": "An unrecoverable error occurred during the dump. Check the logs for more information.",
   "w2k.toolbox.dump.starting.entities": "Dumping entities...",
   "w2k.toolbox.dump.starting.screen": "Preparing dump. Open an inventory within the next 5 seconds to dump its contents.",

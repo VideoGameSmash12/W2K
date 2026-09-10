@@ -6,7 +6,7 @@ import me.videogamesm12.w2k.kernel.command.Argument;
 import me.videogamesm12.w2k.kernel.command.ExecutionPath;
 import me.videogamesm12.w2k.kernel.command.Parameters;
 import me.videogamesm12.w2k.kernel.command.WCommand;
-import me.videogamesm12.w2k.toolbox.util.AshconUtil;
+import me.videogamesm12.w2k.toolbox.util.ProfileUtil;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
@@ -23,7 +23,7 @@ public class NameCmd extends WCommand
     @ExecutionPath
     public void fetchName(final @Argument(label = "uuid", resolver = "w2k:online_players/uuid") UUID uuid)
     {
-        AshconUtil.getAshconDataAsync(uuid.toString()).whenComplete((result, ex) ->
+        ProfileUtil.getAshconDataAsync(uuid.toString()).whenComplete((result, ex) ->
         {
             if (ex != null)
             {
@@ -68,7 +68,7 @@ public class NameCmd extends WCommand
         {
             try
             {
-                return AshconUtil.getAshconData(UUID.fromString(args[0].toLowerCase()).toString());
+                return ProfileUtil.getAshconData(UUID.fromString(args[0].toLowerCase()).toString());
             }
             catch (FileNotFoundException ex)
             {

@@ -24,7 +24,7 @@ public abstract class WModule
 
     public WModule(final String name, final String description)
     {
-        this.id = name.toLowerCase();
+        this.id = name.toLowerCase().replace(" ", "_");
         this.name = name;
         this.description = description;
         this.onToggle = null;

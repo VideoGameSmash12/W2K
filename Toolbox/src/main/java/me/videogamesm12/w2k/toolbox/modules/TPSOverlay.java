@@ -12,8 +12,10 @@ public class TPSOverlay extends WModule
 
     public TPSOverlay()
     {
-        super("TPS Overlay (Not Working)",
-                "Show an overlay of the average tick rate of the server.");
+        super("tps_overlay",
+                "TPS Overlay (Not Working)",
+                "Show an overlay of the average tick rate of the server.",
+                null);
     }
 
     @Subscribe

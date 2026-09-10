@@ -1,12 +1,15 @@
 package me.videogamesm12.w2k.drivers.v1_20_1.required;
 
 import com.mojang.brigadier.Command;
+import com.mojang.brigadier.Message;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.arguments.ArgumentType;
+import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import com.mojang.brigadier.tree.CommandNode;
@@ -20,16 +23,22 @@ import me.videogamesm12.w2k.kernel.driver.base.WCommandDriver;
 import me.videogamesm12.w2k.kernel.driver.base.WDriverMetadata;
 import me.videogamesm12.w2k.kernel.experiment.Experiment;
 import me.videogamesm12.w2k.kernel.experiment.ExperimentManager;
+import me.videogamesm12.w2k.kernel.module.WModule;
+import me.videogamesm12.w2k.kernel.module.setting.BooleanSetting;
+import me.videogamesm12.w2k.kernel.module.setting.StringSetting;
+import me.videogamesm12.w2k.kernel.module.setting.WModuleSetting;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.fabricmc.fabric.api.command.v2.ArgumentTypeRegistry;
+import net.kyori.adventure.nbt.BinaryTag;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.argument.UuidArgumentType;
 import net.minecraft.command.argument.serialize.ConstantArgumentSerializer;
 import net.minecraft.registry.Registries;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.apache.commons.lang3.ArrayUtils;
 
@@ -37,6 +46,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Supplier;
 
 @WDriverMetadata(identifier = "120_command_wrapper")
 public class W120CommandDriver implements WCommandDriver
@@ -45,6 +55,7 @@ public class W120CommandDriver implements WCommandDriver
 
     public W120CommandDriver()
     {
+        register(new ArgumentResolver<>(Identifier.of("brigadier", "bool"), boolean.class, BoolArgumentType.bool()));
         register(new ArgumentResolver<>(Identifier.of("brigadier", "string"), String.class, StringArgumentType.string()));
         register(new ArgumentResolver<>(Identifier.of("w2k", "greedy_string"), String.class, StringArgumentType.greedyString(), true));
         register(new ArgumentResolver<>(Identifier.of("w2k", "word_string"), String.class, StringArgumentType.word(), true));
@@ -73,6 +84,64 @@ public class W120CommandDriver implements WCommandDriver
             public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context, SuggestionsBuilder builder)
             {
                 return CommandSource.suggestMatching(W2K.getInstance().getDriverManager().getVersionBridge().getPlayerList().stream().map(entry -> entry.w2k$profile().getId().toString()), builder);
+            }
+        }, true));
+        register(new ArgumentResolver<>(Identifier.of("w2k", "online_players/both"), String.class, new ArgumentType<String>()
+        {
+            @Override
+            public String parse(StringReader reader) throws CommandSyntaxException
+            {
+                return reader.readString();
+            }
+
+            @Override
+            public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context, SuggestionsBuilder builder)
+            {
+                return CommandSource.suggestMatching(getOnlinePlayers().stream()
+                        .map(entry -> List.of(entry.w2k$profile().getName(), entry.w2k$profile().getId().toString()))
+                        .flatMap(Collection::stream), builder);
+            }
+
+            private List<IPlayerEntry> getOnlinePlayers()
+            {
+                return W2K.getInstance().getDriverManager().getVersionBridge().getPlayerList();
+            }
+        }, true));
+        register(new ArgumentResolver<>(Identifier.of("w2k", "module"), WModule.class, new ArgumentType<WModule>()
+        {
+            @Override
+            public WModule parse(StringReader reader) throws CommandSyntaxException
+            {
+                final String name = Identifier.fromCommandInput(reader).toString();
+                final Message errorMessage = Text.literal("Invalid module: " + name);
+
+                return Optional.ofNullable(W2K.getInstance().getModuleManager().getModule(name))
+                        .map(module -> (WModule) module)
+                        .orElseThrow(() -> new CommandSyntaxException(new SimpleCommandExceptionType(errorMessage), errorMessage));
+            }
+
+            @Override
+            public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context, SuggestionsBuilder builder)
+            {
+                return CommandSource.suggestMatching(W2K.getInstance().getModuleManager().getIdRegistry().keySet(), builder);
+            }
+        }, true));
+        register(new ArgumentResolver<>(Identifier.of("w2k", "experiment"), Experiment.class, new ArgumentType<Experiment>()
+        {
+            @Override
+            public Experiment parse(StringReader reader) throws CommandSyntaxException
+            {
+                final Message errorMessage = Text.translatable("w2k.command.experiments.invalid_experiment");
+                return Experiment.findExperiment(reader.readString())
+                        .orElseThrow(() -> new CommandSyntaxException(new SimpleCommandExceptionType(errorMessage), errorMessage));
+            }
+
+            @Override
+            public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context, SuggestionsBuilder builder)
+            {
+                return CommandSource.suggestMatching(Arrays.stream(Experiment.values())
+                        .filter(experiment -> !experiment.isParameterOnly() && experiment.isAvailable())
+                        .map(Enum::name).toList(), builder);
             }
         }, true));
     }
@@ -253,6 +322,43 @@ public class W120CommandDriver implements WCommandDriver
                 ArgumentTypeRegistry.registerArgumentType(name, argumentType.getClass(), ConstantArgumentSerializer.of(() -> argumentType));
             }
         }
+
+        /*@SuppressWarnings("unchecked")
+        public static <A extends WModuleSetting<?, ?>, AT extends ArgumentType<A>> ArgumentResolver<A, AT> forSettingType(Identifier name, final Class<A> rawClass, final Supplier<List<String>> suggestions)
+        {
+            return (ArgumentResolver<A, AT>) new ArgumentResolver<>(name, rawClass, new ArgumentType<>()
+            {
+                @Override
+                public A parse(StringReader reader) throws CommandSyntaxException
+                {
+                    final Identifier identifier = Identifier.fromCommandInput(reader);
+                    final String[] path = identifier.getPath().split("/");
+
+                    final String moduleId = identifier.getNamespace() + ":" + path[0];
+                    final String settingName = String.join("/", ArrayUtils.subarray(path, 1, path.length));
+
+                    final Message invalidModuleError = Text.literal("Invalid module: " + moduleId);
+                    final Message unknownSettingError = Text.literal("Unknown setting: " + settingName);
+
+                    return (A) Optional.ofNullable(Optional.ofNullable(W2K.getInstance().getModuleManager().getModule(moduleId))
+                                    .map(module -> (WModule) module)
+                                    .orElseThrow(() -> new CommandSyntaxException(new SimpleCommandExceptionType(invalidModuleError), invalidModuleError))
+                                    .getSettings().get(settingName))
+                            .orElseThrow(() -> new CommandSyntaxException(new SimpleCommandExceptionType(unknownSettingError), unknownSettingError));
+                }
+
+                @Override
+                public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context, SuggestionsBuilder builder)
+                {
+                    if (suggestions != null)
+                    {
+                        return CommandSource.suggestMatching(suggestions.get(), builder);
+                    }
+
+                    return ArgumentType.super.listSuggestions(context, builder);
+                }
+            }, true);
+        }*/
     }
 
     public interface DispatcherHook<S>

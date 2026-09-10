@@ -2,6 +2,7 @@
   "chat.click.copy_to_clipboard": "Click to Copy to Clipboard",
   "w2k.command.command_error": "Command error: %s",
   "w2k.command.command_usage": "Usage: %s",
+
   "w2k.command.experiments.all_experiments": "All Experiments:",
   "w2k.command.experiments.already_disabled": "That experiment is already disabled.",
   "w2k.command.experiments.already_enabled": "That experiment is already enabled.",
@@ -18,6 +19,9 @@
   "w2k.command.experiments.instructions": "To enable/disable experiments, you need to either add %s (with comma separated experiment names appended afterward) to your game's Java launch options or use the command %s. For more information, please consult the W2K wiki at %s.",
   "w2k.command.experiments.none_enabled": "No experiments are enabled.",
   "w2k.command.experiments.parameter_only": "This experiment can't be toggled during runtime. Its state must be manually set by manually adding/removing it from your game's launch options.",
+  "w2k.command.experiments.unavailable": "This experiment has the following requirements which currently aren't met:",
+  "w2k.command.experiments.invalid_experiment": "Invalid experiment",
+
   "w2k.command.w2k.info": "You are running %s version %s.",
   "w2k.command.w2k.build_info.branch": "Branch: %s",
   "w2k.command.w2k.build_info.commit_id": "Commit: %s (%s)",
@@ -27,6 +31,12 @@
   "w2k.command.w2k.build_info.origin_url": "Origin URL: %s",
   "w2k.command.w2k.click_to_see_build_info": "Click to see build metadata",
   "w2k.command.w2k.unable_to_fetch_build_data": "Unable to fetch build metadata",
+
+  "w2k.command.w2k.module.cannot_be_toggled": "That module can't be toggled.",
+  "w2k.command.w2k.module.status": "%1$s is currently %2$s.",
+  "w2k.command.w2k.module.toggled": "%1$s is now %2$s.",
+  "w2k.command.w2k.module.status.enabled": "enabled",
+  "w2k.command.w2k.module.status.disabled": "disabled",
 
   "w2k.experiment.supervisor_catches_crashes.name": "Crash Detection",
   "w2k.experiment.supervisor_catches_crashes.description": "New feature in which components like the Blackbox can detect a client crash and prompt the user to open the automatically generated crash report directly."

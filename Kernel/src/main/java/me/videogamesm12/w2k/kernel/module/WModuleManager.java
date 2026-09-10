@@ -20,6 +20,8 @@ public class WModuleManager
     private final Map<ModContainer, Map<String, WModule>> registry = new HashMap<>();
     @Getter
     private final Map<Class<? extends WModule>, WModule> classRegistry = new HashMap<>();
+    @Getter
+    private final Map<String, WModule> idRegistry = new HashMap<>();
 
     public void registerModules()
     {
@@ -36,6 +38,7 @@ public class WModuleManager
             // Get the relevant registry for this mod
             final Map<String, WModule> modModuleRegistry = registry.get(mod);
             modModuleRegistry.put(mod.getMetadata().getId() + ":" + module.getId().replace(" ", "_"), module);
+            idRegistry.put(mod.getMetadata().getId() + ":" + module.getId().replace(" ", "_"), module);
             classRegistry.put(module.getClass(), module);
         });
     }
@@ -49,6 +52,11 @@ public class WModuleManager
                 .map(module -> (T) module)
                 .orElseThrow(() -> new IllegalArgumentException("Module " + id.getName() + " has not been registered"));
     }*/
+
+    public <T extends WModule> T getModule(final String id)
+    {
+        return (T) idRegistry.get(id);
+    }
 
     public <T extends WModule> T getModule(final Class<T> id)
     {

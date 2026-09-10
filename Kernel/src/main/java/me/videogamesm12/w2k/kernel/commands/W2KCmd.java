@@ -1,10 +1,12 @@
 package me.videogamesm12.w2k.kernel.commands;
 
 import me.videogamesm12.w2k.kernel.W2K;
+import me.videogamesm12.w2k.kernel.command.Argument;
 import me.videogamesm12.w2k.kernel.command.ExecutionPath;
 import me.videogamesm12.w2k.kernel.command.Parameters;
 import me.videogamesm12.w2k.kernel.command.WCommand;
 import me.videogamesm12.w2k.kernel.data.BuildMetadata;
+import me.videogamesm12.w2k.kernel.module.WModule;
 import net.fabricmc.loader.api.FabricLoader;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
@@ -47,6 +49,44 @@ public class W2KCmd extends WCommand
                     .decorate(TextDecoration.UNDERLINED).clickEvent(ClickEvent.runCommand("/w2k details")));
         }
     }
+
+    @ExecutionPath("module toggle")
+    public void toggleModule(@Argument(label = "module") WModule module)
+    {
+        try
+        {
+            module.setEnabled(module.isEnabled());
+            msg(Component.translatable("w2k.command.w2k.module.toggled",
+                    Component.text(module.getName()).color(NamedTextColor.WHITE),
+                    module.isEnabled() ?
+                            Component.translatable("w2k.command.w2k.module.toggled.enabled", NamedTextColor.GREEN) :
+                            Component.translatable("w2k.command.w2k.module.toggled.disabled", NamedTextColor.RED))
+                    .color(NamedTextColor.GRAY));
+        }
+        catch (IllegalArgumentException ex)
+        {
+            msg(Component.translatable("w2k.command.w2k.module.cannot_be_toggled", NamedTextColor.RED));
+        }
+    }
+
+    @ExecutionPath("module status")
+    public void moduleStatus(final @Argument(label = "module") WModule module)
+    {
+        msg(Component.translatable("w2k.command.w2k.module.status",
+                Component.text(module.getName()).color(NamedTextColor.WHITE),
+                module.isEnabled() ?
+                        Component.translatable("w2k.command.w2k.module.status.enabled", NamedTextColor.GREEN) :
+                        Component.translatable("w2k.command.w2k.module.status.disabled", NamedTextColor.RED))
+                .color(NamedTextColor.GRAY));
+    }
+
+    /*@ExecutionPath("module setting")
+    public void moduleSetting(final @Argument(label = "module") WModule module,
+                              final @Argument(label = "setting name") WModuleSetting<?, ?> setting,
+                              final @Argument(label = "value") String value)
+    {
+        setting.read(value);
+    }*/
 
     @Override
     public boolean executeCommand(String commandLabel, String[] args)
