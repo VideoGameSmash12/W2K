@@ -300,7 +300,19 @@ public class W120CommandDriver implements WCommandDriver
             });
 
             // Avoid parameter count mismatch
-            Preconditions.checkArgument(argumentsToResolvers.size() == methodParameters.length, "Non-matching method parameter count (Expected " + argumentsToResolvers.size() + ", got " + methodParameters.length);
+            Preconditions.checkArgument(argumentsToResolvers.size() == methodParameters.length, "Non-matching method parameter count (expected " + argumentsToResolvers.size() + ", got " + methodParameters.length);
+
+            // Avoid parameter mismatch
+            int current = 0;
+            for (Map.Entry<String, ArgumentResolver<?, ?>> resolverEntry : argumentsToResolvers.entrySet())
+            {
+                Preconditions.checkArgument(resolverEntry.getValue().rawClass.equals(methodParameters[current].getType()),
+                        String.format("Mismatched parameter for argument %1$s (expected %2$s, got %3$s)",
+                                resolverEntry.getKey(),
+                                resolverEntry.getValue().rawClass.getName(),
+                                methodParameters[current].getType().getName()));
+                current++;
+            }
 
             // Build what the path will look like
             setPath(String.join(" -> ", path));
