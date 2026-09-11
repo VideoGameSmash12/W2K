@@ -19,8 +19,11 @@
   "w2k.command.experiments.hover_for_more_information": "Hover for more information",
   "w2k.command.experiments.instructions": "To enable/disable experiments, you need to either add %s (with comma separated experiment names appended afterward) to your game's Java launch options or use the command %s. For more information, please consult the W2K wiki at %s.",
   "w2k.command.experiments.none_enabled": "No experiments are enabled.",
-  "w2k.command.experiments.parameter_only": "This experiment can't be toggled during runtime. Its state must be manually set by manually adding/removing it from your game's launch options.",
-  "w2k.command.experiments.unavailable": "This experiment has the following requirements which currently aren't met:",
+  "w2k.command.experiments.parameter_only": "This experiment can't be toggled during runtime",
+  "w2k.command.experiments.not_parameter_only": "This experiment can be toggled during runtime",
+  "w2k.command.experiments.available": "This experiment is available",
+  "w2k.command.experiments.unavailable": "This experiment has the following requirements which currently aren't met: ",
+  "w2k.command.experiments.parameter_only_and_unavailable": "This experiment can't be toggled during runtime and even if it could, it has the following requirements which currently aren't met: ",
   "w2k.command.experiments.invalid_experiment": "Invalid experiment",
 
   "w2k.command.w2k.info": "You are running %s version %s.",
@@ -38,6 +41,8 @@
   "w2k.command.w2k.module.toggled": "%1$s is now %2$s.",
   "w2k.command.w2k.module.status.enabled": "enabled",
   "w2k.command.w2k.module.status.disabled": "disabled",
+
+  "w2k.command.error.unknown_module": "Unknown module",
 
   "w2k.experiment.supervisor_catches_crashes.name": "Crash Detection",
   "w2k.experiment.supervisor_catches_crashes.description": "New feature in which components like the Blackbox can detect a client crash and prompt the user to open the automatically generated crash report directly."

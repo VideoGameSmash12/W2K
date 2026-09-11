@@ -86,7 +86,7 @@ public class ExperimentsCmd extends WCommand
         summary();
     }
 
-    @ExecutionPath({"details", "<experiment|w2k:experiment>"})
+    @ExecutionPath({"details", "<experiment|w2k:experiment/all>"})
     public void experimentDetails(final Experiment experiment)
     {
         msg(Component.translatable("w2k.command.experiments.experiment_details")
@@ -99,30 +99,22 @@ public class ExperimentsCmd extends WCommand
                 experiment.getDescription().color(NamedTextColor.WHITE)).colorIfAbsent(NamedTextColor.GRAY));
     }
 
-    @ExecutionPath({"set", "<experiment|w2k:experiment>", "<value|brigadier:bool>"})
-    public void setExperimentState(final Experiment experiment, final boolean enabled)
+    @ExecutionPath({"toggle", "<experiment|w2k:experiment/togglable>"})
+    public void toggle(final Experiment experiment)
     {
-        if (experiment.isParameterOnly())
+        setExperimentState(experiment, !ExperimentManager.isExperimentEnabled(experiment));
+    }
+
+    @ExecutionPath({"set", "<experiment|w2k:experiment/togglable>", "<value|brigadier:bool>"})
+    public void setExperimentState(final Experiment experiment, final boolean value)
+    {
+        if (ExperimentManager.isExperimentEnabled(experiment) == value)
         {
-            msg(Component.translatable("w2k.command.experiments.parameter_only", NamedTextColor.RED));
+            msg(Component.translatable("w2k.command.experiments.already_" + (value ? "enabled" : "disabled")));
             return;
         }
 
-        if (ExperimentManager.isExperimentEnabled(experiment) == enabled)
-        {
-            msg(Component.translatable("w2k.command.experiments.already_" + (enabled ? "enabled" : "disabled")));
-            return;
-        }
-
-        if (!experiment.isAvailable())
-        {
-            msg(Component.translatable("w2k.command.experiments.cannot_be_enabled"));
-            experiment.getFailedConditions().forEach(condition -> msg(Component.text(" - ", NamedTextColor.RED)
-                    .append(Component.text(condition.getLabel(), NamedTextColor.YELLOW))));
-            return;
-        }
-
-        if (enabled)
+        if (value)
         {
             ExperimentManager.enableExperiment(experiment);
         }
@@ -131,7 +123,7 @@ public class ExperimentsCmd extends WCommand
             ExperimentManager.disableExperiment(experiment);
         }
 
-        msg(Component.translatable("w2k.command.experiments.experiment_" + (enabled ? "enabled" : "disabled"),
+        msg(Component.translatable("w2k.command.experiments.experiment_" + (value ? "enabled" : "disabled"),
                         Component.text(experiment.name()).color(NamedTextColor.DARK_GREEN))
                 .color(NamedTextColor.GREEN));
     }

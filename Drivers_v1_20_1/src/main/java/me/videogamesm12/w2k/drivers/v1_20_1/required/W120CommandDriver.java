@@ -14,7 +14,11 @@ import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import com.mojang.brigadier.tree.CommandNode;
 import lombok.Getter;
 import me.videogamesm12.w2k.drivers.v1_20_1.command.ClientEntityArgumentType;
+import me.videogamesm12.w2k.drivers.v1_20_1.command.ExperimentArgumentType;
+import me.videogamesm12.w2k.drivers.v1_20_1.command.OnlinePlayersArgumentType;
+import me.videogamesm12.w2k.drivers.v1_20_1.command.WModuleArgumentType;
 import me.videogamesm12.w2k.kernel.W2K;
+import me.videogamesm12.w2k.kernel.command.AbstractArgumentResolver;
 import me.videogamesm12.w2k.kernel.command.ExecutionPath;
 import me.videogamesm12.w2k.kernel.command.WCommand;
 import me.videogamesm12.w2k.kernel.data.IEntitySelector;
@@ -48,108 +52,42 @@ import java.util.function.Function;
 @WDriverMetadata(identifier = "120_command_wrapper")
 public class W120CommandDriver implements WCommandDriver
 {
-    private final Map<String, ArgumentResolver<?, ?>> resolverMap = new HashMap<>();
+    private final Map<String, BrigadierArgumentResolver<?, ?>> resolverMap = new HashMap<>();
 
     public W120CommandDriver()
     {
-        register(new ArgumentResolver<>(Identifier.of("brigadier", "bool"), boolean.class, BoolArgumentType.bool()));
-        register(new ArgumentResolver<>(Identifier.of("brigadier", "float"), float.class, FloatArgumentType.floatArg()));
-        register(new ArgumentResolver<>(Identifier.of("brigadier", "double"), double.class, DoubleArgumentType.doubleArg()));
-        register(new ArgumentResolver<>(Identifier.of("brigadier", "integer"), int.class, IntegerArgumentType.integer()));
-        register(new ArgumentResolver<>(Identifier.of("brigadier", "long"), long.class, LongArgumentType.longArg()));
-        register(new ArgumentResolver<>(Identifier.of("brigadier", "string"), String.class, StringArgumentType.string()));
+        register(Identifier.of("brigadier", "bool"), boolean.class, BoolArgumentType.bool());
+        register(Identifier.of("brigadier", "float"), float.class, FloatArgumentType.floatArg());
+        register(Identifier.of("brigadier", "double"), double.class, DoubleArgumentType.doubleArg());
+        register(Identifier.of("brigadier", "integer"), int.class, IntegerArgumentType.integer());
+        register(Identifier.of("brigadier", "long"), long.class, LongArgumentType.longArg());
+        register(Identifier.of("brigadier", "string"), String.class, StringArgumentType.string());
         //--
-        register(new ArgumentResolver<>(Identifier.of("w2k", "greedy_string"), String.class, StringArgumentType.greedyString(), true));
-        register(new ArgumentResolver<>(Identifier.of("w2k", "word_string"), String.class, StringArgumentType.word(), true));
-        register(new ArgumentResolver<>(Identifier.of("w2k", "online_players/name"), String.class, new ArgumentType<String>()
-        {
-            @Override
-            public String parse(StringReader reader) throws CommandSyntaxException
-            {
-                return reader.readString();
-            }
-
-            @Override
-            public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context, SuggestionsBuilder builder)
-            {
-                return CommandSource.suggestMatching(getOnlinePlayers().stream().map(entry -> entry.w2k$profile().getName()), builder);
-            }
-
-            private List<IPlayerEntry> getOnlinePlayers()
-            {
-                return W2K.getInstance().getDriverManager().getVersionBridge().getPlayerList();
-            }
-        }, true));
-        register(new ArgumentResolver<>(Identifier.of("w2k", "online_players/uuid"), UUID.class, new UuidArgumentType()
+        register(Identifier.of("w2k", "greedy_string"), String.class, StringArgumentType.greedyString(), true);
+        register(Identifier.of("w2k", "word_string"), String.class, StringArgumentType.word(), true);
+        //--
+        register(Identifier.of("w2k", "online_players/name"), String.class, OnlinePlayersArgumentType.names(), true);
+        register(Identifier.of("w2k", "online_players/uuid"), UUID.class, new UuidArgumentType()
         {
             @Override
             public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context, SuggestionsBuilder builder)
             {
                 return CommandSource.suggestMatching(W2K.getInstance().getDriverManager().getVersionBridge().getPlayerList().stream().map(entry -> entry.w2k$profile().getId().toString()), builder);
             }
-        }, true));
-        register(new ArgumentResolver<>(Identifier.of("w2k", "online_players/both"), String.class, new ArgumentType<String>()
-        {
-            @Override
-            public String parse(StringReader reader) throws CommandSyntaxException
-            {
-                return reader.readString();
-            }
-
-            @Override
-            public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context, SuggestionsBuilder builder)
-            {
-                return CommandSource.suggestMatching(getOnlinePlayers().stream()
-                        .map(entry -> List.of(entry.w2k$profile().getName(), entry.w2k$profile().getId().toString()))
-                        .flatMap(Collection::stream), builder);
-            }
-
-            private List<IPlayerEntry> getOnlinePlayers()
-            {
-                return W2K.getInstance().getDriverManager().getVersionBridge().getPlayerList();
-            }
-        }, true));
-        register(new ArgumentResolver<>(Identifier.of("w2k", "module"), WModule.class, new ArgumentType<WModule>()
-        {
-            @Override
-            public WModule parse(StringReader reader) throws CommandSyntaxException
-            {
-                final String name = Identifier.fromCommandInput(reader).toString();
-                final Message errorMessage = Text.literal("Invalid module: " + name);
-
-                return Optional.ofNullable(W2K.getInstance().getModuleManager().getModule(name))
-                        .map(module -> (WModule) module)
-                        .orElseThrow(() -> new CommandSyntaxException(new SimpleCommandExceptionType(errorMessage), errorMessage));
-            }
-
-            @Override
-            public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context, SuggestionsBuilder builder)
-            {
-                return CommandSource.suggestMatching(W2K.getInstance().getModuleManager().getIdRegistry().keySet(), builder);
-            }
-        }, true));
-        register(new ArgumentResolver<>(Identifier.of("w2k", "experiment"), Experiment.class, new ArgumentType<Experiment>()
-        {
-            @Override
-            public Experiment parse(StringReader reader) throws CommandSyntaxException
-            {
-                final Message errorMessage = Text.translatable("w2k.command.experiments.invalid_experiment");
-                return Experiment.findExperiment(reader.readString())
-                        .orElseThrow(() -> new CommandSyntaxException(new SimpleCommandExceptionType(errorMessage), errorMessage));
-            }
-
-            @Override
-            public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context, SuggestionsBuilder builder)
-            {
-                return CommandSource.suggestMatching(Arrays.stream(Experiment.values())
-                        .filter(experiment -> !experiment.isParameterOnly() && experiment.isAvailable())
-                        .map(Enum::name).toList(), builder);
-            }
-        }, true));
-        register(new ArgumentResolver<>(Identifier.of("w2k", "wrapped/entity"), IEntitySelector.class, new ClientEntityArgumentType(EntityArgumentType.entity()), true));
-        register(new ArgumentResolver<>(Identifier.of("w2k", "wrapped/entities"), IEntitySelector.class, new ClientEntityArgumentType(EntityArgumentType.entities()), true));
-        register(new ArgumentResolver<>(Identifier.of("w2k", "wrapped/entity/player"), IEntitySelector.class, new ClientEntityArgumentType(EntityArgumentType.player()), true));
-        register(new ArgumentResolver<>(Identifier.of("w2k", "wrapped/entities/players"), IEntitySelector.class, new ClientEntityArgumentType(EntityArgumentType.players()), true));
+        }, true);
+        register(Identifier.of("w2k", "online_players/both"), String.class, OnlinePlayersArgumentType.both(), true);
+        //--
+        register(Identifier.of("w2k", "module"), WModule.class, WModuleArgumentType.all(), true);
+        //--
+        register(Identifier.of("w2k", "experiment/all"), Experiment.class, ExperimentArgumentType.all(), true);
+        register(Identifier.of("w2k", "experiment/unavailable_only"), Experiment.class, ExperimentArgumentType.unavailableOnly(), true);
+        register(Identifier.of("w2k", "experiment/runtime_only"), Experiment.class, ExperimentArgumentType.runtimeOnly(), true);
+        register(Identifier.of("w2k", "experiment/togglable"), Experiment.class, ExperimentArgumentType.togglable(), true);
+        //--
+        register(Identifier.of("w2k", "wrapped/entity"), IEntitySelector.class, new ClientEntityArgumentType(EntityArgumentType.entity()), true);
+        register(Identifier.of("w2k", "wrapped/entities"), IEntitySelector.class, new ClientEntityArgumentType(EntityArgumentType.entities()), true);
+        register(Identifier.of("w2k", "wrapped/entity/player"), IEntitySelector.class, new ClientEntityArgumentType(EntityArgumentType.player()), true);
+        register(Identifier.of("w2k", "wrapped/entities/players"), IEntitySelector.class, new ClientEntityArgumentType(EntityArgumentType.players()), true);
     }
 
     @Override
@@ -214,20 +152,63 @@ public class W120CommandDriver implements WCommandDriver
         });
     }
 
-    public <T, AT extends ArgumentType<T>> void register(final ArgumentResolver<T, AT> resolver)
+    public <T, AT extends ArgumentType<T>> void register(final BrigadierArgumentResolver<T, AT> resolver)
     {
-        resolverMap.put(resolver.getName().toString(), resolver);
+        resolverMap.put(resolver.getIdentifier(), resolver);
     }
 
-    public static class FabricCommandPath extends WCommand.CommandPath<CommandNode<FabricClientCommandSource>, ArgumentResolver<?, ?>>
+    public <T, AT extends ArgumentType<T>> void register(final Identifier identifier,
+                                                         final Class<T> rawClass,
+                                                         final AT argumentType,
+                                                         final boolean registerIfUnique)
     {
-        public FabricCommandPath(WCommand command, Method method, java.util.function.Function<String, ArgumentResolver<?, ?>> resolverResolver)
+        register(new BrigadierArgumentResolver<>(identifier, rawClass, argumentType, registerIfUnique));
+    }
+
+    public <T, AT extends ArgumentType<T>> void register(final Identifier identifier,
+                                                         final Class<T> rawClass,
+                                                         final AT argumentType)
+    {
+        register(new BrigadierArgumentResolver<>(identifier, rawClass, argumentType, false));
+    }
+
+    @Getter
+    public static class BrigadierArgumentResolver<T, AT extends ArgumentType<T>> extends AbstractArgumentResolver<T>
+    {
+        private final Identifier minecraftIdentifier;
+        private final AT argumentType;
+
+        public BrigadierArgumentResolver(final Identifier identifier,
+                                         final Class<T> rawClass,
+                                         final AT argumentType,
+                                         final boolean registerIfUnique)
+        {
+            super(identifier.toString(), rawClass);
+            this.minecraftIdentifier = identifier;
+            this.argumentType = argumentType;
+
+            if (registerIfUnique && !Registries.COMMAND_ARGUMENT_TYPE.containsId(identifier))
+            {
+                ArgumentTypeRegistry.registerArgumentType(identifier, argumentType.getClass(), ConstantArgumentSerializer.of(() -> argumentType));
+            }
+        }
+
+        @Override
+        public T resolveArgument(String string)
+        {
+            throw new UnsupportedOperationException("This is only available in pre-Brigadier command APIs");
+        }
+    }
+
+    public static class FabricCommandPath extends WCommand.CommandPath<CommandNode<FabricClientCommandSource>, BrigadierArgumentResolver<?, ?>>
+    {
+        public FabricCommandPath(WCommand command, Method method, java.util.function.Function<String, BrigadierArgumentResolver<?, ?>> resolverResolver)
         {
             super(command, method, resolverResolver);
         }
 
         @Override
-        public CommandNode<FabricClientCommandSource> buildNode(final Function<String, ArgumentResolver<?, ?>> resolverResolver)
+        public CommandNode<FabricClientCommandSource> buildNode(final Function<String, BrigadierArgumentResolver<?, ?>> resolverResolver)
         {
             final Parameter[] methodParameters = getMethod().getParameters();
             //--
@@ -236,7 +217,7 @@ public class W120CommandDriver implements WCommandDriver
 
             //final List<CommandNode<FabricClientCommandSource>> nodeTree = new ArrayList<>();
             final List<ArgumentBuilder<FabricClientCommandSource, ?>> nodes = new ArrayList<>();
-            final Map<String, ArgumentResolver<?, ?>> argumentsToResolvers = new HashMap<>();
+            final Map<String, BrigadierArgumentResolver<?, ?>> argumentsToResolvers = new HashMap<>();
 
             // Ensure that root commands don't have arguments
             if (path.length == 0)
@@ -269,7 +250,7 @@ public class W120CommandDriver implements WCommandDriver
                     Preconditions.checkArgument(resolverResolver.apply(resolverName) != null, "'" + resolverName + "' is not a valid resolver");
 
                     // Get the resolver
-                    final ArgumentResolver<?, ?> resolver = resolverResolver.apply(resolverName);
+                    final BrigadierArgumentResolver<?, ?> resolver = resolverResolver.apply(resolverName);
 
                     // Build the node
                     argumentsToResolvers.put(name, resolver);
@@ -304,12 +285,12 @@ public class W120CommandDriver implements WCommandDriver
 
             // Avoid parameter mismatch
             int current = 0;
-            for (Map.Entry<String, ArgumentResolver<?, ?>> resolverEntry : argumentsToResolvers.entrySet())
+            for (Map.Entry<String, BrigadierArgumentResolver<?, ?>> resolverEntry : argumentsToResolvers.entrySet())
             {
-                Preconditions.checkArgument(resolverEntry.getValue().rawClass.equals(methodParameters[current].getType()),
+                Preconditions.checkArgument(resolverEntry.getValue().getRawClass().equals(methodParameters[current].getType()),
                         String.format("Mismatched parameter for argument %1$s (expected %2$s, got %3$s)",
                                 resolverEntry.getKey(),
-                                resolverEntry.getValue().rawClass.getName(),
+                                resolverEntry.getValue().getRawClass().getName(),
                                 methodParameters[current].getType().getName()));
                 current++;
             }
@@ -333,51 +314,6 @@ public class W120CommandDriver implements WCommandDriver
 
             // Finish
             return builtTree.get(0);
-        }
-    }
-
-    @Getter
-    public static class ArgumentResolver<T, AT extends ArgumentType<T>>
-    {
-        private final Identifier name;
-        private final Class<T> rawClass;
-        private final AT argumentType;
-
-        public ArgumentResolver(final Identifier name, final Class<T> rawClass, final AT argumentType)
-        {
-            this(name, rawClass, argumentType, false);
-        }
-
-        public ArgumentResolver(final Identifier name, final Class<T> rawClass, final AT argumentType, final boolean registerIfUnique)
-        {
-            this.name = name;
-            this.rawClass = rawClass;
-            this.argumentType = argumentType;
-
-            if (registerIfUnique && !Registries.COMMAND_ARGUMENT_TYPE.containsId(name))
-            {
-                ArgumentTypeRegistry.registerArgumentType(name, argumentType.getClass(), ConstantArgumentSerializer.of(() -> argumentType));
-            }
-        }
-
-        public ArgumentResolver(final Identifier name, final AT argumentType)
-        {
-            this.name = name;
-            this.argumentType = argumentType;
-            try
-            {
-                this.rawClass = (Class<T>) argumentType.getClass().getMethod("parse", StringReader.class).getReturnType();
-            }
-            catch (NoSuchMethodException ex)
-            {
-                // should be impossible, but you never know
-                throw new RuntimeException(ex);
-            }
-        }
-
-        public T resolveArgument(final CommandContext<FabricClientCommandSource> ctx, final StringReader reader) throws CommandSyntaxException
-        {
-            return argumentType.parse(reader);
         }
     }
 }
