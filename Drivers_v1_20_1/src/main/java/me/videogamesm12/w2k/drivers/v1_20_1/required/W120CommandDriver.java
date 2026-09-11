@@ -1,11 +1,10 @@
 package me.videogamesm12.w2k.drivers.v1_20_1.required;
 
+import com.google.common.base.Preconditions;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.Message;
 import com.mojang.brigadier.StringReader;
-import com.mojang.brigadier.arguments.ArgumentType;
-import com.mojang.brigadier.arguments.BoolArgumentType;
-import com.mojang.brigadier.arguments.StringArgumentType;
+import com.mojang.brigadier.arguments.*;
 import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
@@ -14,27 +13,25 @@ import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import com.mojang.brigadier.tree.CommandNode;
 import lombok.Getter;
+import me.videogamesm12.w2k.drivers.v1_20_1.command.ClientEntityArgumentType;
 import me.videogamesm12.w2k.kernel.W2K;
-import me.videogamesm12.w2k.kernel.command.Argument;
 import me.videogamesm12.w2k.kernel.command.ExecutionPath;
 import me.videogamesm12.w2k.kernel.command.WCommand;
+import me.videogamesm12.w2k.kernel.data.IEntitySelector;
 import me.videogamesm12.w2k.kernel.data.IPlayerEntry;
 import me.videogamesm12.w2k.kernel.driver.base.WCommandDriver;
 import me.videogamesm12.w2k.kernel.driver.base.WDriverMetadata;
 import me.videogamesm12.w2k.kernel.experiment.Experiment;
 import me.videogamesm12.w2k.kernel.experiment.ExperimentManager;
 import me.videogamesm12.w2k.kernel.module.WModule;
-import me.videogamesm12.w2k.kernel.module.setting.BooleanSetting;
-import me.videogamesm12.w2k.kernel.module.setting.StringSetting;
-import me.videogamesm12.w2k.kernel.module.setting.WModuleSetting;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.fabricmc.fabric.api.command.v2.ArgumentTypeRegistry;
-import net.kyori.adventure.nbt.BinaryTag;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.minecraft.command.CommandSource;
+import net.minecraft.command.argument.EntityArgumentType;
 import net.minecraft.command.argument.UuidArgumentType;
 import net.minecraft.command.argument.serialize.ConstantArgumentSerializer;
 import net.minecraft.registry.Registries;
@@ -46,7 +43,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
-import java.util.function.Supplier;
+import java.util.function.Function;
 
 @WDriverMetadata(identifier = "120_command_wrapper")
 public class W120CommandDriver implements WCommandDriver
@@ -56,7 +53,12 @@ public class W120CommandDriver implements WCommandDriver
     public W120CommandDriver()
     {
         register(new ArgumentResolver<>(Identifier.of("brigadier", "bool"), boolean.class, BoolArgumentType.bool()));
+        register(new ArgumentResolver<>(Identifier.of("brigadier", "float"), float.class, FloatArgumentType.floatArg()));
+        register(new ArgumentResolver<>(Identifier.of("brigadier", "double"), double.class, DoubleArgumentType.doubleArg()));
+        register(new ArgumentResolver<>(Identifier.of("brigadier", "integer"), int.class, IntegerArgumentType.integer()));
+        register(new ArgumentResolver<>(Identifier.of("brigadier", "long"), long.class, LongArgumentType.longArg()));
         register(new ArgumentResolver<>(Identifier.of("brigadier", "string"), String.class, StringArgumentType.string()));
+        //--
         register(new ArgumentResolver<>(Identifier.of("w2k", "greedy_string"), String.class, StringArgumentType.greedyString(), true));
         register(new ArgumentResolver<>(Identifier.of("w2k", "word_string"), String.class, StringArgumentType.word(), true));
         register(new ArgumentResolver<>(Identifier.of("w2k", "online_players/name"), String.class, new ArgumentType<String>()
@@ -144,6 +146,10 @@ public class W120CommandDriver implements WCommandDriver
                         .map(Enum::name).toList(), builder);
             }
         }, true));
+        register(new ArgumentResolver<>(Identifier.of("w2k", "wrapped/entity"), IEntitySelector.class, new ClientEntityArgumentType(EntityArgumentType.entity()), true));
+        register(new ArgumentResolver<>(Identifier.of("w2k", "wrapped/entities"), IEntitySelector.class, new ClientEntityArgumentType(EntityArgumentType.entities()), true));
+        register(new ArgumentResolver<>(Identifier.of("w2k", "wrapped/entity/player"), IEntitySelector.class, new ClientEntityArgumentType(EntityArgumentType.player()), true));
+        register(new ArgumentResolver<>(Identifier.of("w2k", "wrapped/entities/players"), IEntitySelector.class, new ClientEntityArgumentType(EntityArgumentType.players()), true));
     }
 
     @Override
@@ -186,97 +192,121 @@ public class W120CommandDriver implements WCommandDriver
             return;
         }
 
+        W2K.getLogger().debug("Scanning command class for executable paths");
         methods.forEach(method ->
         {
-            final String path = method.getAnnotation(ExecutionPath.class).value();
-
-            List<ArgumentBuilder<FabricClientCommandSource, ? extends ArgumentBuilder<FabricClientCommandSource, ?>>> tree = new ArrayList<>();
-
-            // -- COMMAND NODE BUILDING --
-
-            tree.add(ClientCommandManager.literal(command.getName()));
-
-            // Skip ahead
-            if (!path.trim().isBlank())
+            if (method.isAnnotationPresent(ExecutionPath.class))
             {
-                final String[] arguments = path.split(" ");
-
-                for (String argument : arguments)
-                {
-                    tree.add(ClientCommandManager.literal(argument));
-                }
-            }
-
-            final Map<String, ArgumentResolver<?, ?>> resolvers = new HashMap<>(); // Argument Name, ArgumentResolver
-
-            for (final Parameter parameter : method.getParameters())
-            {
-                ArgumentResolver<?, ?> resolver = null;
-                String name = null;
-
-                // Derive resolver and name from Argument annotation
-                if (parameter.isAnnotationPresent(Argument.class))
-                {
-                    final Argument argument = parameter.getAnnotation(Argument.class);
-
-                    // Determine a resolver if one is manually specified
-                    if (!argument.resolver().trim().isBlank() && resolverMap.containsKey(argument.resolver()))
-                    {
-                        resolver = resolverMap.get(argument.resolver().trim());
-                    }
-
-                    if (!argument.label().trim().isBlank())
-                    {
-                        name = argument.label().trim();
-                    }
-                }
-
-                // Derive name from parameter name if missing or invalid Argument annotation (probably ugly, but whatever)
-                if (name == null)
-                {
-                    name = parameter.getName();
-                }
-
-                // Derive resolver from raw class type
-                if (resolver == null)
-                {
-                    resolver = resolverMap.values().stream()
-                            .filter(containedResolver -> containedResolver.getRawClass().equals(parameter.getType()))
-                            .findAny()
-                            .orElse(null);
-                }
-
-                // Well, we tried lol
-                if (resolver == null)
-                {
-                    W2K.getLogger().error("Invalid or unknown parameter type - {}", parameter.getType().getName());
-                    return;
-                }
-
-                resolvers.put(name, resolver);
-                tree.add(ClientCommandManager.argument(name, resolver.getArgumentType()));
-            }
-
-            // Add executable property to the last of the tree
-            tree.set(tree.size() - 1, tree.get(tree.size() - 1).executes(ctx ->
-            {
+                W2K.getLogger().debug("Building execution path for method {}", method);
                 try
                 {
-                    method.invoke(command, resolvers.entrySet().stream().map(entry -> ctx.getArgument(entry.getKey(), entry.getValue().getRawClass())).toArray());
+                    final FabricCommandPath path = new FabricCommandPath(command, method, resolverMap::get);
+                    W2K.getLogger().debug("Execution path for method {} completed: {}", method, path.toString());
+                    ClientCommandRegistrationCallback.EVENT.register((dispatcher, access) ->
+                            dispatcher.getRoot().addChild(path.getNode()));
+                    command.addPath(path);
                 }
                 catch (Throwable ex)
                 {
-                    command.msg(Component.translatable("w2k.command.command_error", Component.text(ex.getLocalizedMessage()))
+                    W2K.getLogger().error("Failed to build and register execution path for method {}", method, ex);
+                }
+            }
+        });
+    }
+
+    public <T, AT extends ArgumentType<T>> void register(final ArgumentResolver<T, AT> resolver)
+    {
+        resolverMap.put(resolver.getName().toString(), resolver);
+    }
+
+    public static class FabricCommandPath extends WCommand.CommandPath<CommandNode<FabricClientCommandSource>, ArgumentResolver<?, ?>>
+    {
+        public FabricCommandPath(WCommand command, Method method, java.util.function.Function<String, ArgumentResolver<?, ?>> resolverResolver)
+        {
+            super(command, method, resolverResolver);
+        }
+
+        @Override
+        public CommandNode<FabricClientCommandSource> buildNode(final Function<String, ArgumentResolver<?, ?>> resolverResolver)
+        {
+            final Parameter[] methodParameters = getMethod().getParameters();
+            //--
+            final ExecutionPath pathAnnotation = getMethod().getAnnotation(ExecutionPath.class);
+            final String[] path = pathAnnotation.value();
+
+            //final List<CommandNode<FabricClientCommandSource>> nodeTree = new ArrayList<>();
+            final List<ArgumentBuilder<FabricClientCommandSource, ?>> nodes = new ArrayList<>();
+            final Map<String, ArgumentResolver<?, ?>> argumentsToResolvers = new HashMap<>();
+
+            // Ensure that root commands don't have arguments
+            if (path.length == 0)
+            {
+                Preconditions.checkArgument(methodParameters.length == 0, "Annotation implied root command (meaning no parameters), got methods with parameters instead");
+            }
+
+            // Add the root command
+            nodes.add(ClientCommandManager.literal(getCommand().getName()));
+
+            // Scan the path
+            for (final String pathEntry : path)
+            {
+                // Handle variable arguments
+                // Example input would be like <name|w2k:online_players/uuid>
+                if (pathEntry.startsWith("<") && pathEntry.endsWith(">"))
+                {
+                    final String read = pathEntry.substring(1, pathEntry.length() - 1);
+                    final String[] entryArgs = read.split("\\|");
+
+                    // Validation checks to make sure we're not off the rails from the get-go
+                    Preconditions.checkArgument(!read.isBlank(), "Argument cannot be blank or empty");
+                    Preconditions.checkArgument(entryArgs.length >= 2, "Argument must have at least a name and resolver specified");
+
+                    final String name = entryArgs[0]; // Always first
+                    final String resolverName = entryArgs[1]; // Always second
+                    //final String[] arguments = ArrayUtils.subarray(entryArgs, 2, entryArgs.length);
+
+                    // Make sure we have a valid resolver
+                    Preconditions.checkArgument(resolverResolver.apply(resolverName) != null, "'" + resolverName + "' is not a valid resolver");
+
+                    // Get the resolver
+                    final ArgumentResolver<?, ?> resolver = resolverResolver.apply(resolverName);
+
+                    // Build the node
+                    argumentsToResolvers.put(name, resolver);
+                    nodes.add(ClientCommandManager.argument(name, resolver.getArgumentType()));
+                }
+                // Handle subcommands
+                else
+                {
+                    nodes.add(ClientCommandManager.literal(pathEntry));
+                }
+            }
+
+            // Add executable property to last in the tree
+            nodes.get(nodes.size() - 1).executes(ctx ->
+            {
+                try
+                {
+                    getMethod().invoke(getCommand(), argumentsToResolvers.entrySet().stream().map(entry -> ctx.getArgument(entry.getKey(), entry.getValue().getRawClass())).toArray());
+                }
+                catch (Throwable ex)
+                {
+                    getCommand().msg(Component.translatable("w2k.command.command_error", Component.text(ex.getLocalizedMessage()))
                             .color(NamedTextColor.RED));
                     W2K.getLogger().error("An error occurred whilst processing command '{}'", ctx.getInput(), ex);
                 }
 
-                return 1;
-            }));
+                return 0;
+            });
 
-            // -- REGISTRATION --
+            // Avoid parameter count mismatch
+            Preconditions.checkArgument(argumentsToResolvers.size() == methodParameters.length, "Non-matching method parameter count (Expected " + argumentsToResolvers.size() + ", got " + methodParameters.length);
+
+            // Build what the path will look like
+            setPath(String.join(" -> ", path));
+
             final List<CommandNode<FabricClientCommandSource>> builtTree = new ArrayList<>();
-            for (ArgumentBuilder<FabricClientCommandSource, ? extends ArgumentBuilder<FabricClientCommandSource, ?>> object : tree)
+            for (ArgumentBuilder<FabricClientCommandSource, ? extends ArgumentBuilder<FabricClientCommandSource, ?>> object : nodes)
             {
                 if (builtTree.isEmpty())
                 {
@@ -289,15 +319,128 @@ public class W120CommandDriver implements WCommandDriver
                 builtTree.add(built);
             }
 
-            ClientCommandRegistrationCallback.EVENT.register((dispatcher, access) ->
-                    ((DispatcherHook<FabricClientCommandSource>) dispatcher).w2k$register(builtTree.get(0)));
-        });
+            // Finish
+            return builtTree.get(0);
+        }
     }
 
-    public <T, AT extends ArgumentType<T>> void register(final ArgumentResolver<T, AT> resolver)
+    /*@Getter
+    public static class CommandPath
     {
-        resolverMap.put(resolver.getName().toString(), resolver);
-    }
+        private final WCommand command;
+        private final Method method;
+        private final CommandNode<FabricClientCommandSource> node;
+        private String path = null;
+
+        public CommandPath(final WCommand command, final Method method, final Function<String, ArgumentResolver<?, ?>> resolverResolver)
+        {
+            this.command = command;
+            this.method = method;
+            this.node = buildNode(resolverResolver);
+        }
+
+        public CommandNode<FabricClientCommandSource> buildNode(final Function<String, ArgumentResolver<?, ?>> resolverResolver)
+        {
+            final Parameter[] methodParameters = method.getParameters();
+            //--
+            final ExecutionPath pathAnnotation = method.getAnnotation(ExecutionPath.class);
+            final String[] path = pathAnnotation.value();
+
+            //final List<CommandNode<FabricClientCommandSource>> nodeTree = new ArrayList<>();
+            final List<ArgumentBuilder<FabricClientCommandSource, ?>> nodes = new ArrayList<>();
+            final Map<String, ArgumentResolver<?, ?>> argumentsToResolvers = new HashMap<>();
+
+            // Ensure that root commands don't have arguments
+            if (path.length == 0)
+            {
+                Preconditions.checkArgument(methodParameters.length == 0, "Annotation implied root command (meaning no parameters), got methods with parameters instead");
+            }
+
+            // Add the root command
+            nodes.add(ClientCommandManager.literal(command.getName()));
+
+            // Scan the path
+            for (final String pathEntry : path)
+            {
+                // Handle variable arguments
+                // Example input would be like <name|w2k:online_players/uuid>
+                if (pathEntry.startsWith("<") && pathEntry.endsWith(">"))
+                {
+                    final String read = pathEntry.substring(1, pathEntry.length() - 1);
+                    final String[] entryArgs = read.split("\\|");
+
+                    // Validation checks to make sure we're not off the rails from the get-go
+                    Preconditions.checkArgument(!read.isBlank(), "Argument cannot be blank or empty");
+                    Preconditions.checkArgument(entryArgs.length >= 2, "Argument must have at least a name and resolver specified");
+
+                    final String name = entryArgs[0]; // Always first
+                    final String resolverName = entryArgs[1]; // Always second
+                    //final String[] arguments = ArrayUtils.subarray(entryArgs, 2, entryArgs.length);
+
+                    // Make sure we have a valid resolver
+                    Preconditions.checkArgument(resolverResolver.apply(resolverName) != null, "'" + resolverName + "' is not a valid resolver");
+
+                    // Get the resolver
+                    final ArgumentResolver<?, ?> resolver = resolverResolver.apply(resolverName);
+
+                    // Build the node
+                    argumentsToResolvers.put(name, resolver);
+                    nodes.add(ClientCommandManager.argument(name, resolver.getArgumentType()));
+                }
+                // Handle subcommands
+                else
+                {
+                    nodes.add(ClientCommandManager.literal(pathEntry));
+                }
+            }
+
+            // Add executable property to last in the tree
+            nodes.get(nodes.size() - 1).executes(ctx ->
+            {
+                try
+                {
+                    method.invoke(command, argumentsToResolvers.entrySet().stream().map(entry -> ctx.getArgument(entry.getKey(), entry.getValue().getRawClass())).toArray());
+                }
+                catch (Throwable ex)
+                {
+                    command.msg(Component.translatable("w2k.command.command_error", Component.text(ex.getLocalizedMessage()))
+                            .color(NamedTextColor.RED));
+                    W2K.getLogger().error("An error occurred whilst processing command '{}'", ctx.getInput(), ex);
+                }
+
+                return 0;
+            });
+
+            // Avoid parameter count mismatch
+            Preconditions.checkArgument(argumentsToResolvers.size() == methodParameters.length, "Non-matching method parameter count (Expected " + argumentsToResolvers.size() + ", got " + methodParameters.length);
+
+            // Build what the path will look like
+            this.path = String.join(" -> ", path);
+
+            final List<CommandNode<FabricClientCommandSource>> builtTree = new ArrayList<>();
+            for (ArgumentBuilder<FabricClientCommandSource, ? extends ArgumentBuilder<FabricClientCommandSource, ?>> object : nodes)
+            {
+                if (builtTree.isEmpty())
+                {
+                    builtTree.add(object.build());
+                    continue;
+                }
+
+                CommandNode<FabricClientCommandSource> built = object.build();
+                builtTree.get(builtTree.size() - 1).addChild(built);
+                builtTree.add(built);
+            }
+
+            // Finish
+            return builtTree.get(0);
+        }
+
+        @Override
+        public String toString()
+        {
+            return path;
+        }
+    }*/
 
     @Getter
     public static class ArgumentResolver<T, AT extends ArgumentType<T>>
@@ -323,46 +466,24 @@ public class W120CommandDriver implements WCommandDriver
             }
         }
 
-        /*@SuppressWarnings("unchecked")
-        public static <A extends WModuleSetting<?, ?>, AT extends ArgumentType<A>> ArgumentResolver<A, AT> forSettingType(Identifier name, final Class<A> rawClass, final Supplier<List<String>> suggestions)
+        public ArgumentResolver(final Identifier name, final AT argumentType)
         {
-            return (ArgumentResolver<A, AT>) new ArgumentResolver<>(name, rawClass, new ArgumentType<>()
+            this.name = name;
+            this.argumentType = argumentType;
+            try
             {
-                @Override
-                public A parse(StringReader reader) throws CommandSyntaxException
-                {
-                    final Identifier identifier = Identifier.fromCommandInput(reader);
-                    final String[] path = identifier.getPath().split("/");
+                this.rawClass = (Class<T>) argumentType.getClass().getMethod("parse", StringReader.class).getReturnType();
+            }
+            catch (NoSuchMethodException ex)
+            {
+                // should be impossible, but you never know
+                throw new RuntimeException(ex);
+            }
+        }
 
-                    final String moduleId = identifier.getNamespace() + ":" + path[0];
-                    final String settingName = String.join("/", ArrayUtils.subarray(path, 1, path.length));
-
-                    final Message invalidModuleError = Text.literal("Invalid module: " + moduleId);
-                    final Message unknownSettingError = Text.literal("Unknown setting: " + settingName);
-
-                    return (A) Optional.ofNullable(Optional.ofNullable(W2K.getInstance().getModuleManager().getModule(moduleId))
-                                    .map(module -> (WModule) module)
-                                    .orElseThrow(() -> new CommandSyntaxException(new SimpleCommandExceptionType(invalidModuleError), invalidModuleError))
-                                    .getSettings().get(settingName))
-                            .orElseThrow(() -> new CommandSyntaxException(new SimpleCommandExceptionType(unknownSettingError), unknownSettingError));
-                }
-
-                @Override
-                public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context, SuggestionsBuilder builder)
-                {
-                    if (suggestions != null)
-                    {
-                        return CommandSource.suggestMatching(suggestions.get(), builder);
-                    }
-
-                    return ArgumentType.super.listSuggestions(context, builder);
-                }
-            }, true);
-        }*/
-    }
-
-    public interface DispatcherHook<S>
-    {
-        void w2k$register(final CommandNode<S> node);
+        public T resolveArgument(final CommandContext<FabricClientCommandSource> ctx, final StringReader reader) throws CommandSyntaxException
+        {
+            return argumentType.parse(reader);
+        }
     }
 }

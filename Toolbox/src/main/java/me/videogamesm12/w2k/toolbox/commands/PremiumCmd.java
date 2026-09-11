@@ -2,7 +2,6 @@ package me.videogamesm12.w2k.toolbox.commands;
 
 import com.google.gson.JsonParseException;
 import me.videogamesm12.w2k.kernel.W2K;
-import me.videogamesm12.w2k.kernel.command.Argument;
 import me.videogamesm12.w2k.kernel.command.ExecutionPath;
 import me.videogamesm12.w2k.kernel.command.Parameters;
 import me.videogamesm12.w2k.kernel.command.WCommand;
@@ -15,8 +14,8 @@ import java.io.FileNotFoundException;
 @Parameters(name = "premium", usage = "/<command> <name or UUID>")
 public class PremiumCmd extends WCommand
 {
-    @ExecutionPath
-    public void checkPremium(final @Argument(label = "username or UUID", resolver = "w2k:online_players/both") String nameOrUuid)
+    @ExecutionPath("<username or UUID|w2k:online_players/both>")
+    public void checkPremium(final String nameOrUuid)
     {
         ProfileUtil.getMojangAPIData(nameOrUuid).whenComplete((result, ex) ->
         {
@@ -53,8 +52,7 @@ public class PremiumCmd extends WCommand
         }
 
         final String nameOrUuid = args[0];
-
-
+        checkPremium(nameOrUuid);
         return true;
     }
 }

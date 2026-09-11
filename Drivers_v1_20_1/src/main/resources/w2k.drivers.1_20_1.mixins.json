@@ -27,7 +27,7 @@
     "injector.KeyboardMixin",
     "injector.PlayerEntityMixin",
     "wrapper.BlockEntityWrapper",
-    "wrapper.CommandDispatcherWrapper",
+    "wrapper.EntitySelectorWrapper",
     "wrapper.EntityWrapper",
     "wrapper.ItemStackWrapper",
     "wrapper.MapStateWrapper"

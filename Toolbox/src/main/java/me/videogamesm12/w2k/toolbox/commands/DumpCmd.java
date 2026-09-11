@@ -1,17 +1,17 @@
 package me.videogamesm12.w2k.toolbox.commands;
 
 import me.videogamesm12.w2k.kernel.W2K;
-import me.videogamesm12.w2k.kernel.command.Argument;
 import me.videogamesm12.w2k.kernel.command.ExecutionPath;
 import me.videogamesm12.w2k.kernel.command.Parameters;
 import me.videogamesm12.w2k.kernel.command.WCommand;
+import me.videogamesm12.w2k.kernel.data.IEntitySelector;
 import me.videogamesm12.w2k.toolbox.util.DumpUtil;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 
-@Parameters(name = "dump", usage = "/dump <entities | maps | screen | tiles | threads>")
+@Parameters(name = "dump", usage = "/dump <<entities | maps | screen | tiles [heap]> | threads | <heap [live objects?]>>")
 public class DumpCmd extends WCommand
 {
 	@ExecutionPath("heap")
@@ -20,8 +20,8 @@ public class DumpCmd extends WCommand
 		heap(false);
 	}
 
-	@ExecutionPath("heap")
-	public void heap(final @Argument(label = "live objects?") boolean live)
+	@ExecutionPath({"heap", "<live objects?|brigadier:bool>"})
+	public void heap(final boolean live)
 	{
 		msg(Component.translatable("w2k.toolbox.dump.starting.heap", NamedTextColor.GRAY));
 		DumpUtil.generateHeapDump(live).whenComplete((file, throwable) ->
@@ -90,6 +90,25 @@ public class DumpCmd extends WCommand
 	{
 		msg(Component.translatable("w2k.toolbox.dump.starting.entities", NamedTextColor.GRAY));
 		DumpUtil.performEntityDump(true).whenComplete((results, throwable) ->
+		{
+			if (throwable != null)
+			{
+				W2K.getLogger().error("Stacktrace:", throwable);
+				msg(Component.translatable("w2k.toolbox.dump.error", NamedTextColor.RED));
+				return;
+			}
+
+			msg(Component.translatable("w2k.toolbox.dump.success.entities",
+					results.getSuccessful().isEmpty() ? NamedTextColor.RED : results.getFailed().isEmpty() ? NamedTextColor.GREEN : NamedTextColor.YELLOW,
+					Component.text(results.getSuccessful().size()), Component.text(results.getFailed().size())));
+		});
+	}
+
+	@ExecutionPath({"entities", "<selector|w2k:wrapped/entities>"})
+	public void entities(final IEntitySelector selector)
+	{
+		msg(Component.translatable("w2k.toolbox.dump.starting.entities", NamedTextColor.GRAY));
+		DumpUtil.performEntityDump(selector::w2k$getClientEntities, true).whenComplete((results, throwable) ->
 		{
 			if (throwable != null)
 			{

@@ -23,5 +23,8 @@
   "w2k.toolbox.dump.success.threads": "Thread dump complete (located at %1$s).",
   "w2k.toolbox.dump.success.heap": "Heap dump complete (located at %1$s).",
 
+  "w2k.toolbox.lkill.plural": "%1$d entities were killed",
+  "w2k.toolbox.lkill.singular": "%1$d entity was killed",
+
   "w2k.toolbox.module.antilockup.blocked": "Blocked %1$d suspicious inventory packet(s) (suspected lockup attempt?)"
 }

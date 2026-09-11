@@ -2,11 +2,9 @@ package me.videogamesm12.w2k.toolbox.commands;
 
 import com.google.gson.JsonParseException;
 import me.videogamesm12.w2k.kernel.W2K;
-import me.videogamesm12.w2k.kernel.command.Argument;
 import me.videogamesm12.w2k.kernel.command.ExecutionPath;
 import me.videogamesm12.w2k.kernel.command.Parameters;
 import me.videogamesm12.w2k.kernel.command.WCommand;
-import me.videogamesm12.w2k.kernel.data.IPlayerEntry;
 import me.videogamesm12.w2k.toolbox.util.ProfileUtil;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
@@ -15,13 +13,12 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 
 import java.io.FileNotFoundException;
-import java.util.List;
 
 @Parameters(name = "uuid", usage = "/<command> <name>")
 public class UuidCmd extends WCommand
 {
-    @ExecutionPath
-    public void fetchUuid(final @Argument(resolver = "w2k:online_players/name", label = "name") String name)
+    @ExecutionPath("<username|w2k:online_players/name>")
+    public void fetchUuid(final String name)
     {
         ProfileUtil.getAshconDataAsync(name).whenComplete((result, ex) ->
         {

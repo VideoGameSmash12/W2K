@@ -1,11 +1,8 @@
 package me.videogamesm12.w2k.kernel.commands;
 
-import me.videogamesm12.w2k.kernel.command.Argument;
-import me.videogamesm12.w2k.kernel.command.ExecutionPath;
+import me.videogamesm12.w2k.kernel.command.*;
 import me.videogamesm12.w2k.kernel.experiment.Experiment;
 import me.videogamesm12.w2k.kernel.experiment.ExperimentManager;
-import me.videogamesm12.w2k.kernel.command.Parameters;
-import me.videogamesm12.w2k.kernel.command.WCommand;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.JoinConfiguration;
 import net.kyori.adventure.text.event.ClickEvent;
@@ -89,8 +86,8 @@ public class ExperimentsCmd extends WCommand
         summary();
     }
 
-    @ExecutionPath("details")
-    public void experimentDetails(final @Argument(label = "experiment", resolver = "w2k:experiment") Experiment experiment)
+    @ExecutionPath({"details", "<experiment|w2k:experiment>"})
+    public void experimentDetails(final Experiment experiment)
     {
         msg(Component.translatable("w2k.command.experiments.experiment_details")
                 .decorate(TextDecoration.BOLD));
@@ -102,9 +99,8 @@ public class ExperimentsCmd extends WCommand
                 experiment.getDescription().color(NamedTextColor.WHITE)).colorIfAbsent(NamedTextColor.GRAY));
     }
 
-    @ExecutionPath("set")
-    public void setExperimentState(final @Argument(label = "experiment", resolver = "w2k:experiment") Experiment experiment,
-                                   final @Argument(label = "value", resolver = "brigadier:bool") boolean enabled)
+    @ExecutionPath({"set", "<experiment|w2k:experiment>", "<value|brigadier:bool>"})
+    public void setExperimentState(final Experiment experiment, final boolean enabled)
     {
         if (experiment.isParameterOnly())
         {

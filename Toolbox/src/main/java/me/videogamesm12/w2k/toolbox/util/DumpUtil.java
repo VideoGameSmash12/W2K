@@ -16,6 +16,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public class DumpUtil
@@ -108,6 +109,56 @@ public class DumpUtil
 		});
 	}
 
+	public static CompletableFuture<DumpResult> performEntityDump(final Supplier<List<IEntityEntry>> supplier, final boolean parallel)
+	{
+		final CompletableFuture<DumpResult> future = new CompletableFuture<>();
+
+		CompletableFuture.runAsync(() ->
+		{
+			final List<String> completedEntities = new ArrayList<>();
+			final List<String> failedEntities = new ArrayList<>();
+			final File dumpDir = generateDumpFolder();
+
+			final List<IEntityEntry> list = supplier.get();
+
+			(parallel ? list.parallelStream() : list.stream()).forEach(entity ->
+			{
+				String fileName = "entity_" + entity.w2k$id() + "_" + entity.w2k$uuid();
+				try (FileOutputStream stream = new FileOutputStream(new File(dumpDir, fileName + ".nbt")))
+				{
+					BinaryTagIO.writer().write(TagStringIO.get().asCompound(entity.w2k$data()), stream, BinaryTagIO.Compression.GZIP);
+					completedEntities.add(entity.w2k$uuid().toString());
+				}
+				catch (IOException ex)
+				{
+					// Fallback to saving files as SNBT
+					File temp = new File(dumpDir, fileName +" .nbt");
+					if (temp.exists())
+					{
+						temp.delete();
+					}
+
+					try (FileWriter writer = new FileWriter(new File(dumpDir, fileName + ".snbt")))
+					{
+						writer.write(entity.w2k$data());
+					}
+					catch (IOException ex2)
+					{
+						// If both failed, oh well. We tried.
+						failedEntities.add(entity.w2k$uuid().toString());
+						W2K.getLogger().error("Failed to dump entity ID {}", entity.w2k$id(), ex);
+					}
+				}
+			});
+
+			future.complete(DumpResult.builder()
+					.successful(completedEntities)
+					.failed(failedEntities).outputDirectory(dumpDir).build());
+		});
+
+		return future;
+	}
+
 	public static CompletableFuture<DumpResult> performOpenInventoryDump(final boolean parallel)
 	{
 		return CompletableFuture.supplyAsync(() ->
@@ -132,14 +183,6 @@ public class DumpUtil
 
 				try (FileOutputStream stream = new FileOutputStream(new File(dumpDir, fileName + ".nbt")))
 				{
-					/*final CompoundBinaryTag compound = CompoundBinaryTag.builder()
-							.putString("id", item.w2k$type())
-							.putInt("Count", item.w2k$count())
-							.putInt("Slot", Integer.parseInt(item.w2k$location()))
-							.put("tag", item.w2k$data() != null ? TagStringIO.get().asCompound(item.w2k$data())
-									: CompoundBinaryTag.empty())
-							.build();
-					 */
 					final CompoundBinaryTag compound = TagStringIO.get().asCompound(item.w2k$data());
 					BinaryTagIO.writer().write(compound, stream, BinaryTagIO.Compression.GZIP);
 					completedItems.add(item.w2k$location());

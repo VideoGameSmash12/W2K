@@ -1,5 +1,6 @@
 {
   "chat.click.copy_to_clipboard": "Click to Copy to Clipboard",
+  "w2k.command.error.invalid_value": "Invalid option: %s",
   "w2k.command.command_error": "Command error: %s",
   "w2k.command.command_usage": "Usage: %s",
 

@@ -1,7 +1,6 @@
 package me.videogamesm12.w2k.kernel.commands;
 
 import me.videogamesm12.w2k.kernel.W2K;
-import me.videogamesm12.w2k.kernel.command.Argument;
 import me.videogamesm12.w2k.kernel.command.ExecutionPath;
 import me.videogamesm12.w2k.kernel.command.Parameters;
 import me.videogamesm12.w2k.kernel.command.WCommand;
@@ -9,28 +8,16 @@ import me.videogamesm12.w2k.kernel.data.BuildMetadata;
 import me.videogamesm12.w2k.kernel.module.WModule;
 import net.fabricmc.loader.api.FabricLoader;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.JoinConfiguration;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 
+import java.util.stream.Collectors;
+
 @Parameters(name = "w2k", usage = "/<command> [details]")
 public class W2KCmd extends WCommand
 {
-    @ExecutionPath("details")
-    public void details()
-    {
-        final BuildMetadata metadata = BuildMetadata.getMetadataFromClassJar(W2K.class);
-
-        if (metadata == null)
-        {
-            msg(Component.translatable("w2k.command.w2k.unable_to_fetch_build_data").color(NamedTextColor.RED));
-        }
-        else
-        {
-            msg(metadata.toComponent());
-        }
-    }
-
     @ExecutionPath
     public void summary()
     {
@@ -50,8 +37,23 @@ public class W2KCmd extends WCommand
         }
     }
 
-    @ExecutionPath("module toggle")
-    public void toggleModule(@Argument(label = "module") WModule module)
+    @ExecutionPath("details")
+    public void details()
+    {
+        final BuildMetadata metadata = BuildMetadata.getMetadataFromClassJar(W2K.class);
+
+        if (metadata == null)
+        {
+            msg(Component.translatable("w2k.command.w2k.unable_to_fetch_build_data").color(NamedTextColor.RED));
+        }
+        else
+        {
+            msg(metadata.toComponent());
+        }
+    }
+
+    @ExecutionPath({"module", "toggle", "<module|w2k:module>"})
+    public void toggleModule(final WModule module)
     {
         try
         {
@@ -69,8 +71,8 @@ public class W2KCmd extends WCommand
         }
     }
 
-    @ExecutionPath("module status")
-    public void moduleStatus(final @Argument(label = "module") WModule module)
+    @ExecutionPath({"module", "status", "<module|w2k:module>"})
+    public void moduleStatus(final WModule module)
     {
         msg(Component.translatable("w2k.command.w2k.module.status",
                 Component.text(module.getName()).color(NamedTextColor.WHITE),
@@ -101,10 +103,45 @@ public class W2KCmd extends WCommand
             {
                 details();
             }
-            else
+            else if (args[0].equalsIgnoreCase("module"))
             {
-                return false;
+                if (args.length == 2 && args[1].equalsIgnoreCase("list"))
+                {
+                    msg(Component.text("Available modules: ", NamedTextColor.GRAY)
+                            .append(Component.join(JoinConfiguration.commas(true),
+                                    W2K.getInstance().getModuleManager().getIdRegistry().keySet().stream()
+                                            .map(key -> Component.text(key, NamedTextColor.WHITE))
+                                            .collect(Collectors.toList()))));
+                    return true;
+                }
+
+                if (args.length != 3)
+                {
+                    return false;
+                }
+
+                final String moduleId = args[2];
+                final WModule module = W2K.getInstance().getModuleManager().getModule(moduleId);
+
+                if (module == null)
+                {
+                    msg(Component.text("Invalid module: " + moduleId, NamedTextColor.RED));
+                    return true;
+                }
+
+                if (args[1].equalsIgnoreCase("toggle"))
+                {
+                    toggleModule(module);
+                    return true;
+                }
+                else if (args[1].equalsIgnoreCase("status"))
+                {
+                    moduleStatus(module);
+                    return true;
+                }
             }
+
+            return false;
         }
 
         return true;
