@@ -3,40 +3,22 @@ package me.videogamesm12.w2k.kernel.experiment;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import me.videogamesm12.w2k.kernel.util.VersionUtils;
-import net.fabricmc.loader.api.FabricLoader;
 import net.kyori.adventure.text.Component;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
-/**
- * <h1>Experiment</h1>
- * <p>An enum for every experiment in W2K.</p>
- * <p>Experiments can have a set of {@link me.videogamesm12.w2k.kernel.experiment.Condition}s that are checked on
- * runtime to determine which ones are available and can be enabled and which ones aren't.</p>
- * <p>To enable these, set the {@code me.videgamesm12.w2k.enabled_experiments} JVM argument in your instance to a
- * comma-separated list.</p>
- */
 @AllArgsConstructor
-@Getter
 @RequiredArgsConstructor
-public enum Experiment
+@Getter
+public class Experiment
 {
-    KERNEL_COMMAND_SYSTEM_OVERHAUL("Kernel", true, Collections.singletonList(
-            Condition.of("Only available in 1.20.1", VersionUtils.isOlderThanOrRunning("1.20.1")))),
-    BLACKBOX_HELP_WINDOW("Blackbox", true, Collections.EMPTY_LIST),
-    BLACKBOX_COMMAND_LINE_LAF_OVERRIDE("Blackbox", true, Collections.EMPTY_LIST),
-    BLACKBOX_RUNTIME_PROPERTIES_TAB("Blackbox", true, Collections.EMPTY_LIST),
-    INTEGRATOR_WURST_ALT_MANAGER("Integrator", true, Collections.singletonList(Condition.of("Requires Wurst",
-            FabricLoader.getInstance().isModLoaded("wurst"))));
-
-    private final String mod;
-    private boolean parameterOnly;
-    private List<Condition> availability;
+    private final String identifier;
+    private final String translatableName;
+    private final String translatableDescription;
+    private final boolean parameterOnly;
+    private List<Condition> availability = Collections.emptyList();
 
     /**
      * Returns a translatable component for the Experiment's user-facing name.
@@ -44,7 +26,7 @@ public enum Experiment
      */
     public Component getName()
     {
-        return Component.translatable("w2k.experiment." + name().toLowerCase() + ".name");
+        return Component.translatable(translatableName);
     }
 
     /**
@@ -53,7 +35,9 @@ public enum Experiment
      */
     public Component getDescription()
     {
-        return Component.translatable("w2k.experiment." + name().toLowerCase() + ".description");
+        return translatableDescription != null ?
+                Component.translatable(translatableDescription) :
+                Component.empty();
     }
 
     /**
@@ -72,15 +56,5 @@ public enum Experiment
     public boolean isAvailable()
     {
         return availability.isEmpty() || availability.stream().allMatch(Condition::conditionMet);
-    }
-
-    /**
-     * Get an optional {@link Experiment} with a provided String as the name.
-     * @param label     String
-     * @return          @{code Optional<Experiment>}
-     */
-    public static Optional<Experiment> findExperiment(String label)
-    {
-        return Arrays.stream(values()).filter(entry -> entry.name().equalsIgnoreCase(label)).findAny();
     }
 }

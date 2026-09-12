@@ -1,6 +1,7 @@
 package me.videogamesm12.w2k.blackbox.window;
 
 import lombok.Getter;
+import me.videogamesm12.w2k.blackbox.experiments.BlackboxExperiments;
 import me.videogamesm12.w2k.blackbox.window.tool.helper.Helper;
 import me.videogamesm12.w2k.kernel.W2K;
 import me.videogamesm12.w2k.blackbox.window.menu.W2KMenu;
@@ -11,7 +12,6 @@ import me.videogamesm12.w2k.blackbox.window.menu.SettingsMenu;
 import me.videogamesm12.w2k.blackbox.window.menu.ToolsMenu;
 import me.videogamesm12.w2k.blackbox.window.tab.*;
 import me.videogamesm12.w2k.blackbox.window.tool.console.Console;
-import me.videogamesm12.w2k.kernel.experiment.Experiment;
 import me.videogamesm12.w2k.kernel.experiment.ExperimentManager;
 
 import javax.imageio.ImageIO;
@@ -172,7 +172,7 @@ public class GUI extends JFrame
         tabbedPane.addTab("Tile Entities", new BlockEntitiesTab());
         tabbedPane.addTab("Maps", new MapsTab());
         tabbedPane.addTab("Inventory", new InventoryTab());
-        if (ExperimentManager.isExperimentEnabled(Experiment.BLACKBOX_RUNTIME_PROPERTIES_TAB))
+        if (ExperimentManager.isExperimentEnabled(BlackboxExperiments.PROPERTIES_TAB))
             tabbedPane.addTab("Properties", new PropertiesTab());
 
         // Go back to the tab we were at before if we haven't already

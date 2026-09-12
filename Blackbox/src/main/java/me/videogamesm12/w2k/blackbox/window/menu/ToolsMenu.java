@@ -1,8 +1,8 @@
 package me.videogamesm12.w2k.blackbox.window.menu;
 
+import me.videogamesm12.w2k.blackbox.experiments.BlackboxExperiments;
 import me.videogamesm12.w2k.blackbox.util.JComponents;
 import me.videogamesm12.w2k.kernel.experiment.ExperimentManager;
-import me.videogamesm12.w2k.kernel.experiment.Experiment;
 import me.videogamesm12.w2k.kernel.W2K;
 import me.videogamesm12.w2k.blackbox.Blackbox;
 import me.videogamesm12.w2k.supervisor.Supervisor;
@@ -32,7 +32,7 @@ public class ToolsMenu extends JMenu
                 "Dumps information about all threads in the client process to your latest.log file.",
                 () -> Supervisor.getInstance().dumpThreads().forEach(line -> W2K.getLogger().info(line))));
         //--
-        if (ExperimentManager.isExperimentEnabled(Experiment.BLACKBOX_HELP_WINDOW))
+        if (ExperimentManager.isExperimentEnabled(BlackboxExperiments.HELP_WINDOW))
         {
             addSeparator();
             add(JComponents.createMenuItem("Help",

@@ -6,8 +6,6 @@ import com.sun.jna.platform.win32.Advapi32Util;
 import com.sun.jna.platform.win32.WinReg;
 import lombok.Getter;
 import lombok.Setter;
-import me.videogamesm12.w2k.kernel.experiment.Experiment;
-import me.videogamesm12.w2k.kernel.experiment.ExperimentManager;
 import me.videogamesm12.w2k.kernel.W2K;
 import me.videogamesm12.w2k.kernel.util.SysUtils;
 import net.fabricmc.loader.api.FabricLoader;

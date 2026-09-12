@@ -1,10 +1,8 @@
 package me.videogamesm12.w2k.blackbox.window.menu.w2k;
 
 import me.videogamesm12.w2k.kernel.experiment.ExperimentManager;
-import me.videogamesm12.w2k.kernel.experiment.Experiment;
 
 import javax.swing.*;
-import java.util.Arrays;
 
 public class ExperimentsMenu extends JMenu
 {
@@ -12,9 +10,9 @@ public class ExperimentsMenu extends JMenu
     {
         super("Experiments");
 
-        Arrays.stream(Experiment.values()).forEach(experiment ->
+        ExperimentManager.getRegisteredExperiments().forEach(experiment ->
         {
-            final JCheckBoxMenuItem menuItem = new JCheckBoxMenuItem(experiment.name() + " " + (experiment.isAvailable() ?
+            final JCheckBoxMenuItem menuItem = new JCheckBoxMenuItem(experiment.getIdentifier() + " " + (experiment.isAvailable() ?
                     (experiment.isParameterOnly() ? "(Can't be toggled)" : "") : "(Unavailable)"));
             menuItem.setEnabled(experiment.isAvailable() && !experiment.isParameterOnly());
             menuItem.addActionListener((e) ->

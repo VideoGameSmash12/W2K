@@ -12,11 +12,11 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import me.videogamesm12.w2k.kernel.experiment.Condition;
 import me.videogamesm12.w2k.kernel.experiment.Experiment;
+import me.videogamesm12.w2k.kernel.experiment.ExperimentManager;
 import net.minecraft.command.CommandSource;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
@@ -26,7 +26,6 @@ import java.util.function.Predicate;
 public class ExperimentArgumentType implements ArgumentType<Experiment>
 {
     private static final Text INVALID_EXPERIMENT = Text.translatable("w2k.command.experiments.invalid_experiment");
-    private static final Text PARAMETER_ONLY = Text.translatable("w2k.command.experiments.parameter_only");
 
     private final Filter filter;
 
@@ -58,7 +57,7 @@ public class ExperimentArgumentType implements ArgumentType<Experiment>
     @Override
     public Experiment parse(StringReader reader) throws CommandSyntaxException
     {
-        final Optional<Experiment> experiment = Experiment.findExperiment(reader.readString());
+        final Optional<Experiment> experiment = ExperimentManager.getExperiment(Identifier.fromCommandInput(reader).toString());
 
         if (experiment.isEmpty())
         {
@@ -76,9 +75,9 @@ public class ExperimentArgumentType implements ArgumentType<Experiment>
     @Override
     public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context, SuggestionsBuilder builder)
     {
-        return CommandSource.suggestMatching(Arrays.stream(Experiment.values())
+        return CommandSource.suggestMatching(ExperimentManager.getRegisteredExperiments().stream()
                 .filter(filter.applicable)
-                .map(Enum::name).toList(), builder);
+                .map(Experiment::getIdentifier).toList(), builder);
     }
 
     @RequiredArgsConstructor

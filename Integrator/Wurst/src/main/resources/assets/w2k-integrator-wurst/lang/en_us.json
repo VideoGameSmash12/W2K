@@ -1,0 +1,4 @@
+{
+  "w2k.integrator.wurst.experiment.alt_manager.name": "Wurst Alt Manager GUI",
+  "w2k.integrator.wurst.experiment.alt_manager.description": "Add an option to view and interact with Wurst's Alt Manager with a new GUI. Requires Wurst Client."
+}

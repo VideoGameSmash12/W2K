@@ -2,13 +2,9 @@ package me.videogamesm12.w2k.drivers.v1_20_1.required;
 
 import com.google.common.base.Preconditions;
 import com.mojang.brigadier.Command;
-import com.mojang.brigadier.Message;
-import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.arguments.*;
 import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import com.mojang.brigadier.tree.CommandNode;
@@ -22,11 +18,11 @@ import me.videogamesm12.w2k.kernel.command.AbstractArgumentResolver;
 import me.videogamesm12.w2k.kernel.command.ExecutionPath;
 import me.videogamesm12.w2k.kernel.command.WCommand;
 import me.videogamesm12.w2k.kernel.data.IEntitySelector;
-import me.videogamesm12.w2k.kernel.data.IPlayerEntry;
 import me.videogamesm12.w2k.kernel.driver.base.WCommandDriver;
 import me.videogamesm12.w2k.kernel.driver.base.WDriverMetadata;
 import me.videogamesm12.w2k.kernel.experiment.Experiment;
 import me.videogamesm12.w2k.kernel.experiment.ExperimentManager;
+import me.videogamesm12.w2k.kernel.experiments.KernelExperiments;
 import me.videogamesm12.w2k.kernel.module.WModule;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
@@ -39,7 +35,6 @@ import net.minecraft.command.argument.EntityArgumentType;
 import net.minecraft.command.argument.UuidArgumentType;
 import net.minecraft.command.argument.serialize.ConstantArgumentSerializer;
 import net.minecraft.registry.Registries;
-import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.apache.commons.lang3.ArrayUtils;
 
@@ -96,7 +91,7 @@ public class W120CommandDriver implements WCommandDriver
         final List<Method> methods = Arrays.stream(command.getClass().getMethods()).filter(method -> method.isAnnotationPresent(ExecutionPath.class)).toList();
 
         // Fallback onto the old dispatcher system if no execution path is specified
-        if (methods.isEmpty() || !ExperimentManager.isExperimentEnabled(Experiment.KERNEL_COMMAND_SYSTEM_OVERHAUL))
+        if (methods.isEmpty() || !ExperimentManager.isExperimentEnabled(KernelExperiments.COMMAND_SYSTEM_OVERHAUL))
         {
             final Command<FabricClientCommandSource> wrapped = context ->
             {

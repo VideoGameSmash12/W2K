@@ -98,6 +98,37 @@ public class VersionUtils
         return currentVersion.compareTo((Version) version) <= 0;
     }
 
+    /**
+     * Checks whether the currently running version of Minecraft is equal to a provided version string.
+     * @param versionString String
+     * @return              True if the version of Minecraft running is equal to the provided version
+     */
+    public static boolean isRunning(String versionString)
+    {
+        final SemanticVersion currentVersion;
+        try
+        {
+            currentVersion = SemanticVersion.parse(gameVersion.getId());
+        }
+        catch (VersionParsingException ex)
+        {
+            W2K.getLogger().error("Failed to read current version", ex);
+            return false;
+        }
+        final SemanticVersion version;
+        try
+        {
+            version = SemanticVersion.parse(versionString);
+        }
+        catch (VersionParsingException ex)
+        {
+            W2K.getLogger().error("Failed to read version string", ex);
+            return false;
+        }
+
+        return currentVersion.compareTo((Version) version) == 0;
+    }
+
     @AllArgsConstructor
     @Data
     public static class MinecraftVersion

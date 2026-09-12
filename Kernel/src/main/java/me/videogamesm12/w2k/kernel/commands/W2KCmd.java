@@ -5,14 +5,18 @@ import me.videogamesm12.w2k.kernel.command.ExecutionPath;
 import me.videogamesm12.w2k.kernel.command.Parameters;
 import me.videogamesm12.w2k.kernel.command.WCommand;
 import me.videogamesm12.w2k.kernel.data.BuildMetadata;
+import me.videogamesm12.w2k.kernel.experiment.Experiment;
+import me.videogamesm12.w2k.kernel.experiment.ExperimentManager;
 import me.videogamesm12.w2k.kernel.module.WModule;
 import net.fabricmc.loader.api.FabricLoader;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.JoinConfiguration;
 import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Parameters(name = "w2k", usage = "/<command> [details]")
@@ -52,6 +56,8 @@ public class W2KCmd extends WCommand
         }
     }
 
+    // -- Modules -- //
+
     @ExecutionPath({"module", "toggle", "<module|w2k:module>"})
     public void toggleModule(final WModule module)
     {
@@ -82,13 +88,117 @@ public class W2KCmd extends WCommand
                 .color(NamedTextColor.GRAY));
     }
 
-    /*@ExecutionPath("module setting")
-    public void moduleSetting(final @Argument(label = "module") WModule module,
-                              final @Argument(label = "setting name") WModuleSetting<?, ?> setting,
-                              final @Argument(label = "value") String value)
+    // -- Experiments -- //
+
+    @ExecutionPath("experiment")
+    public void experimentSummary()
     {
-        setting.read(value);
-    }*/
+        List<Experiment> enabled = ExperimentManager.getEnabledExperiments();
+
+        if (enabled.isEmpty())
+        {
+            // "No experiments are enabled."
+            msg(Component.translatable("w2k.command.experiments.none_enabled").color(NamedTextColor.RED));
+        }
+        else
+        {
+            // "X experiments are enabled."
+            msg(Component.translatable("w2k.command.experiments.enabled",
+                    Component.text(enabled.size())).decorate(TextDecoration.BOLD));
+
+            // "Enabled: X, Y, Z"
+            msg(Component.translatable("w2k.command.experiments.enabled_list",
+                    Component.join(JoinConfiguration.commas(true),
+                            enabled.stream().map(experiment -> Component.translatable(experiment.getTranslatableName()).color(NamedTextColor.GREEN))
+                                    .collect(Collectors.toList()))).colorIfAbsent(NamedTextColor.GRAY));
+            // "Disabled: A, B, C"
+            msg(Component.translatable("w2k.command.experiments.disabled_list",
+                    Component.join(JoinConfiguration.commas(true),
+                            ExperimentManager.getRegisteredExperiments().stream().filter(ex -> !enabled.contains(ex))
+                                    .map(experiment -> Component.translatable(experiment.getTranslatableName()).color(NamedTextColor.RED))
+                                    .collect(Collectors.toList()))).colorIfAbsent(NamedTextColor.GRAY));
+        }
+
+            /* "To enable/disable experiments, you need to add '-Dme.videogamesm12.w2k.enabled_experiments='
+               (with comma separated experiment names appended afterward) to your game's Java launch options.
+               For more information, please consult the W2K wiki at https://github.com/VideoGameSmash12/W2K/wiki/Experiments." */
+        msg(Component.translatable("w2k.command.experiments.hover_for_more_information")
+                .hoverEvent(HoverEvent.showText(Component.translatable("w2k.command.experiments.instructions",
+                                Component.text("\"-Dme.videogamesm12.w2k.enabled_experiments=\"")
+                                        .color(NamedTextColor.WHITE),
+                                Component.text("/experiments enable/disable <experiment>")
+                                        .clickEvent(ClickEvent.suggestCommand("/experiments enable "))
+                                        .color(NamedTextColor.WHITE),
+                                Component.text("https://github.com/VideoGameSmash12/W2K/wiki/Experiments")
+                                        .color(NamedTextColor.BLUE)
+                                        .decorate(TextDecoration.UNDERLINED)
+                                        .clickEvent(ClickEvent.openUrl("https://github.com/VideoGameSmash12/W2K/wiki/Experiments")))
+                        .colorIfAbsent(NamedTextColor.GRAY)))
+                .colorIfAbsent(NamedTextColor.BLUE).decorate(TextDecoration.UNDERLINED));
+    }
+
+    @ExecutionPath({"experiment", "list"})
+    public void listAll()
+    {
+        // All Experiments:
+        msg(Component.translatable("w2k.command.experiments.all_experiments").decorate(TextDecoration.BOLD));
+
+        // A, B, C
+        msg(Component.join(JoinConfiguration.commas(true), ExperimentManager.getRegisteredExperiments().stream()
+                .map(experiment -> Component.translatable(experiment.getTranslatableName()).color(ExperimentManager.isExperimentEnabled(experiment)
+                                ? NamedTextColor.GREEN : NamedTextColor.RED).hoverEvent(HoverEvent.showText(
+                                Component.translatable("w2k.command.experiments.click_for_more_information")))
+                        .clickEvent(ClickEvent.runCommand("/experiments details " + experiment.getIdentifier())))
+                .collect(Collectors.toList())).colorIfAbsent(NamedTextColor.GRAY));
+    }
+
+    @ExecutionPath({"experiment", "details"})
+    public void redirectSummary()
+    {
+        summary();
+    }
+
+    @ExecutionPath({"experiment", "details", "<experiment|w2k:experiment/all>"})
+    public void experimentDetails(final Experiment experiment)
+    {
+        msg(Component.translatable("w2k.command.experiments.experiment_details")
+                .decorate(TextDecoration.BOLD));
+        // Name: %s
+        msg(Component.translatable("w2k.command.experiments.experiment_details_name",
+                experiment.getName().color(NamedTextColor.WHITE)).colorIfAbsent(NamedTextColor.GRAY));
+        // Description: %s
+        msg(Component.translatable("w2k.command.experiments.experiment_details_description",
+                experiment.getDescription().color(NamedTextColor.WHITE)).colorIfAbsent(NamedTextColor.GRAY));
+    }
+
+    @ExecutionPath({"experiment", "toggle", "<experiment|w2k:experiment/togglable>"})
+    public void experimentToggle(final Experiment experiment)
+    {
+        experimentSet(experiment, !ExperimentManager.isExperimentEnabled(experiment));
+    }
+
+    @ExecutionPath({"experiment", "set", "<experiment|w2k:experiment/togglable>", "<value|brigadier:bool>"})
+    public void experimentSet(final Experiment experiment, final boolean value)
+    {
+        if (ExperimentManager.isExperimentEnabled(experiment) == value)
+        {
+            msg(Component.translatable("w2k.command.experiments.already_" + (value ? "enabled" : "disabled")));
+            return;
+        }
+
+        if (value)
+        {
+            ExperimentManager.enableExperiment(experiment);
+        }
+        else
+        {
+            ExperimentManager.disableExperiment(experiment);
+        }
+
+        msg(Component.translatable("w2k.command.experiments.experiment_" + (value ? "enabled" : "disabled"),
+                        Component.text(experiment.getIdentifier()).color(NamedTextColor.DARK_GREEN))
+                .color(NamedTextColor.GREEN));
+    }
 
     @Override
     public boolean executeCommand(String commandLabel, String[] args)

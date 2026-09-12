@@ -1,10 +1,7 @@
 package me.videogamesm12.w2k.kernel.commands;
 
 import me.videogamesm12.w2k.kernel.command.*;
-import me.videogamesm12.w2k.kernel.experiment.Experiment;
-import me.videogamesm12.w2k.kernel.experiment.ExperimentManager;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
 
 @Parameters(name = "test", usage = "No point here")
 public class TestCmd extends WCommand
@@ -30,12 +27,6 @@ public class TestCmd extends WCommand
     @Override
     public boolean executeCommand(String commandLabel, String[] args)
     {
-        if (!ExperimentManager.isExperimentEnabled(Experiment.KERNEL_COMMAND_SYSTEM_OVERHAUL))
-        {
-            msg(Component.text("You must have the \"KERNEL_COMMAND_SYSTEM_OVERHAUL\" experiment enabled to use this.", NamedTextColor.RED));
-            return true;
-        }
-
-        return false;
+        throw new IllegalArgumentException("This command is only available with the new command system");
     }
 }

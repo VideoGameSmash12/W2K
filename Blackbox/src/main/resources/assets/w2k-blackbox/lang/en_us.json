@@ -5,8 +5,8 @@
   "w2k.blackbox.command.status.inMemoryButNotVisible": "in memory, but not visible",
   "w2k.blackbox.command.status.notInMemory": "not in memory",
 
-  "w2k.experiment.blackbox_command_line_laf_override.name": "Command-line Blackbox Theme Override",
-  "w2k.experiment.blackbox_command_line_laf_override.description": "Instructs the Blackbox to override the theme it uses when launching the game with one defined in the command-line Java option \"me.videogamesm12.w2k.blackbox_theme\" if set.",
-  "w2k.experiment.blackbox_help_window.name": "Knowledge Base in Blackbox",
-  "w2k.experiment.blackbox_help_window.description": "A new feature in the Blackbox which allows users to open a window containing offline documentation about W2K, its components, and some useful tips."
+  "w2k.blackbox.experiment.help_window.name": "Knowledge Base in Blackbox",
+  "w2k.blackbox.experiment.help_window.description": "A new feature in the Blackbox which allows users to open a window containing offline documentation about W2K, its components, and some useful tips.",
+  "w2k.blackbox.experiment.properties_tab.name": "Properties Tab in Blackbox",
+  "w2k.blackbox.experiment.properties_tab.description": "A tab in the Blackbox which allows one to view the current properties of their JVM."
 }

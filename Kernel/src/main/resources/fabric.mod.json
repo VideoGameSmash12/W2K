@@ -18,6 +18,9 @@
   "entrypoints": {
     "main": [
       "me.videogamesm12.w2k.kernel.W2K"
+    ],
+    "w2k-experiments": [
+      "me.videogamesm12.w2k.kernel.experiments.KernelExperiments"
     ]
   },
   "custom": {

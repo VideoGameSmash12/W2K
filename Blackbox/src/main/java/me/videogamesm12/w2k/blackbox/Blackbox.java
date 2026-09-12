@@ -6,8 +6,6 @@ import lombok.Getter;
 import me.videogamesm12.w2k.blackbox.command.BlackboxCmd;
 import me.videogamesm12.w2k.blackbox.theming.ITheme;
 import me.videogamesm12.w2k.blackbox.window.tool.crashpad.Crashpad;
-import me.videogamesm12.w2k.kernel.experiment.ExperimentManager;
-import me.videogamesm12.w2k.kernel.experiment.Experiment;
 import me.videogamesm12.w2k.kernel.W2K;
 import me.videogamesm12.w2k.kernel.event.lifecycle.ClientCrashedEvent;
 import me.videogamesm12.w2k.kernel.event.lifecycle.ClientStartedEvent;
@@ -25,7 +23,6 @@ import javax.swing.plaf.metal.MetalLookAndFeel;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
-import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Blackbox extends Thread
@@ -73,8 +70,7 @@ public class Blackbox extends Thread
         ThemeRegistry.setupThemes();
         try
         {
-            if (ExperimentManager.isExperimentEnabled(Experiment.BLACKBOX_COMMAND_LINE_LAF_OVERRIDE)
-                    && System.getProperty("me.videogamesm12.w2k.blackbox_theme") != null)
+            if (System.getProperty("me.videogamesm12.w2k.blackbox_theme") != null)
             {
                 config.setTheme(System.getProperty("me.videogamesm12.w2k.blackbox_theme"));
             }

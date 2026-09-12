@@ -44,6 +44,6 @@
 
   "w2k.command.error.unknown_module": "Unknown module",
 
-  "w2k.experiment.supervisor_catches_crashes.name": "Crash Detection",
-  "w2k.experiment.supervisor_catches_crashes.description": "New feature in which components like the Blackbox can detect a client crash and prompt the user to open the automatically generated crash report directly."
+  "w2k.kernel.experiment.command_system_overhaul.name": "Overhauled Command System",
+  "w2k.kernel.experiment.command_system_overhaul.description": "A complete overhaul of W2K's command system featuring working tab completions and more powerful commands"
 }

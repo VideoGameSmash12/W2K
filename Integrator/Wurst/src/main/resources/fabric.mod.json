@@ -14,6 +14,9 @@
   "entrypoints": {
     "w2k-integrator-mod-hooks": [
       "me.videogamesm12.w2k.integrator.integrations.wurst.WurstIntegrator"
+    ],
+    "w2k-experiments": [
+      "me.videogamesm12.w2k.integrator.integrations.wurst.experiments.WurstIntegratorExperiments"
     ]
   },
   "mixins": [

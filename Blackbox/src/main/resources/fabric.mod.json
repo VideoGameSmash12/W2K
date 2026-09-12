@@ -15,6 +15,9 @@
     "client": [
       "me.videogamesm12.w2k.blackbox.Entrypoints"
     ],
+    "w2k-experiments": [
+      "me.videogamesm12.w2k.blackbox.experiments.BlackboxExperiments"
+    ],
     "w2k-blackbox": [
       "me.videogamesm12.w2k.blackbox.theming.java.SystemThemesProvider",
       "me.videogamesm12.w2k.blackbox.theming.java.MetalThemesProvider",

@@ -5,10 +5,10 @@ import me.videogamesm12.w2k.integrator.core.IModIntegrator;
 import me.videogamesm12.w2k.integrator.core.IntegratorMetadata;
 import me.videogamesm12.w2k.integrator.core.gui.PModCategoryMenu;
 import me.videogamesm12.w2k.integrator.core.gui.PModMenu;
+import me.videogamesm12.w2k.integrator.integrations.wurst.experiments.WurstIntegratorExperiments;
 import me.videogamesm12.w2k.integrator.integrations.wurst.menu.WurstAltManagerDialog;
 import me.videogamesm12.w2k.integrator.integrations.wurst.menu.WurstHackMenu;
 import me.videogamesm12.w2k.kernel.W2K;
-import me.videogamesm12.w2k.kernel.experiment.Experiment;
 import me.videogamesm12.w2k.kernel.experiment.ExperimentManager;
 import net.wurstclient.Category;
 import net.wurstclient.WurstClient;
@@ -48,7 +48,7 @@ public class WurstIntegrator extends IModIntegrator
             menu.addSubMenu(categoryMenu);
         });
 
-        if (ExperimentManager.isExperimentEnabled(Experiment.INTEGRATOR_WURST_ALT_MANAGER))
+        if (ExperimentManager.isExperimentEnabled(WurstIntegratorExperiments.ALT_MANAGER))
         {
             // Add a separator
             menu.addSeparator();

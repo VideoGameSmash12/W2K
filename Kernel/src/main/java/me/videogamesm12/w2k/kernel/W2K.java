@@ -5,7 +5,6 @@ import com.google.common.eventbus.Subscribe;
 import lombok.Getter;
 import me.videogamesm12.w2k.kernel.command.WCommand;
 import me.videogamesm12.w2k.kernel.command.WCommandManager;
-import me.videogamesm12.w2k.kernel.commands.ExperimentsCmd;
 import me.videogamesm12.w2k.kernel.commands.TestCmd;
 import me.videogamesm12.w2k.kernel.commands.W2KCmd;
 import me.videogamesm12.w2k.kernel.data.BuildMetadata;
@@ -73,14 +72,13 @@ public class W2K implements ModInitializer
 
         logger.info("Registering commands");
         commandManager.registerCommand(W2KCmd.class);
-        commandManager.registerCommand(ExperimentsCmd.class);
         commandManager.registerCommand(TestCmd.class);
 
         // Experiment
         if (!ExperimentManager.getEnabledExperiments().isEmpty())
         {
             logger.warn("[!] Experiments have been enabled. Expect some instability. List of enabled experiments:");
-            ExperimentManager.getEnabledExperiments().forEach(experiment -> logger.warn("[!]  - {}", experiment.name()));
+            ExperimentManager.getEnabledExperiments().forEach(experiment -> logger.warn("[!]  - {}", experiment.getIdentifier()));
         }
 
         logger.info("Initializing modules");
@@ -129,7 +127,7 @@ public class W2K implements ModInitializer
             List<String> experimentManager = new ArrayList<>();
             experimentManager.add("Enabled:");
             experimentManager.addAll(ExperimentManager.getEnabledExperiments().stream()
-                    .map(experiment -> "\t" + experiment.name()).collect(Collectors.toList()));
+                    .map(experiment -> "\t" + experiment.getIdentifier()).collect(Collectors.toList()));
             event.appendSection("Experiment Manager", experimentManager.toArray(new String[0]));
         }
     }
