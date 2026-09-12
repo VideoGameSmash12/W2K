@@ -55,9 +55,6 @@ public abstract class EntityWrapper implements IEntityEntry
     @Shadow
     public abstract void discard();
 
-    @Shadow
-    public abstract void remove(Entity.RemovalReason reason);
-
     @Unique
     private JsonElement cachedName = null;
     @Unique

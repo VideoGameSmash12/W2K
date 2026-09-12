@@ -3,6 +3,7 @@ package me.videogamesm12.w2k.drivers.v1_21_4.mixin.wrapper;
 import com.google.gson.JsonElement;
 import com.mojang.serialization.JsonOps;
 import me.videogamesm12.w2k.kernel.data.IEntityEntry;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.nbt.NbtCompound;
@@ -14,6 +15,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 
+import java.util.Objects;
 import java.util.UUID;
 
 @Mixin(Entity.class)
@@ -46,6 +48,9 @@ public abstract class EntityWrapper implements IEntityEntry
 
     @Shadow
     public abstract String getNameForScoreboard();
+
+    @Shadow
+    public abstract void discard();
 
     @Unique
     private JsonElement cachedName = null;
@@ -116,5 +121,12 @@ public abstract class EntityWrapper implements IEntityEntry
     public String w2k$data()
     {
         return writeNbt(new NbtCompound()).toString();
+    }
+
+    @Override
+    public void w2k$kill()
+    {
+        discard();
+        Objects.requireNonNull(MinecraftClient.getInstance().world).removeEntity(id, Entity.RemovalReason.KILLED);
     }
 }

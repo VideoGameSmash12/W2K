@@ -4,6 +4,7 @@ import me.videogamesm12.w2k.kernel.W2K;
 import me.videogamesm12.w2k.kernel.data.IEntityEntry;
 import me.videogamesm12.w2k.kernel.data.IItemStackEntry;
 import me.videogamesm12.w2k.toolbox.modules.BanHammer;
+import me.videogamesm12.w2k.toolbox.modules.DevelopmentBuildWatermark;
 import me.videogamesm12.w2k.toolbox.modules.TargetHighlighter;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
@@ -12,6 +13,8 @@ import net.minecraft.client.gui.hud.InGameHud;
 import net.minecraft.client.render.RenderTickCounter;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -19,6 +22,8 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import java.util.List;
 
 @Mixin(InGameHud.class)
 public abstract class InGameHudMixin
@@ -32,6 +37,11 @@ public abstract class InGameHudMixin
 
     @Shadow
     public abstract TextRenderer getTextRenderer();
+
+    @Unique
+    private final List<Text> watermarkText = List.of(
+            Text.literal("W2K Development Build " + DevelopmentBuildWatermark.getMeta().getCompileDateFormatted()).styled((style) -> style.withBold(true)),
+            Text.literal("For more information about this build, use /w2k details.").styled(style -> style.withColor(Formatting.GRAY)));
 
     @Inject(method = "renderMiscOverlays", at = @At(value = "TAIL"))
     public void renderTargetOverlay(DrawContext context, RenderTickCounter tickCounter, CallbackInfo ci)
@@ -53,6 +63,16 @@ public abstract class InGameHudMixin
             if (castedTarget.w2k$type().equalsIgnoreCase("minecraft:player"))
             {
                 context.drawCenteredTextWithShadow(getTextRenderer(), "Target: " + castedTarget.w2k$internalName(), context.getScaledWindowWidth() / 2, (context.getScaledWindowHeight() / 2) - 24, 0xFFFFFF);
+            }
+        }
+
+        final DevelopmentBuildWatermark watermark = W2K.getInstance().getModuleManager().getModule(DevelopmentBuildWatermark.class);
+        if (watermark.isEnabled())
+        {
+            for (int i = 0; i < watermarkText.size(); i++)
+            {
+                Text text = watermarkText.get(i);
+                context.drawText(getTextRenderer(), watermarkText.get(i), (context.getScaledWindowWidth() - getTextRenderer().getWidth(text)) - 4, (i * getTextRenderer().fontHeight) + 4, 0xFFFFFF, true);
             }
         }
     }

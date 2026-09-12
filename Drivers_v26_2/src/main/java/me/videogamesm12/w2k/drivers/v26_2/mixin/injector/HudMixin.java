@@ -4,12 +4,15 @@ import me.videogamesm12.w2k.kernel.W2K;
 import me.videogamesm12.w2k.kernel.data.IEntityEntry;
 import me.videogamesm12.w2k.kernel.data.IItemStackEntry;
 import me.videogamesm12.w2k.toolbox.modules.BanHammer;
+import me.videogamesm12.w2k.toolbox.modules.DevelopmentBuildWatermark;
 import me.videogamesm12.w2k.toolbox.modules.TargetHighlighter;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.Hud;
+import net.minecraft.network.chat.Component;
 import net.minecraft.util.ARGB;
 import net.minecraft.world.entity.Entity;
 import org.spongepowered.asm.mixin.Final;
@@ -20,6 +23,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.util.List;
+
 @Mixin(Hud.class)
 public abstract class HudMixin
 {
@@ -29,6 +34,11 @@ public abstract class HudMixin
 
     @Shadow
     public abstract Font getFont();
+
+    @Unique
+    private final List<Component> watermarkText = List.of(
+            Component.literal("W2K Development Build " + DevelopmentBuildWatermark.getMeta().getCompileDateFormatted()).withStyle((style) -> style.withBold(true)),
+            Component.literal("For more information about this build, use /w2k details.").withStyle(style -> style.withColor(ChatFormatting.GRAY)));
 
     @Inject(method = "extractRenderState", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/Hud;extractCrosshair(Lnet/minecraft/client/gui/GuiGraphicsExtractor;Lnet/minecraft/client/DeltaTracker;)V"))
     public void renderTargetOverlay(GuiGraphicsExtractor graphics, DeltaTracker deltaTracker, CallbackInfo ci)
@@ -51,6 +61,16 @@ public abstract class HudMixin
             if (castedTarget.w2k$type().equalsIgnoreCase("minecraft:player"))
             {
                 graphics.centeredText(getFont(), "Target: " + castedTarget.w2k$internalName(), graphics.guiWidth() / 2, (graphics.guiHeight() / 2) - 24, ARGB.white(255));
+            }
+        }
+
+        final DevelopmentBuildWatermark watermark = W2K.getInstance().getModuleManager().getModule(DevelopmentBuildWatermark.class);
+        if (watermark.isEnabled())
+        {
+            for (int i = 0; i < watermarkText.size(); i++)
+            {
+                Component text = watermarkText.get(i);
+                graphics.text(getFont(), watermarkText.get(i), (graphics.guiWidth() - getFont().width(text)) - 4, (i * getFont().lineHeight) + 4, ARGB.white(255), true);
             }
         }
     }

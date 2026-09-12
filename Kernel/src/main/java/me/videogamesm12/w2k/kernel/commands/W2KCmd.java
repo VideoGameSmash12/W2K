@@ -71,9 +71,9 @@ public class W2KCmd extends WCommand
                             Component.translatable("w2k.command.w2k.module.toggled.disabled", NamedTextColor.RED))
                     .color(NamedTextColor.GRAY));
         }
-        catch (IllegalArgumentException ex)
+        catch (UnsupportedOperationException ex)
         {
-            msg(Component.translatable("w2k.command.w2k.module.cannot_be_toggled", NamedTextColor.RED));
+            msg(Component.text(ex.getLocalizedMessage(), NamedTextColor.RED));
         }
     }
 

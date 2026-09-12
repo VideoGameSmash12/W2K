@@ -12,18 +12,21 @@ public class DevelopmentBuildWatermark extends WModule
 
     public DevelopmentBuildWatermark()
     {
-        super("Watermark", "Displays a watermark if you are using a developer build.");
+        super("Watermark", "Displays a watermark when you are using a build with uncommitted changes.");
     }
 
     @Override
     public boolean isEnabled()
     {
-        return meta.isDirty();
+        return super.isEnabled() || meta.isDirty();
     }
 
     @Override
     public void setEnabled(boolean value)
     {
-        throw new IllegalArgumentException("This module cannot be toggled.");
+        if (meta.isDirty())
+            throw new UnsupportedOperationException("Builds with uncommitted changes cannot have their watermark disabled.");
+
+        super.setEnabled(value);
     }
 }

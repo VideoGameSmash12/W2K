@@ -27,10 +27,7 @@ public interface IEntityEntry
 
     String w2k$data();
 
-    default void w2k$kill()
-    {
-        throw new UnsupportedOperationException("Not available on this version");
-    }
+    void w2k$kill();
 
     default List<Object> w2k$toTableRow()
     {

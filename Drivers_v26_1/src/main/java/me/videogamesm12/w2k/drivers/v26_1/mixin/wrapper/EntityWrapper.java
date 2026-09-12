@@ -21,6 +21,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 
+import java.util.Objects;
 import java.util.UUID;
 
 @Mixin(Entity.class)
@@ -66,6 +67,9 @@ public abstract class EntityWrapper implements IEntityEntry
 
     @Shadow
     public abstract String getScoreboardName();
+
+    @Shadow
+    public abstract void discard();
 
     @Unique
     private JsonElement cachedName = null;
@@ -155,5 +159,12 @@ public abstract class EntityWrapper implements IEntityEntry
             W2K.getLogger().error("Failed to save data for entity {}", w2k$uuid().toString(), ex);
             return null;
         }
+    }
+
+    @Override
+    public void w2k$kill()
+    {
+        discard();
+        Objects.requireNonNull(Minecraft.getInstance().level).removeEntity(id, Entity.RemovalReason.KILLED);
     }
 }
