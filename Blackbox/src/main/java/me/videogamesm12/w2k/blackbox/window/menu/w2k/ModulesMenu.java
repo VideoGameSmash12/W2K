@@ -70,7 +70,18 @@ public class ModulesMenu extends JMenu
             this.enabledItem = JComponents.createCheckboxMenuItem("Enabled",
                     null,
                     this.module::isEnabled,
-                    this.module::setEnabled);
+                    (checkbox, value) ->
+                    {
+                        try
+                        {
+                            this.module.setEnabled(value);
+                        }
+                        catch (Exception ex)
+                        {
+                            JOptionPane.showMessageDialog(Blackbox.getInstance().getMainWindow(), ex.getLocalizedMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                            checkbox.setSelected(!value);
+                        }
+                    });
             add(enabledItem);
 
             if (!module.getSettings().isEmpty())
