@@ -27,6 +27,7 @@
     "injector.CrashReportMixin",
     "injector.PlayerEntityMixin",
     "wrapper.BlockEntityWrapper",
+    "wrapper.EntitySelectorWrapper",
     "wrapper.EntityWrapper",
     "wrapper.ItemStackWrapper",
     "wrapper.MapStateWrapper"
