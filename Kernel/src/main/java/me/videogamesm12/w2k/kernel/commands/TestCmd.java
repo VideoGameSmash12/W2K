@@ -23,10 +23,4 @@ public class TestCmd extends WCommand
     {
         msg(Component.text("/test!"));
     }
-
-    @Override
-    public boolean executeCommand(String commandLabel, String[] args)
-    {
-        throw new IllegalArgumentException("This command is only available with the new command system");
-    }
 }

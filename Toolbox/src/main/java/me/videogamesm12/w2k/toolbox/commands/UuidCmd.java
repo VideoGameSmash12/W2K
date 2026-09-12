@@ -52,16 +52,4 @@ public class UuidCmd extends WCommand
                     .colorIfAbsent(NamedTextColor.GRAY));
         });
     }
-
-    @Override
-    public boolean executeCommand(String commandLabel, String[] args)
-    {
-        if (args.length == 0)
-        {
-            return false;
-        }
-
-        fetchUuid(args[0]);
-        return true;
-    }
 }

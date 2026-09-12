@@ -42,17 +42,4 @@ public class PremiumCmd extends WCommand
                     .color(NamedTextColor.GRAY));
         });
     }
-
-    @Override
-    public boolean executeCommand(String commandLabel, String[] args)
-    {
-        if (args.length == 0)
-        {
-            return false;
-        }
-
-        final String nameOrUuid = args[0];
-        checkPremium(nameOrUuid);
-        return true;
-    }
 }

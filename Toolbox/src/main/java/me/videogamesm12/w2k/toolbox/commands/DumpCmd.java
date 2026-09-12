@@ -161,43 +161,4 @@ public class DumpCmd extends WCommand
 					Component.text(results.getIgnored().size())));
 		}), 5000);
 	}
-
-	@Override
-	public boolean executeCommand(String commandLabel, String[] args)
-	{
-		if (args.length == 0)
-		{
-			return false;
-		}
-
-		switch (args[0].toLowerCase())
-		{
-			case "tiles":
-			{
-				tiles();
-				break;
-			}
-			case "entities":
-			{
-				entities();
-				break;
-			}
-			case "maps":
-			{
-				maps();
-				break;
-			}
-			case "menu":
-			case "screen":
-			{
-				screen();
-				break;
-			}
-			default:
-			{
-				return false;
-			}
-		}
-		return true;
-	}
 }

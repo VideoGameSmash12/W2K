@@ -90,41 +90,6 @@ public class W120CommandDriver implements WCommandDriver
     {
         final List<Method> methods = Arrays.stream(command.getClass().getMethods()).filter(method -> method.isAnnotationPresent(ExecutionPath.class)).toList();
 
-        // Fallback onto the old dispatcher system if no execution path is specified
-        if (methods.isEmpty() || !ExperimentManager.isExperimentEnabled(KernelExperiments.COMMAND_SYSTEM_OVERHAUL))
-        {
-            final Command<FabricClientCommandSource> wrapped = context ->
-            {
-                final String[] input = context.getInput().split(" ");
-
-                // If the input is somehow blank, this is a problem!
-                if (input.length == 0)
-                {
-                    return 1;
-                }
-
-                try
-                {
-                    if (!command.executeCommand(input[0], ArrayUtils.remove(input, 0)))
-                    {
-                        command.msg(Component.translatable("w2k.command.command_usage",
-                                Component.text(command.getUsage().replace("<command>", input[0]))));
-                    }
-                }
-                catch (Throwable ex)
-                {
-                    command.msg(Component.translatable("w2k.command.command_error", Component.text(ex.getLocalizedMessage())));
-                }
-
-                return 0;
-            };
-
-            ClientCommandRegistrationCallback.EVENT.register((dispatcher, access) ->
-                    dispatcher.register(ClientCommandManager.literal(command.getName()).executes(wrapped)
-                            .then(ClientCommandManager.argument("args", StringArgumentType.greedyString()).executes(wrapped))));
-            return;
-        }
-
         W2K.getLogger().debug("Scanning command class for executable paths");
         methods.forEach(method ->
         {
@@ -209,8 +174,7 @@ public class W120CommandDriver implements WCommandDriver
             //--
             final ExecutionPath pathAnnotation = getMethod().getAnnotation(ExecutionPath.class);
             final String[] path = pathAnnotation.value();
-
-            //final List<CommandNode<FabricClientCommandSource>> nodeTree = new ArrayList<>();
+            //--
             final List<ArgumentBuilder<FabricClientCommandSource, ?>> nodes = new ArrayList<>();
             final Map<String, BrigadierArgumentResolver<?, ?>> argumentsToResolvers = new HashMap<>();
 

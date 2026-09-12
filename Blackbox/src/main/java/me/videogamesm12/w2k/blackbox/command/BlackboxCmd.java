@@ -29,33 +29,4 @@ public class BlackboxCmd extends WCommand
 
         msg(Component.translatable("w2k.blackbox.command.status", status).colorIfAbsent(NamedTextColor.GRAY));
     }
-
-    @Override
-    public boolean executeCommand(String commandLabel, String[] args)
-    {
-        if (args.length == 0)
-        {
-            return false;
-        }
-
-        switch (args[0].toLowerCase())
-        {
-            case "open":
-            {
-                open();
-                break;
-            }
-            case "status":
-            {
-                status();
-                break;
-            }
-            default:
-            {
-                return false;
-            }
-        }
-
-        return true;
-    }
 }

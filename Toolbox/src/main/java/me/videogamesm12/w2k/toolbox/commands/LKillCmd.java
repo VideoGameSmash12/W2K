@@ -29,10 +29,4 @@ public class LKillCmd extends WCommand
 
         msg(Component.translatable("w2k.toolbox.lkill." + (amount == 1 ? "singular" : "plural"), Component.text(amount)));
     }
-
-    @Override
-    public boolean executeCommand(String commandLabel, String[] args)
-    {
-        throw new UnsupportedOperationException("This command is only available with the new command system.");
-    }
 }

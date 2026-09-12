@@ -37,8 +37,6 @@ public abstract class WCommand
         this.paths      = new ArrayList<>();
     }
 
-    public abstract boolean executeCommand(String commandLabel, String[] args);
-
     public void addPath(final CommandPath<?, ?> path)
     {
         paths.add(path);
