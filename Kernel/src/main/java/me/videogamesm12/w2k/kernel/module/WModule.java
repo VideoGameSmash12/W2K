@@ -51,6 +51,7 @@ public abstract class WModule
     public <T extends WModule> void setEnabled(boolean value)
     {
         final ModuleStateUpdateEvent<T> event = new ModuleStateUpdateEvent<>((T) this, this.enabled, value);
+        W2K.getEventBus().post(event);
         if (!event.isCancelled())
         {
             this.enabled = value;

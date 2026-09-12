@@ -63,12 +63,12 @@ public class W2KCmd extends WCommand
     {
         try
         {
-            module.setEnabled(module.isEnabled());
+            module.setEnabled(!module.isEnabled());
             msg(Component.translatable("w2k.command.w2k.module.toggled",
                     Component.text(module.getName()).color(NamedTextColor.WHITE),
                     module.isEnabled() ?
-                            Component.translatable("w2k.command.w2k.module.toggled.enabled", NamedTextColor.GREEN) :
-                            Component.translatable("w2k.command.w2k.module.toggled.disabled", NamedTextColor.RED))
+                            Component.translatable("w2k.command.w2k.module.status.enabled", NamedTextColor.GREEN) :
+                            Component.translatable("w2k.command.w2k.module.status.disabled", NamedTextColor.RED))
                     .color(NamedTextColor.GRAY));
         }
         catch (UnsupportedOperationException ex)

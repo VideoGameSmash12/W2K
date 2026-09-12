@@ -79,7 +79,7 @@ public class ModulesMenu extends JMenu
                         catch (Exception ex)
                         {
                             JOptionPane.showMessageDialog(Blackbox.getInstance().getMainWindow(), ex.getLocalizedMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-                            checkbox.setSelected(!value);
+                            checkbox.setState(!value);
                         }
                     });
             add(enabledItem);
@@ -103,7 +103,13 @@ public class ModulesMenu extends JMenu
         @Subscribe
         public void onModuleStateUpdate(ModuleStateUpdateEvent<T> event)
         {
-            enabledItem.setSelected(event.getNewValue());
+            SwingUtilities.invokeLater(() ->
+            {
+                if (event.getModule().getId().equalsIgnoreCase(module.getId()) && !event.isCancelled())
+                {
+                    enabledItem.setState(event.getNewValue());
+                }
+            });
         }
     }
 
