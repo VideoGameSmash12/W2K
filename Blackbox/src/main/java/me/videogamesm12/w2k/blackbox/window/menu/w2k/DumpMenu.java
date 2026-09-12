@@ -4,9 +4,13 @@ import me.videogamesm12.w2k.blackbox.Blackbox;
 import me.videogamesm12.w2k.blackbox.util.JComponents;
 import me.videogamesm12.w2k.kernel.W2K;
 import me.videogamesm12.w2k.kernel.util.SysUtils;
+import me.videogamesm12.w2k.supervisor.Supervisor;
+import me.videogamesm12.w2k.toolbox.data.DumpResult;
 import me.videogamesm12.w2k.toolbox.util.DumpUtil;
 
 import javax.swing.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.function.Supplier;
 
 public class DumpMenu extends JMenu
 {
@@ -14,178 +18,98 @@ public class DumpMenu extends JMenu
 	{
 		super("Dump");
 
-		// TODO: Try to reduce the amount of boilerplate code here
+		add(JComponents.createMenuItem("Dump loaded maps to disk",
+				"Instructs the client to write all map data in its memory to disk.",
+				createForDump("Map dump complete (%d successful, %d failed). Would you like to view it?",
+						() -> DumpUtil.performMapDump(true))));
 
-		final JMenuItem dumpMaps = new JMenuItem("Dump loaded maps to disk");
-		dumpMaps.addActionListener((e) -> DumpUtil.performMapDump(true).whenComplete((results, throwable) ->
-		{
-			if (throwable != null)
-			{
-				W2K.getLogger().error("Stacktrace:", throwable);
-				SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(Blackbox.getInstance().getMainWindow(),
-						"An unrecoverable error occurred during the dump. Please check the logs for more "
-								+ "information.", "Dump failed", JOptionPane.ERROR_MESSAGE));
-				return;
-			}
+		add(JComponents.createMenuItem("Dump items in currently open screen to disk",
+				"Instructs the client to write all items present in the currently open chest/window to disk.",
+				createForDump("Screen dump complete (%d successful, %d failed, %d ignored). Would you like to view it?",
+						() -> DumpUtil.performOpenInventoryDump(true))));
 
+		add(JComponents.createMenuItem("Dump all tile entities in memory to disk",
+				"Instructs the client to write all tile entity data (e.g. signs) in memory to disk.",
+				createForDump("Tile entity dump complete (%d successful, %d failed, %d ignored). Would you like to view it?",
+						() -> DumpUtil.performTileEntityDump(true))));
 
-			SwingUtilities.invokeLater(() ->
-			{
-				int prompt = JOptionPane.showConfirmDialog(Blackbox.getInstance().getMainWindow(),
-						String.format("Map dump complete (%d successful, %d failed). Would you like to view it?",
-								results.getSuccessful().size(), results.getFailed().size()),
-						"Dump completed", JOptionPane.YES_NO_OPTION , JOptionPane.QUESTION_MESSAGE);
+		add(JComponents.createMenuItem("Dump all entities in memory to disk",
+				"Instructs the client to write all entity data in memory to disk.",
+				createForDump("Entity dump complete (%d successful, %d failed). Would you like to view it?",
+						() -> DumpUtil.performEntityDump(true))));
 
-				if (prompt == JOptionPane.YES_OPTION)
-				{
-					try
-					{
-						SysUtils.getOperatingSystem().openFolder(results.getOutputDirectory());
-					}
-					catch (Throwable ignored)
-					{
-					}
-				}
-			});
-		}));
-		add(dumpMaps);
-
-		final JMenuItem dumpOpenInventory = new JMenuItem("Dump items in currently open screen to disk");
-		dumpOpenInventory.addActionListener((e) -> DumpUtil.performOpenInventoryDump(true).whenComplete((results, throwable) ->
-		{
-			if (throwable != null)
-			{
-				W2K.getLogger().error("Stacktrace:", throwable);
-				SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(Blackbox.getInstance().getMainWindow(),
-						"An unrecoverable error occurred during the dump. Please check the logs for more "
-								+ "information.", "Dump failed", JOptionPane.ERROR_MESSAGE));
-				return;
-			}
-
-			SwingUtilities.invokeLater(() ->
-			{
-				int prompt = JOptionPane.showConfirmDialog(Blackbox.getInstance().getMainWindow(),
-						String.format("Screen dump complete (%d successful, %d failed, %d ignored). Would you like to view it?",
-								results.getSuccessful().size(), results.getFailed().size(), results.getIgnored().size()),
-						"Dump completed", JOptionPane.YES_NO_OPTION , JOptionPane.QUESTION_MESSAGE);
-
-				if (prompt == JOptionPane.YES_OPTION)
-				{
-					try
-					{
-						SysUtils.getOperatingSystem().openFolder(results.getOutputDirectory());
-					}
-					catch (Throwable ignored)
-					{
-					}
-				}
-			});
-		}));
-		add(dumpOpenInventory);
-
-		final JMenuItem dumpTileEntities = new JMenuItem("Dump nearby tile entities to disk");
-		dumpTileEntities.addActionListener((e) -> DumpUtil.performTileEntityDump(true).whenComplete((results, throwable) ->
-		{
-			if (throwable != null)
-			{
-				W2K.getLogger().error("Stacktrace:", throwable);
-				SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(Blackbox.getInstance().getMainWindow(),
-						"An unrecoverable error occurred during the dump. Please check the logs for more "
-								+ "information.", "Dump failed", JOptionPane.ERROR_MESSAGE));
-				return;
-			}
-
-			SwingUtilities.invokeLater(() ->
-			{
-				int prompt = JOptionPane.showConfirmDialog(Blackbox.getInstance().getMainWindow(),
-						String.format("Tile entity dump complete (%d successful, %d failed, %d ignored). Would you like to view it?",
-								results.getSuccessful().size(), results.getFailed().size(), results.getIgnored().size()),
-						"Dump completed", JOptionPane.YES_NO_OPTION , JOptionPane.QUESTION_MESSAGE);
-
-				if (prompt == JOptionPane.YES_OPTION)
-				{
-					try
-					{
-						SysUtils.getOperatingSystem().openFolder(results.getOutputDirectory());
-					}
-					catch (Throwable ignored)
-					{
-					}
-				}
-			});
-		}));
-		add(dumpTileEntities);
-
-		final JMenuItem dumpEntities = new JMenuItem("Dump nearby entities to disk");
-		dumpEntities.addActionListener((e) -> DumpUtil.performEntityDump(true).whenComplete((results, throwable) ->
-		{
-			if (throwable != null)
-			{
-				W2K.getLogger().error("Stacktrace:", throwable);
-				SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(Blackbox.getInstance().getMainWindow(),
-						"An unrecoverable error occurred during the dump. Please check the logs for more "
-								+ "information.", "Dump failed", JOptionPane.ERROR_MESSAGE));
-				return;
-			}
-
-			SwingUtilities.invokeLater(() ->
-			{
-				int prompt = JOptionPane.showConfirmDialog(Blackbox.getInstance().getMainWindow(),
-						String.format("Entity dump complete (%d successful, %d failed). Would you like to view it?",
-								results.getSuccessful().size(), results.getFailed().size()),
-						"Dump completed", JOptionPane.YES_NO_OPTION , JOptionPane.QUESTION_MESSAGE);
-
-				if (prompt == JOptionPane.YES_OPTION)
-				{
-					try
-					{
-						SysUtils.getOperatingSystem().openFolder(results.getOutputDirectory());
-					}
-					catch (Throwable ignored)
-					{
-					}
-				}
-			});
-		}));
-		add(dumpEntities);
-
-		final JMenuItem generateHeapDump = JComponents.createMenuItem("Generate heap dump",
+		add(JComponents.createMenuItem("Generate heap dump",
 				"Instructs the JVM to generate a heap dump. Useful for diagnosing memory leaks.",
 				() -> DumpUtil.generateHeapDump(false).whenComplete((result, throwable) ->
-                {
-                    if (throwable != null)
-                    {
-                        W2K.getLogger().error("Stacktrace:", throwable);
-                        SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(Blackbox.getInstance().getMainWindow(),
-                                "An unrecoverable error occurred during the dump. Please check the logs for more "
-                                        + "information.", "Dump failed", JOptionPane.ERROR_MESSAGE));
-                        return;
-                    }
+				{
+					if (throwable != null)
+					{
+						W2K.getLogger().error("Stacktrace:", throwable);
+						SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(Blackbox.getInstance().getMainWindow(),
+								"An unrecoverable error occurred during the dump. Please check the logs for more "
+										+ "information.", "Dump failed", JOptionPane.ERROR_MESSAGE));
+						return;
+					}
 
-                    SwingUtilities.invokeLater(() ->
-                    {
-                        int prompt = JOptionPane.showConfirmDialog(Blackbox.getInstance().getMainWindow(),
-                                "Heap dump completed. Would you like to open the folder it's in?",
-                                "Dump completed", JOptionPane.YES_NO_OPTION , JOptionPane.QUESTION_MESSAGE);
+					SwingUtilities.invokeLater(() ->
+					{
+						int prompt = JOptionPane.showConfirmDialog(Blackbox.getInstance().getMainWindow(),
+								"Heap dump completed. Would you like to open the folder it's in?",
+								"Dump completed", JOptionPane.YES_NO_OPTION , JOptionPane.QUESTION_MESSAGE);
 
-                        if (prompt == JOptionPane.YES_OPTION)
-                        {
-                            try
-                            {
-                                SysUtils.getOperatingSystem().openFolder(DumpUtil.getDumpsFolder());
-                            }
-                            catch (Throwable ignored)
-                            {
-                            }
-                        }
-                    });
-                }));
-		add(generateHeapDump);
+						if (prompt == JOptionPane.YES_OPTION)
+						{
+							try
+							{
+								SysUtils.getOperatingSystem().openFolder(DumpUtil.getDumpsFolder());
+							}
+							catch (Throwable ignored)
+							{
+							}
+						}
+					});
+				})));
 
 		addSeparator();
 
-		final JMenuItem openDumpFolder = new JMenuItem("Browse dump folder");
-		openDumpFolder.addActionListener(e -> SysUtils.getOperatingSystem().openFolder(DumpUtil.getDumpsFolder()));
-		add(openDumpFolder);
+		add(JComponents.createMenuItem("Browse dump folder",
+				"Open the dumps folder on your system.",
+				() -> SysUtils.getOperatingSystem().openFolder(DumpUtil.getDumpsFolder())));
+	}
+
+	public final Runnable createForDump(final String dumpMessage,
+										final Supplier<CompletableFuture<DumpResult>> futureSupplier)
+	{
+		return () -> futureSupplier.get().whenComplete((results, throwable) ->
+		{
+			if (throwable != null)
+			{
+				W2K.getLogger().error("Stacktrace:", throwable);
+				SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(Blackbox.getInstance().getMainWindow(),
+						"An unrecoverable error occurred during the dump. Please check the logs for more "
+								+ "information.", "Dump failed", JOptionPane.ERROR_MESSAGE));
+				return;
+			}
+
+			SwingUtilities.invokeLater(() ->
+			{
+				int prompt = JOptionPane.showConfirmDialog(Blackbox.getInstance().getMainWindow(),
+						String.format(dumpMessage, results.getSuccessful().size(),
+								results.getFailed().size(),
+								results.getIgnored().size()),
+						"Dump completed", JOptionPane.YES_NO_OPTION , JOptionPane.QUESTION_MESSAGE);
+
+				if (prompt == JOptionPane.YES_OPTION)
+				{
+					try
+					{
+						SysUtils.getOperatingSystem().openFolder(results.getOutputDirectory());
+					}
+					catch (Throwable ignored)
+					{
+					}
+				}
+			});
+		});
 	}
 }

@@ -97,4 +97,14 @@ public class JComponents
         item.addActionListener(e -> action.run());
         return item;
     }
+
+    public static JMenu createMenu(final String label, final String tooltip, final JMenuItem... items)
+    {
+        final JMenu menu = new JMenu(label);
+        if (tooltip != null)
+            menu.setToolTipText(tooltip);
+        for (JMenuItem item : items)
+            menu.add(item);
+        return menu;
+    }
 }

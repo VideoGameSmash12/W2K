@@ -26,7 +26,6 @@ import lombok.Getter;
 import me.videogamesm12.w2k.kernel.W2K;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
-import org.spongepowered.asm.mixin.injection.At;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
