@@ -7,6 +7,7 @@ import me.videogamesm12.w2k.blackbox.command.BlackboxCmd;
 import me.videogamesm12.w2k.blackbox.theming.ITheme;
 import me.videogamesm12.w2k.blackbox.window.tool.crashpad.Crashpad;
 import me.videogamesm12.w2k.kernel.W2K;
+import me.videogamesm12.w2k.kernel.event.miscellaneous.PanicKeyCombinationEvent;
 import me.videogamesm12.w2k.kernel.event.lifecycle.ClientCrashedEvent;
 import me.videogamesm12.w2k.kernel.event.lifecycle.ClientStartedEvent;
 import me.videogamesm12.w2k.kernel.event.lifecycle.ClientStoppedEvent;
@@ -213,6 +214,13 @@ public class Blackbox extends Thread
         event.setCancelled(true);
     }
 
+    @Subscribe
+    public void onPanicKeyCombination(PanicKeyCombinationEvent event)
+    {
+        W2K.getLogger().info("Received panic alert with ID {}, opening Blackbox", event.getTimestamp());
+        SwingUtilities.invokeLater(() -> Blackbox.getInstance().openWindow());
+    }
+
     private void startup()
     {
         if (config.isSystemTrayEnabled())
@@ -234,6 +242,7 @@ public class Blackbox extends Thread
         }
 
         mainWindow.setVisible(true);
+        mainWindow.toFront();
 
         if (!ThemeRegistry.getThemeSafe(config.getTheme()).isPresent())
         {

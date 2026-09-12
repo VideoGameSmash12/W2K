@@ -24,7 +24,7 @@ public class ExperimentManager
         final String[] enabled = System.getProperty("me.videogamesm12.w2k.enabled_experiments", "").split(",");
         experiments.forEach((key, experiment) ->
                 enabledExperimentMap.put(experiment, Arrays.stream(enabled)
-                        .anyMatch(requested -> requested.equalsIgnoreCase(key)) && experiment.isAvailable()));
+                        .anyMatch(requested -> (requested.equalsIgnoreCase(key))) && experiment.isAvailable()));
     }
 
     /**

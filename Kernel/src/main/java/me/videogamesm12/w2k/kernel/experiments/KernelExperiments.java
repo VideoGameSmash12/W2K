@@ -15,9 +15,15 @@ public class KernelExperiments extends ExperimentSupplier
             "w2k.kernel.experiment.command_system_overhaul.description",
             true,
             Collections.singletonList(Condition.of("Only available for 1.20.1", VersionUtils.isRunning("1.20.1"))));
+    public static final Experiment PANIC_KEY_COMBINATION = new Experiment(
+            "w2k-kernel:panic_key_combination",
+            "w2k.kernel.experiment.panic_key_combination.name",
+            "w2k.kernel.experiment.panic_key_combination.description",
+            false);
 
     public KernelExperiments()
     {
         register(COMMAND_SYSTEM_OVERHAUL);
+        register(PANIC_KEY_COMBINATION);
     }
 }

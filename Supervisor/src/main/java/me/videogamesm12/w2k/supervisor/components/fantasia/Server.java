@@ -25,6 +25,7 @@ package me.videogamesm12.w2k.supervisor.components.fantasia;
 import com.google.common.eventbus.Subscribe;
 import lombok.Getter;
 import me.videogamesm12.w2k.kernel.W2K;
+import me.videogamesm12.w2k.kernel.event.miscellaneous.PanicKeyCombinationEvent;
 import me.videogamesm12.w2k.supervisor.Supervisor;
 import me.videogamesm12.w2k.supervisor.api.event.ClientFreezeEvent;
 import me.videogamesm12.w2k.supervisor.components.fantasia.command.*;
@@ -173,6 +174,12 @@ public class Server extends Thread
     public void onClientFreeze(ClientFreezeEvent event)
     {
         broadcast(" ** WARNING: CLIENT FREEZE DETECTED, LAST RENDERED " + event.getLastRendered() + " MS AGO ** ");
+    }
+
+    @Subscribe
+    public void onPanicCombination(PanicKeyCombinationEvent event)
+    {
+        broadcast(" ** ATTENTION: PANIC KEY COMBINATION ENTERED AT " + event.getTimestamp() + " MS ** ");
     }
 
     @Subscribe
