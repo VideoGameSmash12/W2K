@@ -3,6 +3,7 @@ package me.videogamesm12.w2k.drivers.v1_20_1.mixin.injector;
 import me.videogamesm12.w2k.kernel.W2K;
 import me.videogamesm12.w2k.kernel.data.IEntityEntry;
 import me.videogamesm12.w2k.kernel.data.IItemStackEntry;
+import me.videogamesm12.w2k.kernel.util.ComponentUtils;
 import me.videogamesm12.w2k.toolbox.modules.BanHammer;
 import me.videogamesm12.w2k.toolbox.modules.DevelopmentBuildWatermark;
 import me.videogamesm12.w2k.toolbox.modules.TPSOverlay;
@@ -15,6 +16,7 @@ import net.minecraft.client.gui.hud.InGameHud;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.text.MutableText;
 import net.minecraft.text.OrderedText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
@@ -50,9 +52,9 @@ public abstract class InGameHudMixin
     private int scaledHeight;
 
     @Unique
-    private final List<Text> watermarkText = List.of(
-            Text.literal("W2K Development Build " + DevelopmentBuildWatermark.getMeta().getCompileDateFormatted()).styled((style) -> style.withBold(true)),
-            Text.literal("For more information about this build, use /w2k details.").styled(style -> style.withColor(Formatting.GRAY)));
+    private final List<MutableText> watermarkText = DevelopmentBuildWatermark.createWatermarkText().stream()
+            .map(component -> Text.Serializer.fromJson(ComponentUtils.serializeComponent(component)))
+            .toList();
 
     @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/hud/InGameHud;renderCrosshair(Lnet/minecraft/client/gui/DrawContext;)V"))
     public void renderTargetOverlay(DrawContext context, float tickDelta, CallbackInfo ci)

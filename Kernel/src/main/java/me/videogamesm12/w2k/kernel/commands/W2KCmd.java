@@ -33,7 +33,7 @@ public class W2KCmd extends WCommand
                     .colorIfAbsent(NamedTextColor.GRAY));
         });
 
-        final BuildMetadata metadata = BuildMetadata.getMetadataFromClassJar(W2K.class);
+        final BuildMetadata metadata = BuildMetadata.getMetadataFromMod("w2k");
         if (metadata != null)
         {
             msg(Component.translatable("w2k.command.w2k.click_to_see_build_info").color(NamedTextColor.BLUE)
@@ -44,7 +44,7 @@ public class W2KCmd extends WCommand
     @ExecutionPath("details")
     public void details()
     {
-        final BuildMetadata metadata = BuildMetadata.getMetadataFromClassJar(W2K.class);
+        final BuildMetadata metadata = BuildMetadata.getMetadataFromMod("w2k");
 
         if (metadata == null)
         {

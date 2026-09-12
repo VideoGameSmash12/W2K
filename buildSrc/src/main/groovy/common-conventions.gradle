@@ -1,9 +1,7 @@
-import java.time.Instant
-import java.time.format.DateTimeFormatter
-
 plugins {
     id 'java-library'
     id 'com.gorylenko.gradle-git-properties'
+    id 'eu.davidea.grabver'
 }
 
 ext {
@@ -36,9 +34,16 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok:1.18.42'
 }
 
+versioning {
+    major 3
+    minor 0
+    patch 0
+}
+
 gitProperties {
     customProperty "w2k.build.timestamp", build_time
     customProperty "w2k.build.timestamp.formatted", new Date((long) build_time).toString()
+    customProperty "w2k.build.number", versioning.build
     keys = [
             'git.branch',
             'git.commit.id',
@@ -47,6 +52,7 @@ gitProperties {
             'git.remote.origin.url',
             'git.dirty',
             'w2k.build.timestamp',
-            'w2k.build.timestamp.formatted'
+            'w2k.build.timestamp.formatted',
+            'w2k.build.number'
     ]
 }

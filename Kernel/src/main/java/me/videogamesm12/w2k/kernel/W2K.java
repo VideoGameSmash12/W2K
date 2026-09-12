@@ -93,8 +93,8 @@ public class W2K implements ModInitializer
     public void onCrashReport(PopulateCrashReportEvent event)
     {
         // Add our build information
-        event.appendSection("Kernel Build", "Details:\r\n" +
-                Objects.requireNonNull(BuildMetadata.getMetadataFromClassJar(W2K.class)).toCrashReportSection());
+        event.appendSection("Build", "Details:\r\n" +
+                Objects.requireNonNull(BuildMetadata.getMetadataFromMod("w2k")).toCrashReportSection());
 
         // Append our loaded drivers
         final StringBuilder driverList = new StringBuilder();

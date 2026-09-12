@@ -1,8 +1,10 @@
 package me.videogamesm12.w2k.drivers.v26_2.mixin.injector;
 
+import com.mojang.serialization.JsonOps;
 import me.videogamesm12.w2k.kernel.W2K;
 import me.videogamesm12.w2k.kernel.data.IEntityEntry;
 import me.videogamesm12.w2k.kernel.data.IItemStackEntry;
+import me.videogamesm12.w2k.kernel.util.ComponentUtils;
 import me.videogamesm12.w2k.toolbox.modules.BanHammer;
 import me.videogamesm12.w2k.toolbox.modules.DevelopmentBuildWatermark;
 import me.videogamesm12.w2k.toolbox.modules.TargetHighlighter;
@@ -13,6 +15,7 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.Hud;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.ComponentSerialization;
 import net.minecraft.util.ARGB;
 import net.minecraft.world.entity.Entity;
 import org.spongepowered.asm.mixin.Final;
@@ -36,9 +39,9 @@ public abstract class HudMixin
     public abstract Font getFont();
 
     @Unique
-    private final List<Component> watermarkText = List.of(
-            Component.literal("W2K Development Build " + DevelopmentBuildWatermark.getMeta().getCompileDateFormatted()).withStyle((style) -> style.withBold(true)),
-            Component.literal("For more information about this build, use /w2k details.").withStyle(style -> style.withColor(ChatFormatting.GRAY)));
+    private final List<Component> watermarkText = DevelopmentBuildWatermark.createWatermarkText().stream()
+            .map(component -> ComponentSerialization.CODEC.parse(JsonOps.INSTANCE, ComponentUtils.serializeComponent(component)).getOrThrow())
+            .toList();
 
     @Inject(method = "extractRenderState", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/Hud;extractCrosshair(Lnet/minecraft/client/gui/GuiGraphicsExtractor;Lnet/minecraft/client/DeltaTracker;)V"))
     public void renderTargetOverlay(GuiGraphicsExtractor graphics, DeltaTracker deltaTracker, CallbackInfo ci)

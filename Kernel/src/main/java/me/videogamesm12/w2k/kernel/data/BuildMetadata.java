@@ -3,6 +3,8 @@ package me.videogamesm12.w2k.kernel.data;
 import lombok.Builder;
 import lombok.Data;
 import me.videogamesm12.w2k.kernel.W2K;
+import net.fabricmc.loader.api.FabricLoader;
+import net.fabricmc.loader.api.ModContainer;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
@@ -10,7 +12,10 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.zip.ZipFile;
 
 /**
@@ -21,7 +26,8 @@ import java.util.zip.ZipFile;
 @Builder
 public class BuildMetadata
 {
-    private static final Map<Class<?>, BuildMetadata> cache = new HashMap<>();
+    private static final Map<String, BuildMetadata> cache = new HashMap<>();
+    private static final Map<Class<?>, BuildMetadata> classCache = new HashMap<>();
 
     private final String branch;
     private final String commitId;
@@ -31,6 +37,7 @@ public class BuildMetadata
     private final boolean dirty;
     private final long compileDate;
     private final String compileDateFormatted;
+    private final long buildNumber;
 
     @Override
     public String toString()
@@ -41,7 +48,8 @@ public class BuildMetadata
                 + "Commit Date: " + commitTime + "\r\n"
                 + "Origin URL: " + originUrl + "\r\n"
                 + "Dirty: " + dirty + "\r\n"
-                + "Compile Date: " + compileDateFormatted + " (" + compileDate + ")";
+                + "Compile Date: " + compileDateFormatted + " (" + compileDate + ")\r\n"
+                + "Build Number: " + buildNumber + "\r\n";
     }
 
     public String toCrashReportSection()
@@ -51,7 +59,8 @@ public class BuildMetadata
                 + "\tCommit Date: " + commitTime + "\r\n"
                 + "\tOrigin URL: " + originUrl + "\r\n"
                 + "\tDirty: " + dirty + "\r\n"
-                + "\tCompile Date: " + compileDateFormatted + " (" + compileDate + ")";
+                + "\tCompile Date: " + compileDateFormatted + " (" + compileDate + ")\r\n"
+                + "\tBuild Number: " + buildNumber + "\r\n";
     }
 
     public Component toComponent()
@@ -76,9 +85,41 @@ public class BuildMetadata
                 .clickEvent(ClickEvent.copyToClipboard(toString()));
     }
 
+    public static BuildMetadata getMetadataFromMod(String id)
+    {
+        final Path path = FabricLoader.getInstance().getModContainer(id)
+                .orElseThrow(() -> new IllegalArgumentException("Unknown mod '" + id + "id"))
+                .findPath("git.properties")
+                .orElseThrow(() -> new IllegalArgumentException("Mod " + id + " does not have a git.properties file"));
+
+        final Properties properties = new Properties();
+        try
+        {
+            properties.load(Files.newInputStream(path));
+
+            cache.put(id, BuildMetadata.builder()
+                    .branch(properties.getProperty("git.branch"))
+                    .commitId(properties.getProperty("git.commit.id"))
+                    .commitIdAbbreviated(properties.getProperty("git.commit.id.abbrev"))
+                    .commitTime(properties.getProperty("git.commit.time"))
+                    .originUrl(properties.getProperty("git.remote.origin.url"))
+                    .dirty(Boolean.parseBoolean(properties.getProperty("git.dirty")))
+                    .compileDate(Long.parseLong(properties.getProperty("w2k.build.timestamp")))
+                    .compileDateFormatted(properties.getProperty("w2k.build.timestamp.formatted"))
+                    .buildNumber(Long.parseLong(properties.getProperty("w2k.build.number", "0")))
+                    .build());
+        }
+        catch (Throwable ex)
+        {
+            W2K.getLogger().error("Failed to read JAR build properties", ex);
+        }
+
+        return cache.get(id);
+    }
+
     public static BuildMetadata getMetadataFromClassJar(Class<?> modClass)
     {
-        if (!cache.containsKey(modClass))
+        if (!classCache.containsKey(modClass))
         {
             // In a perfect world, git.properties would instead be formatted as JSON and readable with GSON. That is not the
             //  case due to plugin shenanigans
@@ -87,7 +128,7 @@ public class BuildMetadata
             {
                 properties.load(zip.getInputStream(zip.getEntry("git.properties")));
 
-                cache.put(modClass, BuildMetadata.builder()
+                classCache.put(modClass, BuildMetadata.builder()
                         .branch(properties.getProperty("git.branch"))
                         .commitId(properties.getProperty("git.commit.id"))
                         .commitIdAbbreviated(properties.getProperty("git.commit.id.abbrev"))
@@ -96,6 +137,7 @@ public class BuildMetadata
                         .dirty(Boolean.parseBoolean(properties.getProperty("git.dirty")))
                         .compileDate(Long.parseLong(properties.getProperty("w2k.build.timestamp")))
                         .compileDateFormatted(properties.getProperty("w2k.build.timestamp.formatted"))
+                        .buildNumber(Long.parseLong(properties.getProperty("w2k.build.number", "0")))
                         .build());
             }
             catch (Throwable ex)
@@ -105,6 +147,6 @@ public class BuildMetadata
             }
         }
 
-        return cache.get(modClass);
+        return classCache.get(modClass);
     }
 }

@@ -1,7 +1,10 @@
 package me.videogamesm12.w2k.kernel.commands;
 
 import me.videogamesm12.w2k.kernel.command.*;
+import me.videogamesm12.w2k.kernel.data.BuildMetadata;
 import net.kyori.adventure.text.Component;
+
+import java.util.Objects;
 
 @Parameters(name = "test", usage = "No point here")
 public class TestCmd extends WCommand
@@ -21,6 +24,6 @@ public class TestCmd extends WCommand
     @ExecutionPath
     public void rootCommand()
     {
-        msg(Component.text("/test!"));
+        msg(Objects.requireNonNull(BuildMetadata.getMetadataFromMod("w2k")).toComponent());
     }
 }

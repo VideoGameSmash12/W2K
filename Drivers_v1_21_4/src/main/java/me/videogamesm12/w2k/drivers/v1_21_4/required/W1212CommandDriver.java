@@ -231,7 +231,7 @@ public class W1212CommandDriver implements WCommandDriver
                 }
                 catch (Throwable ex)
                 {
-                    getCommand().msg(Component.translatable("w2k.command.command_error", Component.text(ex.getLocalizedMessage()))
+                    getCommand().msg(Component.translatable("w2k.command.command_error", Component.text(ex.getLocalizedMessage() != null ? ex.getLocalizedMessage() : ex.getClass().getName()))
                             .color(NamedTextColor.RED));
                     W2K.getLogger().error("An error occurred whilst processing command '{}'", ctx.getInput(), ex);
                 }

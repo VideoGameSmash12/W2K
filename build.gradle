@@ -3,6 +3,7 @@ plugins {
     id("modern-minecraft-conventions")
 }
 
+
 version = project.mod_version
 group = "me.videogamesm12"
 

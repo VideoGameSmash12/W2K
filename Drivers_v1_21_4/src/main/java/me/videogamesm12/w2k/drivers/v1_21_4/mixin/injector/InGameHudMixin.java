@@ -3,6 +3,7 @@ package me.videogamesm12.w2k.drivers.v1_21_4.mixin.injector;
 import me.videogamesm12.w2k.kernel.W2K;
 import me.videogamesm12.w2k.kernel.data.IEntityEntry;
 import me.videogamesm12.w2k.kernel.data.IItemStackEntry;
+import me.videogamesm12.w2k.kernel.util.ComponentUtils;
 import me.videogamesm12.w2k.toolbox.modules.BanHammer;
 import me.videogamesm12.w2k.toolbox.modules.DevelopmentBuildWatermark;
 import me.videogamesm12.w2k.toolbox.modules.TargetHighlighter;
@@ -13,6 +14,8 @@ import net.minecraft.client.gui.hud.InGameHud;
 import net.minecraft.client.render.RenderTickCounter;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.registry.BuiltinRegistries;
+import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import org.spongepowered.asm.mixin.Final;
@@ -39,9 +42,9 @@ public abstract class InGameHudMixin
     public abstract TextRenderer getTextRenderer();
 
     @Unique
-    private final List<Text> watermarkText = List.of(
-            Text.literal("W2K Development Build " + DevelopmentBuildWatermark.getMeta().getCompileDateFormatted()).styled((style) -> style.withBold(true)),
-            Text.literal("For more information about this build, use /w2k details.").styled(style -> style.withColor(Formatting.GRAY)));
+    private final List<MutableText> watermarkText = DevelopmentBuildWatermark.createWatermarkText().stream()
+            .map(component -> Text.Serialization.fromJsonTree(ComponentUtils.serializeComponent(component), BuiltinRegistries.createWrapperLookup()))
+            .toList();
 
     @Inject(method = "renderMiscOverlays", at = @At(value = "TAIL"))
     public void renderTargetOverlay(DrawContext context, RenderTickCounter tickCounter, CallbackInfo ci)
