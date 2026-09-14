@@ -34,11 +34,14 @@ public class AntiLockup extends WModule
 
             if ((System.currentTimeMillis() - timeSinceLastAlert >= alertInterval.get()))
             {
-                versionBridge().displayMessage(Component.translatable("w2k.toolbox.module.antilockup.blocked", Component.text(packetCount))
-                        .color(NamedTextColor.YELLOW));
+                versionAbstractionLayer().getLocalPlayer().ifPresent(player ->
+                {
+                    player.w2k$displayMessage(Component.translatable("w2k.toolbox.module.antilockup.blocked", Component.text(packetCount))
+                            .color(NamedTextColor.YELLOW));
 
-                timeSinceLastAlert = System.currentTimeMillis();
-                packetCount = 0;
+                    timeSinceLastAlert = System.currentTimeMillis();
+                    packetCount = 0;
+                });
             }
         }
     }

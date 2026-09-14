@@ -2,7 +2,7 @@ package me.videogamesm12.w2k.drivers.v1_20_1.mixin.injector;
 
 import com.llamalad7.mixinextras.sugar.Local;
 import me.videogamesm12.w2k.kernel.W2K;
-import me.videogamesm12.w2k.kernel.data.IItemStackEntry;
+import me.videogamesm12.w2k.kernel.abstraction.inventory.ItemStackInterface;
 import me.videogamesm12.w2k.toolbox.modules.BanHammer;
 import me.videogamesm12.w2k.toolbox.modules.TargetHighlighter;
 import net.minecraft.client.MinecraftClient;
@@ -49,7 +49,7 @@ public class WorldRendererMixin
         if (banHammer.isEnabled()
                 && banHammer.useCustomHighlightColor.get()
                 && banHammer.outlineTarget.get()
-                && banHammer.isHammerActive(IItemStackEntry.class.cast(client.player.getInventory().getMainHandStack()))
+                && banHammer.isHammerActive(ItemStackInterface.class.cast(client.player.getInventory().getMainHandStack()))
                 && client.targetedEntity == entity)
         {
             proposedReplacement = banHammer.highlightColor.get();

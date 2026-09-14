@@ -1,6 +1,7 @@
 package me.videogamesm12.w2k.blackbox.window.tool.console;
 
 import com.google.gson.JsonElement;
+import net.kyori.adventure.text.Component;
 
 import javax.swing.*;
 import java.awt.*;
@@ -29,7 +30,7 @@ public class MainChatTab extends AbstractTab<JList<String>>
     }
 
     @Override
-    public boolean shouldDisplay(JsonElement message)
+    public boolean shouldDisplay(Component message)
     {
         return true;
     }

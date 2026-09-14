@@ -9,10 +9,12 @@ import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import me.videogamesm12.w2k.kernel.W2K;
-import me.videogamesm12.w2k.kernel.data.IPlayerEntry;
+import me.videogamesm12.w2k.kernel.abstraction.network.PlayNetworkHandlerInterface;
+import me.videogamesm12.w2k.kernel.abstraction.network.PlayerListEntryInterface;
 import net.minecraft.command.CommandSource;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -58,8 +60,10 @@ public class OnlinePlayersArgumentType implements ArgumentType<String>
         return EXAMPLES;
     }
 
-    private List<IPlayerEntry> getOnlinePlayers()
+    private List<PlayerListEntryInterface> getOnlinePlayers()
     {
-        return W2K.getInstance().getDriverManager().getVersionBridge().getPlayerList();
+        return W2K.getInstance().getVersionAbstractionLayer().networkHandler()
+                .map(PlayNetworkHandlerInterface::w2k$getOnlinePlayers)
+                .orElseThrow(() -> new IllegalStateException("Not connected to a server"));
     }
 }

@@ -3,6 +3,7 @@ package me.videogamesm12.w2k.kernel;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import lombok.Getter;
+import me.videogamesm12.w2k.kernel.abstraction.BaseVersionAbstractionLayer;
 import me.videogamesm12.w2k.kernel.command.WCommand;
 import me.videogamesm12.w2k.kernel.command.WCommandManager;
 import me.videogamesm12.w2k.kernel.commands.TestCmd;
@@ -44,6 +45,7 @@ public class W2K implements ModInitializer
         }
     }
 
+    private BaseVersionAbstractionLayer<?> versionAbstractionLayer;
     @Getter
     private WDriverManager driverManager;
     @Getter
@@ -55,6 +57,9 @@ public class W2K implements ModInitializer
     public void onInitialize()
     {
         instance = this;
+
+        logger.info("Setting up version abstraction layer");
+        installVersionAbstractionLayer();
 
         logger.info("Setting up driver manager");
         driverManager = new WDriverManager();
@@ -87,6 +92,28 @@ public class W2K implements ModInitializer
         logger.info("Modules successfully initialized");
 
         getEventBus().register(this);
+    }
+
+    @SuppressWarnings("unchecked")
+    public <Minecraft> BaseVersionAbstractionLayer<Minecraft> getVersionAbstractionLayer()
+    {
+        if (versionAbstractionLayer == null)
+        {
+            installVersionAbstractionLayer();
+        }
+
+        return (BaseVersionAbstractionLayer<Minecraft>) versionAbstractionLayer;
+    }
+
+    private void installVersionAbstractionLayer()
+    {
+        versionAbstractionLayer = FabricLoader.getInstance().getEntrypoints("w2k-version-abstraction-layer", BaseVersionAbstractionLayer.class).stream()
+                .findAny()
+                .orElse(null);
+                //.orElseThrow(() -> new IllegalStateException("Unable to find a version abstraction layer compatible with this version of the game"));
+
+        if (versionAbstractionLayer != null)
+            versionAbstractionLayer.setup();
     }
 
     @Subscribe

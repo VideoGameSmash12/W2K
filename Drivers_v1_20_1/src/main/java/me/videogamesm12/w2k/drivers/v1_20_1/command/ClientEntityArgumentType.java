@@ -7,14 +7,14 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import lombok.RequiredArgsConstructor;
-import me.videogamesm12.w2k.kernel.data.IEntitySelector;
+import me.videogamesm12.w2k.kernel.abstraction.command.EntitySelectorInterface;
 import net.minecraft.command.argument.EntityArgumentType;
 
 import java.util.Collection;
 import java.util.concurrent.CompletableFuture;
 
 @RequiredArgsConstructor
-public class ClientEntityArgumentType implements ArgumentType<IEntitySelector>
+public class ClientEntityArgumentType implements ArgumentType<EntitySelectorInterface>
 {
     private final EntityArgumentType parent;
 
@@ -31,8 +31,8 @@ public class ClientEntityArgumentType implements ArgumentType<IEntitySelector>
     }
 
     @Override
-    public IEntitySelector parse(StringReader reader) throws CommandSyntaxException
+    public EntitySelectorInterface parse(StringReader reader) throws CommandSyntaxException
     {
-        return (IEntitySelector) parent.parse(reader);
+        return (EntitySelectorInterface) parent.parse(reader);
     }
 }

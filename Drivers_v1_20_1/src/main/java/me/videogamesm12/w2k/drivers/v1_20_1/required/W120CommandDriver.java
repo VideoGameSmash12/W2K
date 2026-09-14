@@ -1,7 +1,6 @@
 package me.videogamesm12.w2k.drivers.v1_20_1.required;
 
 import com.google.common.base.Preconditions;
-import com.mojang.brigadier.Command;
 import com.mojang.brigadier.arguments.*;
 import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
@@ -14,15 +13,13 @@ import me.videogamesm12.w2k.drivers.v1_20_1.command.ExperimentArgumentType;
 import me.videogamesm12.w2k.drivers.v1_20_1.command.OnlinePlayersArgumentType;
 import me.videogamesm12.w2k.drivers.v1_20_1.command.WModuleArgumentType;
 import me.videogamesm12.w2k.kernel.W2K;
+import me.videogamesm12.w2k.kernel.abstraction.command.EntitySelectorInterface;
 import me.videogamesm12.w2k.kernel.command.AbstractArgumentResolver;
 import me.videogamesm12.w2k.kernel.command.ExecutionPath;
 import me.videogamesm12.w2k.kernel.command.WCommand;
-import me.videogamesm12.w2k.kernel.data.IEntitySelector;
 import me.videogamesm12.w2k.kernel.driver.base.WCommandDriver;
 import me.videogamesm12.w2k.kernel.driver.base.WDriverMetadata;
 import me.videogamesm12.w2k.kernel.experiment.Experiment;
-import me.videogamesm12.w2k.kernel.experiment.ExperimentManager;
-import me.videogamesm12.w2k.kernel.experiments.KernelExperiments;
 import me.videogamesm12.w2k.kernel.module.WModule;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
@@ -36,7 +33,6 @@ import net.minecraft.command.argument.UuidArgumentType;
 import net.minecraft.command.argument.serialize.ConstantArgumentSerializer;
 import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
-import org.apache.commons.lang3.ArrayUtils;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
@@ -67,7 +63,11 @@ public class W120CommandDriver implements WCommandDriver
             @Override
             public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context, SuggestionsBuilder builder)
             {
-                return CommandSource.suggestMatching(W2K.getInstance().getDriverManager().getVersionBridge().getPlayerList().stream().map(entry -> entry.w2k$profile().getId().toString()), builder);
+                return CommandSource.suggestMatching(W2K.getInstance().getVersionAbstractionLayer().networkHandler()
+                        .map(handler -> handler.w2k$getOnlinePlayers().stream()
+                                .map(entry -> entry.w2k$uuid().toString())
+                                .toList())
+                        .orElseThrow(() -> new IllegalStateException("Not connected to a server")), builder);
             }
         }, true);
         register(Identifier.of("w2k", "online_players/both"), String.class, OnlinePlayersArgumentType.both(), true);
@@ -79,10 +79,10 @@ public class W120CommandDriver implements WCommandDriver
         register(Identifier.of("w2k", "experiment/runtime_only"), Experiment.class, ExperimentArgumentType.runtimeOnly(), true);
         register(Identifier.of("w2k", "experiment/togglable"), Experiment.class, ExperimentArgumentType.togglable(), true);
         //--
-        register(Identifier.of("w2k", "wrapped/entity"), IEntitySelector.class, new ClientEntityArgumentType(EntityArgumentType.entity()), true);
-        register(Identifier.of("w2k", "wrapped/entities"), IEntitySelector.class, new ClientEntityArgumentType(EntityArgumentType.entities()), true);
-        register(Identifier.of("w2k", "wrapped/entity/player"), IEntitySelector.class, new ClientEntityArgumentType(EntityArgumentType.player()), true);
-        register(Identifier.of("w2k", "wrapped/entities/players"), IEntitySelector.class, new ClientEntityArgumentType(EntityArgumentType.players()), true);
+        register(Identifier.of("w2k", "wrapped/entity"), EntitySelectorInterface.class, new ClientEntityArgumentType(EntityArgumentType.entity()), true);
+        register(Identifier.of("w2k", "wrapped/entities"), EntitySelectorInterface.class, new ClientEntityArgumentType(EntityArgumentType.entities()), true);
+        register(Identifier.of("w2k", "wrapped/entity/player"), EntitySelectorInterface.class, new ClientEntityArgumentType(EntityArgumentType.player()), true);
+        register(Identifier.of("w2k", "wrapped/entities/players"), EntitySelectorInterface.class, new ClientEntityArgumentType(EntityArgumentType.players()), true);
     }
 
     @Override

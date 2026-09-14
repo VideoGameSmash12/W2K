@@ -2,13 +2,17 @@ package me.videogamesm12.w2k.kernel.module;
 
 import lombok.Getter;
 import me.videogamesm12.w2k.kernel.W2K;
+import me.videogamesm12.w2k.kernel.abstraction.BaseVersionAbstractionLayer;
+import me.videogamesm12.w2k.kernel.data.Overlay;
 import me.videogamesm12.w2k.kernel.driver.base.WAmbassadorDriver;
 import me.videogamesm12.w2k.kernel.driver.base.WVersionBridgeDriver;
 import me.videogamesm12.w2k.kernel.event.module.ModuleStateUpdateEvent;
 import me.videogamesm12.w2k.kernel.module.setting.WModuleSetting;
 import net.kyori.adventure.nbt.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
@@ -20,6 +24,7 @@ public abstract class WModule
     private final String description;
     private final Consumer<Boolean> onToggle;
     private final Map<String, WModuleSetting<? extends BinaryTag, ?>> settings = new HashMap<>();
+    private final List<Overlay> overlays = new ArrayList<>();
     private boolean enabled;
 
     public WModule(final String name, final String description)
@@ -46,6 +51,12 @@ public abstract class WModule
     {
         settings.put(setting.getId(), setting);
         return setting;
+    }
+
+    protected final <T extends Overlay> T addOverlay(T overlay)
+    {
+        overlays.add(overlay);
+        return overlay;
     }
 
     public <T extends WModule> void setEnabled(boolean value)
@@ -134,5 +145,10 @@ public abstract class WModule
     protected WVersionBridgeDriver versionBridge()
     {
         return w2k().getDriverManager().getVersionBridge();
+    }
+
+    protected <Minecraft> BaseVersionAbstractionLayer<Minecraft> versionAbstractionLayer()
+    {
+        return w2k().getVersionAbstractionLayer();
     }
 }

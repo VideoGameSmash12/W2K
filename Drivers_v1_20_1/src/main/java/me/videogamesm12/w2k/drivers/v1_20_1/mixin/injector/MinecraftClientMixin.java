@@ -1,22 +1,17 @@
 package me.videogamesm12.w2k.drivers.v1_20_1.mixin.injector;
 
-import me.videogamesm12.w2k.kernel.data.IEntityEntry;
-import me.videogamesm12.w2k.kernel.data.IItemStackEntry;
 import me.videogamesm12.w2k.kernel.W2K;
+import me.videogamesm12.w2k.kernel.abstraction.world.EntityInterface;
 import me.videogamesm12.w2k.kernel.event.lifecycle.ClientCrashedEvent;
 import me.videogamesm12.w2k.supervisor.Supervisor;
 import me.videogamesm12.w2k.supervisor.components.flags.Flags;
 import me.videogamesm12.w2k.supervisor.components.watchdog.Watchdog;
-import me.videogamesm12.w2k.toolbox.modules.BanHammer;
 import me.videogamesm12.w2k.toolbox.modules.TargetHighlighter;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.crash.CrashReport;
-import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -28,15 +23,6 @@ import java.io.File;
 @Mixin(MinecraftClient.class)
 public abstract class MinecraftClientMixin
 {
-
-    @Shadow
-    @Nullable
-    public ClientPlayerEntity player;
-
-    @Shadow
-    @Nullable
-    public Entity targetedEntity;
-
     /**
      * <p>Supervisor's freeze detection works by injecting some code at the tail-end of the game's rendering method to
      *  store a timestamp for when the last time a frame successfully rendered occurs, then periodically checking
@@ -100,13 +86,8 @@ public abstract class MinecraftClientMixin
     @Inject(method = "hasOutline", at = @At("HEAD"), cancellable = true)
     private void outlineTargetedPlayer(Entity entity, CallbackInfoReturnable<Boolean> cir)
     {
-        final BanHammer banHammer = W2K.getInstance().getModuleManager().getModule(BanHammer.class);
         final TargetHighlighter targetHighlighter = W2K.getInstance().getModuleManager().getModule(TargetHighlighter.class);
-        if (player != null
-                && targetedEntity != null
-                && targetedEntity.equals(entity)
-                && ((IEntityEntry) targetedEntity).w2k$type().equalsIgnoreCase("minecraft:player")
-                && ((banHammer.isEnabled() && banHammer.isHammerActive(IItemStackEntry.class.cast(player.getInventory().getMainHandStack())) && banHammer.outlineTarget.get()) || targetHighlighter.isEnabled()))
+        if (targetHighlighter.isEnabled() && targetHighlighter.lookingAtValidTarget((EntityInterface) entity))
         {
             cir.setReturnValue(true);
         }

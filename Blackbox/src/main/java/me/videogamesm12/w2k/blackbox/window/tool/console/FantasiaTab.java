@@ -10,6 +10,7 @@ import me.videogamesm12.w2k.supervisor.components.fantasia.event.SessionStartedE
 import me.videogamesm12.w2k.supervisor.components.fantasia.event.SessionStartedPreSetupEvent;
 import me.videogamesm12.w2k.supervisor.components.fantasia.session.CommandSender;
 import me.videogamesm12.w2k.supervisor.components.fantasia.session.ISession;
+import net.kyori.adventure.text.Component;
 
 import javax.swing.*;
 import java.awt.*;
@@ -35,7 +36,7 @@ public class FantasiaTab extends AbstractTab<JTextArea>
     }
 
     @Override
-    public boolean shouldDisplay(JsonElement message)
+    public boolean shouldDisplay(Component message)
     {
         return false;
     }

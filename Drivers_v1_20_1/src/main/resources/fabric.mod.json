@@ -14,17 +14,8 @@
   "icon": "assets/w2k-drivers-v1_20_1/icon.png",
   "environment": "client",
   "entrypoints": {
-    "w2k-event-passthru-driver": [
-      "me.videogamesm12.w2k.drivers.v1_20_1.required.W120EventPassthruDriver"
-    ],
-    "w2k-version-bridge-driver": [
-      "me.videogamesm12.w2k.drivers.v1_20_1.required.WVersionBridgeDriver"
-    ],
     "w2k-command-wrapper-driver": [
       "me.videogamesm12.w2k.drivers.v1_20_1.required.W120CommandDriver"
-    ],
-    "w2k-communications-driver": [
-      "me.videogamesm12.w2k.drivers.v1_20_1.protocol.WCommunicationsDriver"
     ]
   },
   "mixins": [

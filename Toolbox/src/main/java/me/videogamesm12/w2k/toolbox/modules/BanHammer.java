@@ -1,8 +1,10 @@
 package me.videogamesm12.w2k.toolbox.modules;
 
-import lombok.Getter;
-import me.videogamesm12.w2k.kernel.data.IEntityEntry;
-import me.videogamesm12.w2k.kernel.data.IItemStackEntry;
+import com.google.common.eventbus.Subscribe;
+import me.videogamesm12.w2k.kernel.abstraction.inventory.ItemStackInterface;
+import me.videogamesm12.w2k.kernel.abstraction.world.ClientPlayerEntityInterface;
+import me.videogamesm12.w2k.kernel.abstraction.world.EntityInterface;
+import me.videogamesm12.w2k.kernel.event.entity.EntityInteractionEvent;
 import me.videogamesm12.w2k.kernel.module.WModule;
 import me.videogamesm12.w2k.kernel.module.setting.BooleanSetting;
 import me.videogamesm12.w2k.kernel.module.setting.ColorSetting;
@@ -32,27 +34,33 @@ public class BanHammer extends WModule
                 "Repurposes an item to act as a literal ban hammer. \nThis should only be used for extreme cases where you need to \nremove a large quantity of bots in a given space. \n\nLeft click to ban regularly, right click to ban IP.");
     }
 
-    public boolean handleClick(final IEntityEntry entity, final IItemStackEntry stack, final boolean hit)
+    @Subscribe
+    public void onEntityHit(EntityInteractionEvent event)
     {
-        if (!isHammerActive(stack)
-                || !entity.w2k$type().equalsIgnoreCase("minecraft:player"))
+        final ClientPlayerEntityInterface clientPlayer = event.getClientPlayerEntity();
+        final EntityInterface target = event.getTarget();
+
+        if (!isEnabled()
+                || !clientPlayer.w2k$isCreative()
+                || !clientPlayer.w2k$getStackInMainHand().filter(this::isHammerActive).isPresent()
+                || !target.w2k$type().equalsIgnoreCase("minecraft:player"))
         {
-            return false;
+            return;
         }
 
-        final String command = (hit ? banCommand.get() : banIpCommand.get())
-                .replaceAll("%uuid%", entity.w2k$uuid().toString())
-                .replaceAll("%username%", entity.w2k$internalName());
-        versionBridge().runCommand(command);
-        return true;
+        final String command = (event.isLeftClick() ? banCommand.get() : banIpCommand.get())
+                .replaceAll("%uuid%", target.w2k$uuid().toString())
+                .replaceAll("%username%", target.w2k$internalName());
+
+        versionAbstractionLayer().networkHandler().ifPresent(handler -> handler.w2k$sendCommand(command));
     }
 
-    public boolean isHammerActive(final IItemStackEntry stack)
+    public boolean isHammerActive(final ItemStackInterface stack)
     {
         return stack != null
                 && stack.w2k$isNotEmpty()
                 && stack.w2k$type().equalsIgnoreCase(itemType.get())
                 && stack.w2k$name() != null
-                && stack.w2k$name().toString().contains(itemName);
+                && versionAbstractionLayer().text().adventureToString(stack.w2k$name()).contains(itemName);
     }
 }

@@ -50,7 +50,8 @@ public class KeyboardMixin
 
                     if (module.alert.get())
                     {
-                        W2K.getInstance().getDriverManager().getVersionBridge().displayMessage(Component.text("Entity query response logged to " + path + ".", NamedTextColor.GREEN));
+                        W2K.getInstance().getVersionAbstractionLayer().getLocalPlayer().ifPresent(player ->
+                                player.w2k$displayMessage(Component.text("Entity query response logged to " + path + ".", NamedTextColor.GREEN)));
                     }
                 }
             });
@@ -76,7 +77,8 @@ public class KeyboardMixin
 
                     if (module.alert.get())
                     {
-                        W2K.getInstance().getDriverManager().getVersionBridge().displayMessage(Component.text("Block query response logged to " + path + ".", NamedTextColor.GREEN));
+                        W2K.getInstance().getVersionAbstractionLayer().getLocalPlayer().ifPresent(player ->
+                                player.w2k$displayMessage(Component.text("Block query response logged to " + path + ".", NamedTextColor.GREEN)));
                     }
                 }
             });

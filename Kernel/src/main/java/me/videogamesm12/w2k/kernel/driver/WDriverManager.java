@@ -42,17 +42,19 @@ public class WDriverManager
     {
         eventPassThru = FabricLoader.getInstance().getEntrypoints("w2k-event-passthru-driver",
                 WEventPassThruDriver.class).stream().filter(WDriver::isSupported).findAny()
-                .orElseThrow(() -> new IllegalStateException("Event pass-through driver not found!"));
+                .orElse(null);
+                //.orElseThrow(() -> new IllegalStateException("Event pass-through driver not found!"));
         versionBridge = FabricLoader.getInstance().getEntrypoints("w2k-version-bridge-driver",
                 WVersionBridgeDriver.class).stream().filter(WDriver::isSupported).findAny()
-                .orElseThrow(() -> new IllegalStateException("Version bridge driver not found!"));
+                .orElse(null);
+                //.orElseThrow(() -> new IllegalStateException("Version bridge driver not found!"));
 
         commandWrapper = FabricLoader.getInstance().getEntrypoints("w2k-command-wrapper-driver",
                 WCommandDriver.class).stream().filter(WDriver::isSupported).findAny().orElse(null);
         communicationsDriver = FabricLoader.getInstance().getEntrypoints("w2k-communications-driver",
                 WAmbassadorDriver.class).stream().filter(WDriver::isSupported).findAny().orElse(null);
 
-        eventPassThru.setupEvents();
+        //eventPassThru.setupEvents();
     }
 
     public void loadOptionalDrivers()

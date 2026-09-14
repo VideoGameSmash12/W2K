@@ -45,7 +45,8 @@ public abstract class WCommand
     public final void msg(@NotNull Component component)
     {
         Objects.requireNonNull(component);
-        W2K.getInstance().getDriverManager().getVersionBridge().displayMessage(component);
+        W2K.getInstance().getVersionAbstractionLayer().getLocalPlayer().ifPresent(player ->
+                player.w2k$displayMessage(component));
     }
 
     public final void schedule(@NotNull Runnable task, int delay)

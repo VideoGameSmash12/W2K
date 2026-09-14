@@ -28,6 +28,10 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import lombok.Getter;
 import me.videogamesm12.w2k.kernel.W2K;
+import me.videogamesm12.w2k.kernel.abstraction.inventory.ItemStackInterface;
+import me.videogamesm12.w2k.kernel.abstraction.network.PlayNetworkHandlerInterface;
+import me.videogamesm12.w2k.kernel.abstraction.network.PlayerListEntryInterface;
+import me.videogamesm12.w2k.kernel.abstraction.world.*;
 import me.videogamesm12.w2k.kernel.data.*;
 import me.videogamesm12.w2k.kernel.event.diagnostics.PopulateCrashReportEvent;
 import me.videogamesm12.w2k.kernel.event.lifecycle.ClientStartedEvent;
@@ -37,6 +41,7 @@ import me.videogamesm12.w2k.supervisor.components.fantasia.Fantasia;
 import me.videogamesm12.w2k.supervisor.components.flags.Flags;
 import me.videogamesm12.w2k.supervisor.components.watchdog.Watchdog;
 import net.fabricmc.loader.api.FabricLoader;
+import net.kyori.adventure.text.Component;
 
 import java.io.File;
 import java.io.FileReader;
@@ -165,47 +170,63 @@ public class Supervisor extends Thread
 
     public void chatMessage(String message)
     {
-        W2K.getInstance().getDriverManager().getVersionBridge().sendMessage(message);
+        W2K.getInstance().getVersionAbstractionLayer().networkHandler()
+                .ifPresent(handler -> handler.w2k$sendChatMessage(message));
     }
 
     public void disconnect()
     {
-        W2K.getInstance().getDriverManager().getVersionBridge().disconnect();
+        W2K.getInstance().getVersionAbstractionLayer().networkHandler()
+                .ifPresent(handler -> handler.w2k$disconnect(Component.text("Disconnected by Supervisor")));
     }
 
     public void runCommand(String command)
     {
-        W2K.getInstance().getDriverManager().getVersionBridge().runCommand(command);
+        W2K.getInstance().getVersionAbstractionLayer().networkHandler()
+                .ifPresent(handler -> handler.w2k$sendCommand(command));
     }
 
-    public List<IPlayerEntry> getPlayerList()
+    public List<PlayerListEntryInterface> getPlayerList()
     {
-        return W2K.getInstance().getDriverManager().getVersionBridge().getPlayerList();
+        return W2K.getInstance().getVersionAbstractionLayer().networkHandler()
+                .map(PlayNetworkHandlerInterface::w2k$getOnlinePlayers)
+                .orElse(Collections.emptyList());
     }
 
-    public List<IEntityEntry> getNearbyEntities()
+    public List<EntityInterface> getNearbyEntities()
     {
-        return W2K.getInstance().getDriverManager().getVersionBridge().getEntities();
+        return W2K.getInstance().getVersionAbstractionLayer().getLocalWorld()
+                .map(ClientWorldInterface::w2k$getEntities)
+                .orElse(Collections.emptyList());
     }
 
-    public List<IBlockEntityEntry> getNearbyBlockEntities()
+    public List<BlockEntityInterface> getNearbyBlockEntities()
     {
-        return W2K.getInstance().getDriverManager().getVersionBridge().getBlockEntities();
+        return W2K.getInstance().getVersionAbstractionLayer().getLocalWorld()
+                .map(ClientWorldInterface::w2k$getBlockEntities)
+                .orElse(Collections.emptyList());
     }
 
-    public List<IMapEntry> getLoadedMaps()
+    public List<MapStateInterface> getLoadedMaps()
     {
-        return W2K.getInstance().getDriverManager().getVersionBridge().getMaps();
+        return W2K.getInstance().getVersionAbstractionLayer().getLocalWorld()
+                .map(ClientWorldInterface::w2k$getMapStates)
+                .map(map -> map.entrySet().stream()
+                        .map(entry -> entry.getValue().w2k$id(entry.getKey()))
+                        .collect(Collectors.toList()))
+                .orElse(Collections.emptyList());
     }
 
-    public List<IItemStackEntry> getInventory()
+    public List<ItemStackInterface> getInventory()
     {
-        return W2K.getInstance().getDriverManager().getVersionBridge().getPlayerInventory();
+        return W2K.getInstance().getVersionAbstractionLayer().getLocalPlayer()
+                .map(ClientPlayerEntityInterface::w2k$getInventory)
+                .orElse(Collections.emptyList());
     }
 
     public void closeCurrentScreen()
     {
-        W2K.getInstance().getDriverManager().getVersionBridge().closeCurrentScreen();
+        W2K.getInstance().getVersionAbstractionLayer().closeCurrentScreen();
     }
 
     public void shutdown()

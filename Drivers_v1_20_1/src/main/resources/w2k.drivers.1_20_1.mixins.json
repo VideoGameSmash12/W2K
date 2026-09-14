@@ -4,7 +4,6 @@
   "package": "me.videogamesm12.w2k.drivers.v1_20_1.mixin",
   "compatibilityLevel": "JAVA_17",
   "client": [
-    "accessor.ClientWorldAccessor",
     "accessor.DHAccessor",
     "accessor.IGHAccessor",
     "injector.BlockEntityRendererMixin",
@@ -12,24 +11,15 @@
     "injector.ClientPlayNetworkHandlerMixin",
     "injector.EntityRendererMixin",
     "injector.GameRendererMixin",
-    "injector.InGameHudMixin",
     "injector.MainMixin",
     "injector.MinecraftClientMixin",
-    "injector.WorldRendererMixin",
-    "wrapper.PlayerEntryWrapper"
+    "injector.WorldRendererMixin"
   ],
   "injectors": {
     "defaultRequire": 1
   },
   "mixins": [
-    "accessor.WorldAccessor",
     "injector.CrashReportMixin",
-    "injector.KeyboardMixin",
-    "injector.PlayerEntityMixin",
-    "wrapper.BlockEntityWrapper",
-    "wrapper.EntitySelectorWrapper",
-    "wrapper.EntityWrapper",
-    "wrapper.ItemStackWrapper",
-    "wrapper.MapStateWrapper"
+    "injector.KeyboardMixin"
   ]
 }
