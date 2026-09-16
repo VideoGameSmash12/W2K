@@ -1,6 +1,7 @@
 package me.videogamesm12.w2k.kernel.abstraction.world;
 
 import me.videogamesm12.w2k.kernel.abstraction.ObjectInterface;
+import me.videogamesm12.w2k.kernel.abstraction.util.BlockPosInterface;
 import net.kyori.adventure.text.Component;
 
 import java.util.Arrays;
@@ -20,6 +21,8 @@ public interface EntityInterface extends ObjectInterface
     double w2k$y();
 
     double w2k$z();
+
+    BlockPosInterface w2k$blockPos();
 
     int w2k$id();
 

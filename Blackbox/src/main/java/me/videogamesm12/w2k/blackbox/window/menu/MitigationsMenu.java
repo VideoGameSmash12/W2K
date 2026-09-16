@@ -6,8 +6,6 @@ import me.videogamesm12.w2k.supervisor.Configuration;
 import me.videogamesm12.w2k.supervisor.Supervisor;
 
 import javax.swing.*;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 public class MitigationsMenu extends JMenu
 {
@@ -32,7 +30,7 @@ public class MitigationsMenu extends JMenu
 
         menu.add(JComponents.createMenuItem("Crash",
                 "Forces the client to crash within the next render tick.",
-                () -> Supervisor.getInstance().getFlags().setSupposedToCrash(true)));
+                () -> Supervisor.getInstance().crashClient()));
         //--
         menu.add(JComponents.createMenuItem("Disconnect",
                 "Immediately disconnects you from the server.",

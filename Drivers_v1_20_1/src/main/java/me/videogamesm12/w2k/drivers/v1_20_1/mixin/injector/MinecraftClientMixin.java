@@ -39,43 +39,6 @@ public abstract class MinecraftClientMixin
         }
     }
 
-    /**
-     * <p>This forces the Supervisor to properly shut down after the client has crashed if a mod like Not Enough Crashes is not present.</p>
-     * <p>If the crash was intentionally caused by the Supervisor, this reverts also the flag if Not Enough Crashes was detected to avoid a potential softlock.</p>
-     * @param ci    CallbackInfo
-     */
-    @Inject(method = "cleanUpAfterCrash", at = @At("RETURN"))
-    public void onCleanUpAfterCrash(CallbackInfo ci)
-    {
-        if (!FabricLoader.getInstance().isModLoaded("notenoughcrashes"))
-        {
-            Supervisor.getInstance().shutdown();
-        }
-        else
-        {
-            Flags flags = Supervisor.getInstance().getFlags();
-
-            if (flags.isSupposedToCrash())
-            {
-                flags.setSupposedToCrash(false);
-            }
-        }
-    }
-
-    /**
-     * <p>This will intentionally crash the client if the relevant flags are set.</p>
-     * @param ci    CallbackInfo
-     */
-    @Inject(method = "run", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/MinecraftClient;endMonitor(ZLnet/minecraft/util/TickDurationMonitor;)V", shift = At.Shift.AFTER))
-    public void intentionallyCrash(CallbackInfo ci)
-    {
-        if (Supervisor.getInstance().getFlags().isSupposedToCrash())
-        {
-            W2K.getLogger().info("Hey, want to see a magic trick?");
-            int lol = 0 / 0;
-        }
-    }
-
     @Inject(method = "printCrashReport", at = @At(value = "INVOKE", target = "Ljava/lang/System;exit(I)V", shift = At.Shift.BEFORE, ordinal = -1), locals = LocalCapture.CAPTURE_FAILHARD)
     private static void catchCrashReport(CrashReport crashReport, CallbackInfo ci, File crashReportFolder, File crashReportFile)
     {

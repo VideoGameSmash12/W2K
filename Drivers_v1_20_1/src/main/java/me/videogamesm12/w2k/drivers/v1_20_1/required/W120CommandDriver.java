@@ -185,7 +185,7 @@ public class W120CommandDriver implements WCommandDriver
             }
 
             // Add the root command
-            nodes.add(ClientCommandManager.literal(getCommand().getName()));
+            nodes.add(ClientCommandManager.literal(getCommand().getName()).requires(source -> getCommand().available()));
 
             // Scan the path
             for (final String pathEntry : path)

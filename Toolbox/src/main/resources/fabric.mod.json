@@ -20,8 +20,7 @@
       "me.videogamesm12.w2k.toolbox.modules.DevelopmentBuildWatermark",
       "me.videogamesm12.w2k.toolbox.modules.QueryLogger",
       "me.videogamesm12.w2k.toolbox.modules.TargetHighlighter",
-      "me.videogamesm12.w2k.toolbox.modules.TPSOverlay",
-      "me.videogamesm12.w2k.toolbox.modules.WPacketLogger"
+      "me.videogamesm12.w2k.toolbox.modules.TPSOverlay"
     ]
   },
   "depends": {

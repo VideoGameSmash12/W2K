@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 /**
  * <h1>WCommand</h1>
@@ -22,6 +23,7 @@ public abstract class WCommand
     private final String name;
     private final String usage;
     private final List<CommandPath<?, ?>> paths;
+    private Predicate<WCommand> predicate;
 
     protected WCommand()
     {
@@ -35,6 +37,11 @@ public abstract class WCommand
         this.name       = parameters.name();
         this.usage      = parameters.usage();
         this.paths      = new ArrayList<>();
+    }
+
+    public boolean available()
+    {
+        return true;
     }
 
     public void addPath(final CommandPath<?, ?> path)

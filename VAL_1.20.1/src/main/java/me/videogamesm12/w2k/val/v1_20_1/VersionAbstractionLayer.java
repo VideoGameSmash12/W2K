@@ -7,6 +7,7 @@ import me.videogamesm12.w2k.kernel.abstraction.BaseVersionAbstractionLayer;
 import me.videogamesm12.w2k.kernel.abstraction.conversion.NBTConverter;
 import me.videogamesm12.w2k.kernel.abstraction.conversion.TextComponentConverter;
 import me.videogamesm12.w2k.kernel.abstraction.network.PlayNetworkHandlerInterface;
+import me.videogamesm12.w2k.kernel.abstraction.render.OverlayRenderDispatcher;
 import me.videogamesm12.w2k.kernel.abstraction.world.ClientPlayerEntityInterface;
 import me.videogamesm12.w2k.kernel.abstraction.world.EntityInterface;
 import me.videogamesm12.w2k.kernel.data.TextOverlay;
@@ -18,6 +19,8 @@ import me.videogamesm12.w2k.kernel.event.network.DisconnectEvent;
 import me.videogamesm12.w2k.kernel.event.network.JoinEvent;
 import me.videogamesm12.w2k.kernel.module.WModule;
 import me.videogamesm12.w2k.kernel.util.ComponentUtils;
+import me.videogamesm12.w2k.val.v1_20_1.graphics.OverlayRenderDispatcherImpl;
+import me.videogamesm12.w2k.val.v1_20_1.graphics.renderer.AbstractOverlayRenderer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
@@ -69,11 +72,12 @@ public class VersionAbstractionLayer extends BaseVersionAbstractionLayer<Minecra
                 }
             },
             NbtCompound::toString);
-    private final Map<String, BiConsumer<Overlay, DrawContext>> overlayRendererRegistry = new HashMap<>();
+    private final OverlayRenderDispatcherImpl renderDispatcher;
 
     public VersionAbstractionLayer()
     {
         super(MinecraftClient.getInstance());
+        this.renderDispatcher = new OverlayRenderDispatcherImpl();
     }
 
     @Override
@@ -114,73 +118,6 @@ public class VersionAbstractionLayer extends BaseVersionAbstractionLayer<Minecra
 
             return ActionResult.PASS;
         });
-
-        // Register
-        overlayRendererRegistry.put("w2k:text", (overlay, context) ->
-        {
-            final TextOverlay textOverlay = (TextOverlay) overlay;
-
-            final Overlay.Alignment horizontal = overlay.getHorizontalAlignment();
-            final Overlay.Alignment vertical = overlay.getVerticalAlignment();
-
-            // Get the starting position
-            int xi = switch (horizontal)
-            {
-                case LEAST -> 0;
-                case CENTER -> context.getScaledWindowWidth() / 2;
-                case MOST -> context.getScaledWindowWidth();
-            };
-            int y = switch (vertical)
-            {
-                case LEAST -> 0;
-                case CENTER -> context.getScaledWindowHeight() / 2;
-                case MOST -> context.getScaledWindowHeight();
-            };
-
-            if (textOverlay.shouldUpdate())
-            {
-                textOverlay.update();
-            }
-
-            final List<Text> compiled = textOverlay.getCompiledText();
-
-            for (int i = 0; i < compiled.size(); i++)
-            {
-                Text text = compiled.get(i);
-                int level = (i * minecraft.textRenderer.fontHeight);
-
-                int x = switch (horizontal)
-                {
-                    case LEAST -> overlay.getX();
-                    case CENTER -> xi - horizontal.offset(minecraft.textRenderer.getWidth(text));
-                    case MOST -> (xi - minecraft.textRenderer.getWidth(text)) + horizontal.offset(overlay.getX());
-                };
-                y = switch (vertical)
-                {
-                    case LEAST -> overlay.getY() + level;
-                    case CENTER -> y + (overlay.getY() + level);
-                    case MOST -> (y - overlay.getY() - level);
-                };
-
-                context.drawText(minecraft.textRenderer, text, x, y, 0xFFFFFF, textOverlay.isShadowEnabled());
-
-            }
-        });
-
-        // Register our overlay renderer
-        HudRenderCallback.EVENT.register((lol, ass) ->
-        {
-            W2K.getInstance().getModuleManager().getIdRegistry().values().stream()
-                    .filter(WModule::isEnabled)
-                    .map(WModule::getOverlays)
-                    .flatMap(Collection::stream)
-                    .filter(overlay -> overlay.getShouldDisplay().test(overlay))
-                    .forEach(overlay ->
-                    {
-                        overlayRendererRegistry.getOrDefault(overlay.getId(), (ignored1, ignored2) -> {})
-                                .accept(overlay, lol);
-                    });
-        });
     }
 
     @Override
@@ -193,6 +130,12 @@ public class VersionAbstractionLayer extends BaseVersionAbstractionLayer<Minecra
     public Optional<Entity> getTargetedEntity()
     {
         return Optional.ofNullable(minecraft.targetedEntity);
+    }
+
+    @Override
+    public EntityInterface getTargetedEntityUnsafe()
+    {
+        return (EntityInterface) minecraft.targetedEntity;
     }
 
     @Override
@@ -229,5 +172,11 @@ public class VersionAbstractionLayer extends BaseVersionAbstractionLayer<Minecra
     public NBTConverter<NbtCompound> nbt()
     {
         return nbtConverter;
+    }
+
+    @Override
+    public OverlayRenderDispatcher<AbstractOverlayRenderer> renderDispatcher()
+    {
+        return renderDispatcher;
     }
 }

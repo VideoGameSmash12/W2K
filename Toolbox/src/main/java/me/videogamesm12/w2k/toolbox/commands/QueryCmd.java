@@ -7,7 +7,9 @@ import me.videogamesm12.w2k.kernel.abstraction.world.EntityInterface;
 import me.videogamesm12.w2k.kernel.command.ExecutionPath;
 import me.videogamesm12.w2k.kernel.command.Parameters;
 import me.videogamesm12.w2k.kernel.command.WCommand;
-import net.kyori.adventure.nbt.CompoundBinaryTag;
+import me.videogamesm12.w2k.kernel.event.BulkEvent;
+import me.videogamesm12.w2k.kernel.event.network.DataQueryResponseEvent;
+import me.videogamesm12.w2k.toolbox.modules.QueryLogger;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 
@@ -16,12 +18,17 @@ import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.TimeoutException;
-import java.util.stream.Collectors;
 
 @Parameters(name = "query", usage = "")
 public class QueryCmd extends WCommand
 {
     private final ForkJoinPool pool = new ForkJoinPool(4);
+
+    @Override
+    public boolean available()
+    {
+        return W2K.getInstance().getModuleManager().getModule(QueryLogger.class).isEnabled();
+    }
 
     @ExecutionPath({"entities", "<selector|w2k:wrapped/entities>"})
     public void queryEntities(final EntitySelectorInterface selectors)
@@ -29,36 +36,27 @@ public class QueryCmd extends WCommand
         final PlayNetworkHandlerInterface handler = W2K.getInstance().getVersionAbstractionLayer().networkHandler()
                 .orElseThrow(() -> new IllegalStateException("Not connected to a server"));
 
-        msg(Component.text("Initiating queries"));
+        msg(Component.translatable("w2k.toolbox.query.bulk.starting", NamedTextColor.GRAY));
         pool.submit(() ->
         {
-            final List<CompoundBinaryTag> data = new ArrayList<>();
+            final List<DataQueryResponseEvent> events = new ArrayList<>();
 
             selectors.w2k$getClientEntities().parallelStream()
-                    .map(entity -> handler.w2k$getDataQueryHandler().w2k$queryEntity(entity.w2k$id()))
-                    .peek(CompletableFuture::join)
-                    .forEach(future -> future.whenComplete((result, exception) ->
-                    {
-                        if (exception != null)
-                        {
-                            W2K.getLogger().error("Error", exception);
-                            return;
-                        }
+                    .map(entity -> handler.w2k$getDataQueryHandler().w2k$queryEntity(entity.w2k$id())
+                            .whenComplete((result, throwable) ->
+                            {
+                                if (throwable != null)
+                                {
+                                    msg(Component.translatable("w2k.toolbox.query.failed.error", NamedTextColor.RED));
+                                    W2K.getLogger().error("Failed to query entity {}", entity.w2k$id(), throwable);
+                                    return;
+                                }
 
-                        data.add(result);
-                    }));
+                                events.add(new DataQueryResponseEvent(entity.w2k$type(), entity.w2k$blockPos(), result, "entity", "w2k-toolbox:query_command"));
+                            }))
+                    .forEach(CompletableFuture::join);
 
-            msg(Component.text("Done, we got " + data.size() + " results"));
-            data.forEach(tag ->
-            {
-                try
-                {
-                    W2K.getLogger().info(W2K.getInstance().getVersionAbstractionLayer().nbt().adventureToString(tag));
-                }
-                catch (IOException e)
-                {
-                }
-            });
+            W2K.getEventBus().post(new BulkEvent<>(events, DataQueryResponseEvent.class));
         });
 
     }

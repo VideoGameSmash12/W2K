@@ -55,10 +55,4 @@ public abstract class ClientPlayerEntityWrapper implements ClientPlayerEntityInt
 
         return entries;
     }
-
-    @Override
-    public boolean w2k$isCreative()
-    {
-        return PlayerEntity.class.cast(this).isCreative();
-    }
 }

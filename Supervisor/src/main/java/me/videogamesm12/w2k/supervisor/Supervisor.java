@@ -32,8 +32,9 @@ import me.videogamesm12.w2k.kernel.abstraction.inventory.ItemStackInterface;
 import me.videogamesm12.w2k.kernel.abstraction.network.PlayNetworkHandlerInterface;
 import me.videogamesm12.w2k.kernel.abstraction.network.PlayerListEntryInterface;
 import me.videogamesm12.w2k.kernel.abstraction.world.*;
-import me.videogamesm12.w2k.kernel.data.*;
 import me.videogamesm12.w2k.kernel.event.diagnostics.PopulateCrashReportEvent;
+import me.videogamesm12.w2k.kernel.event.lifecycle.ClientCleanedUpAfterCrashEvent;
+import me.videogamesm12.w2k.kernel.event.lifecycle.ClientCrashedEvent;
 import me.videogamesm12.w2k.kernel.event.lifecycle.ClientStartedEvent;
 import me.videogamesm12.w2k.kernel.event.lifecycle.ClientStoppedEvent;
 import me.videogamesm12.w2k.supervisor.api.SVComponent;
@@ -106,6 +107,17 @@ public class Supervisor extends Thread
     @Subscribe
     public void onClientStopped(ClientStoppedEvent event)
     {
+        shutdown();
+    }
+
+    @Subscribe
+    public void onClientCleanUpAfterCrash(ClientCleanedUpAfterCrashEvent event)
+    {
+        if (FabricLoader.getInstance().isModLoaded("notenoughcrashes"))
+        {
+            return;
+        }
+
         shutdown();
     }
 
@@ -233,6 +245,14 @@ public class Supervisor extends Thread
     {
         saveConfiguration();
         components.forEach(SVComponent::shutdown);
+    }
+
+    public void crashClient()
+    {
+        W2K.getInstance().getVersionAbstractionLayer().execute(() ->
+        {
+            throw new Error("Intentionally crashed by Supervisor");
+        });
     }
 
     public void shutdownForcefully()

@@ -1,5 +1,6 @@
 package me.videogamesm12.w2k.val.v1_20_1.wrappers.world;
 
+import me.videogamesm12.w2k.kernel.abstraction.util.BlockPosInterface;
 import me.videogamesm12.w2k.kernel.abstraction.world.EntityInterface;
 import net.kyori.adventure.text.Component;
 import net.minecraft.client.MinecraftClient;
@@ -7,6 +8,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.text.Text;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
@@ -53,6 +55,8 @@ public abstract class EntityWrapper implements EntityInterface
     @Shadow
     public abstract void discard();
 
+    @Shadow
+    private BlockPos blockPos;
     @Unique
     private Component cachedName = null;
     @Unique
@@ -104,6 +108,12 @@ public abstract class EntityWrapper implements EntityInterface
     public double w2k$z()
     {
         return getPos().z;
+    }
+
+    @Override
+    public BlockPosInterface w2k$blockPos()
+    {
+        return (BlockPosInterface) blockPos;
     }
 
     @Override

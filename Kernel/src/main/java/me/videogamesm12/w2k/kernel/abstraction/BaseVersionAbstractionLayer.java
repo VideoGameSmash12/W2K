@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import me.videogamesm12.w2k.kernel.abstraction.conversion.NBTConverter;
 import me.videogamesm12.w2k.kernel.abstraction.conversion.TextComponentConverter;
 import me.videogamesm12.w2k.kernel.abstraction.network.PlayNetworkHandlerInterface;
+import me.videogamesm12.w2k.kernel.abstraction.render.OverlayRenderDispatcher;
 import me.videogamesm12.w2k.kernel.abstraction.world.ClientPlayerEntityInterface;
 import me.videogamesm12.w2k.kernel.abstraction.world.ClientWorldInterface;
 import me.videogamesm12.w2k.kernel.abstraction.world.EntityInterface;
@@ -14,7 +15,7 @@ import java.util.Optional;
 /**
  * <h1>BaseVersionAbstractionLayer</h1>
  * <p>An abstract class used to keep version specific code separate from the codebases of W2K's components.</p>
- * <p>Modules containing Version Abstraction Layers serve two purposes:</p>
+ * <p>Subprojects containing Version Abstraction Layers serve two purposes:</p>
  * <ol>
  *     <li>Implement the {@link ObjectInterface} variations located in {@code me.videogamesm12.w2k.kernel}. The
  *     implementations should try to remain functionally consistent where possible and stay organized. For example,
@@ -23,8 +24,8 @@ import java.util.Optional;
  *     <li>Forward events from the mod loader's API to W2K's own {@link me.videogamesm12.w2k.kernel.event.CustomEvent}
  *     system and inject code into the game to call our own events if no such events exist</li>
  * </ol>
- * <p>In both cases, this aims to only implement the bare minimum required for core features of W2K to work in a
- *  particular Minecraft version.</p>
+ * <p>Code changes on this level should only be done to ensure that the purposes mentioned above are accomplished where
+ *  possible.</p>
  * @param <Minecraft>   MinecraftClient or Minecraft (depending on the mappings you are using)
  */
 @RequiredArgsConstructor
@@ -74,6 +75,13 @@ public abstract class BaseVersionAbstractionLayer<Minecraft>
     public abstract <Entity extends EntityInterface> Optional<Entity> getTargetedEntity();
 
     /**
+     * <p>Gets the {@code Entity} representing the player that the user is currently looking at.</p>
+     * <p>Since the player is not always going to be looking at an entity, this can have a chance of being null.</p>
+     * @return          Entity
+     */
+    public abstract EntityInterface getTargetedEntityUnsafe();
+
+    /**
      * Instructs the client to close whatever screen is open.
      */
     public abstract void closeCurrentScreen();
@@ -99,6 +107,8 @@ public abstract class BaseVersionAbstractionLayer<Minecraft>
      * @param <NbtCompound> {@code NbtCompound} or {@code CompoundTag} (depends on your mappings)
      */
     public abstract <NbtCompound> NBTConverter<NbtCompound> nbt();
+
+    public abstract <BaseRenderer> OverlayRenderDispatcher<BaseRenderer> renderDispatcher();
 
     /**
      * <p>Gets the current client version using the Fabric Loader API.</p>

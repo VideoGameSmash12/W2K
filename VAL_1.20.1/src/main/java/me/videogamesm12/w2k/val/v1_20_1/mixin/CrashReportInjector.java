@@ -1,4 +1,4 @@
-package me.videogamesm12.w2k.drivers.v1_20_1.mixin.injector;
+package me.videogamesm12.w2k.val.v1_20_1.mixin;
 
 import me.videogamesm12.w2k.kernel.W2K;
 import me.videogamesm12.w2k.kernel.event.diagnostics.PopulateCrashReportEvent;
@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 @Mixin(CrashReport.class)
-public class CrashReportMixin
+public class CrashReportInjector
 {
     @Inject(method = "asString", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/crash/CrashReport;addStackTrace(Ljava/lang/StringBuilder;)V", shift = At.Shift.AFTER), locals = LocalCapture.CAPTURE_FAILHARD)
     public void injectOurCrashReportData(CallbackInfoReturnable<String> cir, StringBuilder stringBuilder)

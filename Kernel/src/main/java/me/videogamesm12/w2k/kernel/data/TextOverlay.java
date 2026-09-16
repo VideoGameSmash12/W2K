@@ -43,7 +43,7 @@ public class TextOverlay extends Overlay
 
     public boolean shouldUpdate()
     {
-        return getShouldDisplay().test(this) && !this.marker.equals(markerGetter.get());
+        return getShouldDisplay().test(this) && this.marker != markerGetter.get();
     }
 
     public <Text> List<Text> getCompiledText()

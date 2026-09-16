@@ -19,7 +19,6 @@
     "defaultRequire": 1
   },
   "mixins": [
-    "injector.CrashReportMixin",
     "injector.KeyboardMixin"
   ]
 }

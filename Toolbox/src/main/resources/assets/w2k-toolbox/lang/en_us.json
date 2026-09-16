@@ -28,7 +28,8 @@
 
   "w2k.toolbox.query.failed.timeout": "Timed out whilst waiting for a response from the server.",
   "w2k.toolbox.query.failed.error": "An unexpected error occurred. Please consult the client logs for more information.",
-  "w2k.toolbox.query.bulk.success": "",
+  "w2k.toolbox.query.bulk.starting": "Sending queries to server...",
+  "w2k.toolbox.query.bulk.success": "%s files were successfully written to disk.",
 
   "w2k.toolbox.module.antilockup.blocked": "Blocked %1$d suspicious inventory packet(s) (suspected lockup attempt?)"
 }

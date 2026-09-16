@@ -6,12 +6,9 @@ import net.kyori.adventure.text.Component;
 import java.util.List;
 import java.util.Optional;
 
-public interface ClientPlayerEntityInterface extends LivingEntityInterface
+public interface ClientPlayerEntityInterface extends PlayerEntityInterface
 {
     void w2k$displayMessage(final Component component);
 
     List<ItemStackInterface> w2k$getInventory();
-
-    boolean w2k$isCreative();
-
 }

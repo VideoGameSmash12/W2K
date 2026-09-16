@@ -2,9 +2,16 @@ package me.videogamesm12.w2k.toolbox.modules;
 
 import com.google.common.eventbus.Subscribe;
 import me.videogamesm12.w2k.kernel.W2K;
+import me.videogamesm12.w2k.kernel.data.Overlay;
+import me.videogamesm12.w2k.kernel.data.TextOverlay;
 import me.videogamesm12.w2k.kernel.event.protocol.WPacketReceivedEvent;
 import me.videogamesm12.w2k.kernel.module.WModule;
+import me.videogamesm12.wcom.Stage;
 import me.videogamesm12.wcom.protocol.clientbound.WClientboundHeartbeatPacket;
+import net.kyori.adventure.text.Component;
+
+import java.util.Arrays;
+import java.util.Collections;
 
 public class TPSOverlay extends WModule
 {
@@ -16,6 +23,12 @@ public class TPSOverlay extends WModule
                 "TPS Overlay (Not Working)",
                 "Show an overlay of the average tick rate of the server.",
                 null);
+
+        addOverlay(new TextOverlay(0, 0, Overlay.Alignment.LEAST, Overlay.Alignment.MOST,
+                overlay -> isEnabled() /*&& w2k().getDriverManager().getCommunicationsDriver().getStage() == Stage.READY*/,
+                () -> Collections.singletonList(Component.text("TPS: " + Arrays.toString(ticks))),
+                () -> ticks,
+                true));
     }
 
     @Subscribe

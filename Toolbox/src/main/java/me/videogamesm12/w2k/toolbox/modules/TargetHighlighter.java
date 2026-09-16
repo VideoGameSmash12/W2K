@@ -21,26 +21,29 @@ public class TargetHighlighter extends WModule
         super("Target Highlighter",
                 "Highlights the player that you are currently looking at.");
 
-        addOverlay(new TextOverlay(0, 0, Overlay.Alignment.CENTER, Overlay.Alignment.CENTER,
-                overlay -> isEnabled() && lookingAtValidTarget(),
+        addOverlay(new TextOverlay(0, 32, Overlay.Alignment.CENTER, Overlay.Alignment.CENTER,
+                overlay -> lookingAtValidTarget(),
                 () -> Collections.singletonList(createTargetText()),
-                System::currentTimeMillis,
+                () -> {
+                    final EntityInterface entity = versionAbstractionLayer().getTargetedEntityUnsafe();
+                    return entity != null ? entity.w2k$id() : null;
+                },
                 true));
     }
 
     public boolean lookingAtValidTarget(EntityInterface entity)
     {
-        return versionAbstractionLayer().getTargetedEntity()
-                .filter(target -> target.w2k$type().equalsIgnoreCase("minecraft:player"))
-                .filter(target -> target.w2k$id() == entity.w2k$id())
-                .isPresent();
+        final EntityInterface target = versionAbstractionLayer().getTargetedEntityUnsafe();
+        return target != null
+                && target.w2k$type().equalsIgnoreCase("minecraft:player")
+                && target.w2k$uuid().equals(entity.w2k$uuid());
     }
 
     public boolean lookingAtValidTarget()
     {
-        return versionAbstractionLayer().getTargetedEntity()
-                .filter(entity -> entity.w2k$type().equalsIgnoreCase("minecraft:player"))
-                .isPresent();
+        final EntityInterface entity = versionAbstractionLayer().getTargetedEntityUnsafe();
+        return entity != null
+                && entity.w2k$type().equalsIgnoreCase("minecraft:player");
     }
 
     private Component createTargetText()

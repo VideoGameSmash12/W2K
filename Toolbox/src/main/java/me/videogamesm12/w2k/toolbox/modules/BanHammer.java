@@ -23,7 +23,6 @@ public class BanHammer extends WModule
     private final StringSetting itemType = register(new StringSetting("item_type", "Item Type",
             VersionUtils.isNewerThanOrRunning("1.16.5") ? "minecraft:netherite_axe" : "minecraft:diamond_axe"));
 
-    public final BooleanSetting showOverlay = register(new BooleanSetting("show_overlay", "Show Overlay", true));
     public final BooleanSetting outlineTarget = register(new BooleanSetting("outline_target", "Outline Target", true));
     public final BooleanSetting useCustomHighlightColor = register(new BooleanSetting("use_custom_highlight_color", "Use Custom Highlight Color", true));
     public final ColorSetting highlightColor = register(new ColorSetting("custom_highlight_color", "Custom Highlight Color", new Color(255, 0, 0)));
