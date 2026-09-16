@@ -39,13 +39,6 @@ public abstract class MinecraftClientMixin
         }
     }
 
-    @Inject(method = "printCrashReport", at = @At(value = "INVOKE", target = "Ljava/lang/System;exit(I)V", shift = At.Shift.BEFORE, ordinal = -1), locals = LocalCapture.CAPTURE_FAILHARD)
-    private static void catchCrashReport(CrashReport crashReport, CallbackInfo ci, File crashReportFolder, File crashReportFile)
-    {
-        final ClientCrashedEvent event = new ClientCrashedEvent(MinecraftClient.getInstance(), crashReport.getCause(), crashReportFile);
-        Supervisor.getEventBus().post(event);
-    }
-
     @Inject(method = "hasOutline", at = @At("HEAD"), cancellable = true)
     private void outlineTargetedPlayer(Entity entity, CallbackInfoReturnable<Boolean> cir)
     {
