@@ -14,9 +14,6 @@
   "icon": "assets/w2k-drivers-v1_20_1/icon.png",
   "environment": "client",
   "entrypoints": {
-    "w2k-command-wrapper-driver": [
-      "me.videogamesm12.w2k.drivers.v1_20_1.required.W120CommandDriver"
-    ]
   },
   "mixins": [
     "w2k.drivers.1_20_1.mixins.json"

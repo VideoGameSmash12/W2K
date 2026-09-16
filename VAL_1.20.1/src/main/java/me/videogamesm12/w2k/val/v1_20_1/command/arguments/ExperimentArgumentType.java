@@ -1,4 +1,4 @@
-package me.videogamesm12.w2k.drivers.v1_20_1.command;
+package me.videogamesm12.w2k.val.v1_20_1.command.arguments;
 
 import com.mojang.brigadier.Message;
 import com.mojang.brigadier.StringReader;

@@ -1,6 +1,7 @@
 package me.videogamesm12.w2k.kernel.abstraction;
 
 import lombok.RequiredArgsConstructor;
+import me.videogamesm12.w2k.kernel.abstraction.command.AbstractCommandRegistrar;
 import me.videogamesm12.w2k.kernel.abstraction.conversion.NBTConverter;
 import me.videogamesm12.w2k.kernel.abstraction.conversion.TextComponentConverter;
 import me.videogamesm12.w2k.kernel.abstraction.network.PlayNetworkHandlerInterface;
@@ -8,6 +9,7 @@ import me.videogamesm12.w2k.kernel.abstraction.render.OverlayRenderDispatcher;
 import me.videogamesm12.w2k.kernel.abstraction.world.ClientPlayerEntityInterface;
 import me.videogamesm12.w2k.kernel.abstraction.world.ClientWorldInterface;
 import me.videogamesm12.w2k.kernel.abstraction.world.EntityInterface;
+import me.videogamesm12.w2k.kernel.command.AbstractArgumentResolver;
 import net.fabricmc.loader.api.FabricLoader;
 
 import java.util.Optional;
@@ -109,6 +111,8 @@ public abstract class BaseVersionAbstractionLayer<Minecraft>
     public abstract <NbtCompound> NBTConverter<NbtCompound> nbt();
 
     public abstract <BaseRenderer> OverlayRenderDispatcher<BaseRenderer> renderDispatcher();
+
+    public abstract <Resolver extends AbstractArgumentResolver<?>> AbstractCommandRegistrar<Resolver> commandRegistrar();
 
     /**
      * <p>Gets the current client version using the Fabric Loader API.</p>

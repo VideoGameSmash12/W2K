@@ -17,14 +17,6 @@ import java.util.Map;
  *     <li>{@link WVersionBridgeDriver} ({@code w2k-version-bridge-driver}): A driver to call any Minecraft code.
  *     Implementations should never be re-used across versions unless you are <i>absolutely confident</i> that it
  *     will work and that nothing could possibly go wrong as a result of doing so.</li>
- *     <li>{@link WEventPassThruDriver} ({@code w2k-event-passthru-driver}): A driver to pass through client start and
- *     stop events from a Fabric API.</li>
- * </ul>
- * <p>Drivers marked as "required" but not necessary to start the game are as follows:</p>
- * <ul>
- *     <li>{@link WCommandDriver} ({@code w2k-command-wrapper-driver}): A driver to wrap and register client-side
- *     commands through an existing API (or creates one if present). This driver may be necessary to start the game in
- *     the future.</li>
  * </ul>
  * <p>Mods wishing to hook into W2K can do so by registering an instance of {@link WDriver} in the same way under the
  * {@code w2k-optional-driver} entrypoint.</p>
@@ -33,24 +25,16 @@ import java.util.Map;
 public class WDriverManager
 {
     private WVersionBridgeDriver versionBridge;
-    private WEventPassThruDriver eventPassThru;
-    private WCommandDriver commandWrapper;
     private WAmbassadorDriver communicationsDriver;
     private final Map<String, WDriver> optionalDrivers = new HashMap<>();
 
     public void loadRequiredDrivers()
     {
-        eventPassThru = FabricLoader.getInstance().getEntrypoints("w2k-event-passthru-driver",
-                WEventPassThruDriver.class).stream().filter(WDriver::isSupported).findAny()
-                .orElse(null);
                 //.orElseThrow(() -> new IllegalStateException("Event pass-through driver not found!"));
         versionBridge = FabricLoader.getInstance().getEntrypoints("w2k-version-bridge-driver",
                 WVersionBridgeDriver.class).stream().filter(WDriver::isSupported).findAny()
                 .orElse(null);
                 //.orElseThrow(() -> new IllegalStateException("Version bridge driver not found!"));
-
-        commandWrapper = FabricLoader.getInstance().getEntrypoints("w2k-command-wrapper-driver",
-                WCommandDriver.class).stream().filter(WDriver::isSupported).findAny().orElse(null);
         communicationsDriver = FabricLoader.getInstance().getEntrypoints("w2k-communications-driver",
                 WAmbassadorDriver.class).stream().filter(WDriver::isSupported).findAny().orElse(null);
 

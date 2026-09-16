@@ -1,4 +1,4 @@
-package me.videogamesm12.w2k.kernel.event.miscellaneous;
+package me.videogamesm12.w2k.kernel.event.hud;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

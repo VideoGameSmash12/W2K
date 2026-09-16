@@ -2,8 +2,7 @@ package me.videogamesm12.w2k.blackbox.window.tool.console;
 
 import com.google.common.eventbus.Subscribe;
 import me.videogamesm12.w2k.kernel.W2K;
-import me.videogamesm12.w2k.kernel.event.miscellaneous.ChatMessageAddedEvent;
-import me.videogamesm12.w2k.supervisor.Supervisor;
+import me.videogamesm12.w2k.kernel.event.hud.ChatMessageAddedEvent;
 
 import javax.swing.*;
 import java.awt.*;

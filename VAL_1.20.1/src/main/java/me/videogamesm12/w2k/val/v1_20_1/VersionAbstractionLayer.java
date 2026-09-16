@@ -7,27 +7,21 @@ import me.videogamesm12.w2k.kernel.abstraction.BaseVersionAbstractionLayer;
 import me.videogamesm12.w2k.kernel.abstraction.conversion.NBTConverter;
 import me.videogamesm12.w2k.kernel.abstraction.conversion.TextComponentConverter;
 import me.videogamesm12.w2k.kernel.abstraction.network.PlayNetworkHandlerInterface;
-import me.videogamesm12.w2k.kernel.abstraction.render.OverlayRenderDispatcher;
 import me.videogamesm12.w2k.kernel.abstraction.world.ClientPlayerEntityInterface;
 import me.videogamesm12.w2k.kernel.abstraction.world.EntityInterface;
-import me.videogamesm12.w2k.kernel.data.TextOverlay;
-import me.videogamesm12.w2k.kernel.data.Overlay;
 import me.videogamesm12.w2k.kernel.event.entity.EntityInteractionEvent;
 import me.videogamesm12.w2k.kernel.event.lifecycle.ClientStartedEvent;
 import me.videogamesm12.w2k.kernel.event.lifecycle.ClientStoppedEvent;
 import me.videogamesm12.w2k.kernel.event.network.DisconnectEvent;
 import me.videogamesm12.w2k.kernel.event.network.JoinEvent;
-import me.videogamesm12.w2k.kernel.module.WModule;
 import me.videogamesm12.w2k.kernel.util.ComponentUtils;
+import me.videogamesm12.w2k.val.v1_20_1.command.CommandRegistrar;
 import me.videogamesm12.w2k.val.v1_20_1.graphics.OverlayRenderDispatcherImpl;
-import me.videogamesm12.w2k.val.v1_20_1.graphics.renderer.AbstractOverlayRenderer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
-import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.fabricmc.fabric.api.event.player.AttackEntityCallback;
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
@@ -38,7 +32,6 @@ import net.minecraft.util.ActionResult;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.function.BiConsumer;
 
 @SuppressWarnings("unchecked")
 public class VersionAbstractionLayer extends BaseVersionAbstractionLayer<MinecraftClient>
@@ -73,11 +66,13 @@ public class VersionAbstractionLayer extends BaseVersionAbstractionLayer<Minecra
             },
             NbtCompound::toString);
     private final OverlayRenderDispatcherImpl renderDispatcher;
+    private final CommandRegistrar commandRegistrar;
 
     public VersionAbstractionLayer()
     {
         super(MinecraftClient.getInstance());
         this.renderDispatcher = new OverlayRenderDispatcherImpl();
+        this.commandRegistrar = new CommandRegistrar();
     }
 
     @Override
@@ -175,8 +170,14 @@ public class VersionAbstractionLayer extends BaseVersionAbstractionLayer<Minecra
     }
 
     @Override
-    public OverlayRenderDispatcher<AbstractOverlayRenderer> renderDispatcher()
+    public OverlayRenderDispatcherImpl renderDispatcher()
     {
         return renderDispatcher;
+    }
+
+    @Override
+    public CommandRegistrar commandRegistrar()
+    {
+        return commandRegistrar;
     }
 }

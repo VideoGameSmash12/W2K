@@ -1,0 +1,38 @@
+package me.videogamesm12.w2k.val.v1_20_1.command;
+
+import com.mojang.brigadier.arguments.ArgumentType;
+import lombok.Getter;
+import me.videogamesm12.w2k.kernel.command.AbstractArgumentResolver;
+import net.fabricmc.fabric.api.command.v2.ArgumentTypeRegistry;
+import net.minecraft.command.argument.serialize.ConstantArgumentSerializer;
+import net.minecraft.registry.Registries;
+import net.minecraft.util.Identifier;
+
+@Getter
+public class BrigadierArgumentResolver<T, AT extends ArgumentType<T>> extends AbstractArgumentResolver<T>
+{
+
+    private final Identifier minecraftIdentifier;
+    private final AT argumentType;
+
+    public BrigadierArgumentResolver(final Identifier identifier,
+                                     final Class<T> rawClass,
+                                     final AT argumentType,
+                                     final boolean registerIfUnique)
+    {
+        super(identifier.toString(), rawClass);
+        this.minecraftIdentifier = identifier;
+        this.argumentType = argumentType;
+
+        if (registerIfUnique && !Registries.COMMAND_ARGUMENT_TYPE.containsId(identifier))
+        {
+            ArgumentTypeRegistry.registerArgumentType(identifier, argumentType.getClass(), ConstantArgumentSerializer.of(() -> argumentType));
+        }
+    }
+
+    @Override
+    public T resolveArgument(String string)
+    {
+        throw new UnsupportedOperationException("This is only available in pre-Brigadier command APIs");
+    }
+}

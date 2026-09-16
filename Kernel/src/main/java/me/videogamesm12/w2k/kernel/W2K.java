@@ -126,10 +126,6 @@ public class W2K implements ModInitializer
         // Append our loaded drivers
         final StringBuilder driverList = new StringBuilder();
         driverList.append("Primary Drivers:\n");
-        driverList.append("\tWCommandDriver: ").append(driverManager.getCommandWrapper() != null ?
-                        driverManager.getCommandWrapper().getClass().getName() : "(not loaded)").append("\n");
-        driverList.append("\tWEventPassThruDriver: ").append(driverManager.getEventPassThru() != null ?
-                driverManager.getEventPassThru().getClass().getName() : "(not loaded)").append("\n");
         driverList.append("\tWVersionBridgeDriver: ").append(driverManager.getVersionBridge() != null ?
                 driverManager.getVersionBridge().getClass().getName() : "(not loaded)").append("\n");
         if (!driverManager.getOptionalDrivers().isEmpty())

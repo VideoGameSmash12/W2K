@@ -18,13 +18,13 @@ public class WCommandManager
     private final Map<String, WCommand> commandMap = new HashMap<>();
 
     /**
-     * Returns whether a {@link me.videogamesm12.w2k.kernel.driver.base.WCommandDriver command wrapper driver} is
-     *  currently registered
+     * Returns whether an {@link me.videogamesm12.w2k.kernel.abstraction.command.AbstractCommandRegistrar} is currently
+     *  registered
      * @return  True if a command driver is present.
      */
     public boolean isSupported()
     {
-        return W2K.getInstance().getDriverManager().getCommandWrapper() != null;
+        return W2K.getInstance().getVersionAbstractionLayer().commandRegistrar() != null;
     }
 
     /**
@@ -33,7 +33,7 @@ public class WCommandManager
      */
     public void registerCommand(WCommand command)
     {
-        // Don't register commands if the command driver doesn't exist
+        // Don't register commands if the command registrar doesn't exist
         if (!isSupported())
             return;
 
@@ -41,7 +41,7 @@ public class WCommandManager
             throw new IllegalArgumentException("Command class has already been registered!");
 
         commandMap.put(command.getName(), command);
-        W2K.getInstance().getDriverManager().getCommandWrapper().registerCommand(command);
+        W2K.getInstance().getVersionAbstractionLayer().commandRegistrar().registerCommand(command);
     }
 
     /**
