@@ -60,6 +60,6 @@ public class BanHammer extends WModule
                 && stack.w2k$isNotEmpty()
                 && stack.w2k$type().equalsIgnoreCase(itemType.get())
                 && stack.w2k$name() != null
-                && versionAbstractionLayer().text().adventureToString(stack.w2k$name()).contains(itemName);
+                && versionAbstractionLayer().text().jsonToString(stack.w2k$name()).contains(itemName);
     }
 }

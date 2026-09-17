@@ -89,8 +89,7 @@ public abstract class AbstractTab<T extends JComponent> extends JPanel
     {
         if (shouldDisplay(text))
         {
-            showMessage(W2K.getInstance().getVersionAbstractionLayer().text().adventureToString(text));
-            //showMessage(W2K.getInstance().getDriverManager().getVersionBridge().textToString(text));
+            showMessage(W2K.getInstance().getVersionAbstractionLayer().text().adventureToString(text, false));
         }
     }
 

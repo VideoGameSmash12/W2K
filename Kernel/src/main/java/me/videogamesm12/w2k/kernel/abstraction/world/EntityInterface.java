@@ -1,5 +1,6 @@
 package me.videogamesm12.w2k.kernel.abstraction.world;
 
+import com.google.gson.JsonElement;
 import me.videogamesm12.w2k.kernel.abstraction.ObjectInterface;
 import me.videogamesm12.w2k.kernel.abstraction.util.BlockPosInterface;
 import net.kyori.adventure.text.Component;
@@ -12,7 +13,7 @@ public interface EntityInterface extends ObjectInterface
 {
     String w2k$internalName();
 
-    Component w2k$name();
+    JsonElement w2k$name();
 
     String w2k$type();
 
@@ -35,11 +36,11 @@ public interface EntityInterface extends ObjectInterface
     default List<Object> w2k$toTableRow()
     {
         return Arrays.asList(
-                w2k$name() != null ? w2k$val().text().adventureToString(w2k$name()) : null,  // Display Name
-                w2k$type(),                                                                                       // Type
-                String.format("%s, %s, %s", w2k$x(), w2k$y(), w2k$z()),                                           // Location
-                w2k$id(),                                                                                         // ID
-                w2k$uuid().toString()                                                                             // UUID
+                w2k$name() != null ? w2k$val().text().jsonToString(w2k$name()) : null,  // Display Name
+                w2k$type(),                                                             // Type
+                String.format("%s, %s, %s", w2k$x(), w2k$y(), w2k$z()),                 // Location
+                w2k$id(),                                                               // ID
+                w2k$uuid().toString()                                                   // UUID
         );
     }
 }

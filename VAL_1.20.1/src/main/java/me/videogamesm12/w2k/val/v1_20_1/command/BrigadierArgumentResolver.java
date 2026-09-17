@@ -2,7 +2,7 @@ package me.videogamesm12.w2k.val.v1_20_1.command;
 
 import com.mojang.brigadier.arguments.ArgumentType;
 import lombok.Getter;
-import me.videogamesm12.w2k.kernel.command.AbstractArgumentResolver;
+import me.videogamesm12.w2k.kernel.abstraction.command.AbstractArgumentResolver;
 import net.fabricmc.fabric.api.command.v2.ArgumentTypeRegistry;
 import net.minecraft.command.argument.serialize.ConstantArgumentSerializer;
 import net.minecraft.registry.Registries;

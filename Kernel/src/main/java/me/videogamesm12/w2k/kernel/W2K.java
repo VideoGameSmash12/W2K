@@ -69,11 +69,8 @@ public class W2K implements ModInitializer
         moduleManager = new WModuleManager();
         logger.info("Kernel successfully initialized");
 
-        logger.info("Loading required drivers");
-        driverManager.loadRequiredDrivers();
-
-        logger.info("Loading optional drivers");
-        driverManager.loadOptionalDrivers();
+        logger.info("Loading drivers");
+        driverManager.loadDrivers();
 
         logger.info("Registering commands");
         commandManager.registerCommand(W2KCmd.class);
@@ -125,13 +122,10 @@ public class W2K implements ModInitializer
 
         // Append our loaded drivers
         final StringBuilder driverList = new StringBuilder();
-        driverList.append("Primary Drivers:\n");
-        driverList.append("\tWVersionBridgeDriver: ").append(driverManager.getVersionBridge() != null ?
-                driverManager.getVersionBridge().getClass().getName() : "(not loaded)").append("\n");
-        if (!driverManager.getOptionalDrivers().isEmpty())
+        if (!driverManager.getDrivers().isEmpty())
         {
-            driverList.append("\nOptional Drivers:\n");
-            driverManager.getOptionalDrivers().forEach((id, instance) ->
+            driverList.append("\nDrivers:\n");
+            driverManager.getDrivers().forEach((id, instance) ->
                     driverList.append("\t").append(instance.getClass().getName()).append(" (")
                             .append("registered under ").append(id).append(")"));
         }

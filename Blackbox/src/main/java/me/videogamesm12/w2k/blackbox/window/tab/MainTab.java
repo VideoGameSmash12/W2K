@@ -29,7 +29,6 @@ public class MainTab extends ScrollableTab
     @Override
     public void update()
     {
-        //textArea.setText(W2K.getInstance().getDriverManager().getVersionBridge().getClientDebugInformation());
-        textArea.setText("Debugging information not available in this build");
+        textArea.setText(String.join("\r\n", W2K.getInstance().getVersionAbstractionLayer().getClientOverview()));
     }
 }

@@ -46,9 +46,8 @@ public class QueryLogger extends WModule
 
                 if (alert.get())
                 {
-                    W2K.getInstance().getVersionAbstractionLayer().getLocalPlayer()
-                            .ifPresent(player ->
-                                    player.w2k$displayMessage(Component.text("Query response logged to " + path + ".", NamedTextColor.GREEN)));
+                    versionAbstractionLayer().getLocalPlayer().ifPresent(player ->
+                            player.w2k$displayMessage(Component.text("Query response logged to " + path + ".", NamedTextColor.GREEN)));
                 }
             }));
         }
@@ -84,7 +83,7 @@ public class QueryLogger extends WModule
 
                 if (alert.get())
                 {
-                    W2K.getInstance().getVersionAbstractionLayer().getLocalPlayer()
+                    versionAbstractionLayer().getLocalPlayer()
                             .ifPresent(player -> player.w2k$displayMessage(Component.translatable("w2k.toolbox.query.bulk.success", Component.text(success.get())
                                     .color(NamedTextColor.GREEN))));
                 }

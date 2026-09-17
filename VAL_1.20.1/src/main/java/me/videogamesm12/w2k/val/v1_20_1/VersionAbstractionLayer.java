@@ -1,12 +1,14 @@
 package me.videogamesm12.w2k.val.v1_20_1;
 
+import com.google.gson.JsonElement;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import me.videogamesm12.w2k.kernel.W2K;
 import me.videogamesm12.w2k.kernel.abstraction.BaseVersionAbstractionLayer;
 import me.videogamesm12.w2k.kernel.abstraction.conversion.NBTConverter;
-import me.videogamesm12.w2k.kernel.abstraction.conversion.TextComponentConverter;
+import me.videogamesm12.w2k.kernel.abstraction.conversion.TextConverter;
 import me.videogamesm12.w2k.kernel.abstraction.network.PlayNetworkHandlerInterface;
+import me.videogamesm12.w2k.kernel.abstraction.util.SessionInterface;
 import me.videogamesm12.w2k.kernel.abstraction.world.ClientPlayerEntityInterface;
 import me.videogamesm12.w2k.kernel.abstraction.world.EntityInterface;
 import me.videogamesm12.w2k.kernel.event.entity.EntityInteractionEvent;
@@ -15,12 +17,18 @@ import me.videogamesm12.w2k.kernel.event.lifecycle.ClientStoppedEvent;
 import me.videogamesm12.w2k.kernel.event.network.DisconnectEvent;
 import me.videogamesm12.w2k.kernel.event.network.JoinEvent;
 import me.videogamesm12.w2k.kernel.util.ComponentUtils;
+import me.videogamesm12.w2k.kernel.util.VersionUtils;
 import me.videogamesm12.w2k.val.v1_20_1.command.CommandRegistrar;
 import me.videogamesm12.w2k.val.v1_20_1.graphics.OverlayRenderDispatcherImpl;
+import me.videogamesm12.w2k.val.v1_20_1.mixin.DebugHudAccessor;
+import me.videogamesm12.w2k.val.v1_20_1.mixin.InGameHudAccessor;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.event.player.AttackEntityCallback;
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
+import net.minecraft.client.ClientBrandRetriever;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.world.ClientWorld;
@@ -36,11 +44,6 @@ import java.util.*;
 @SuppressWarnings("unchecked")
 public class VersionAbstractionLayer extends BaseVersionAbstractionLayer<MinecraftClient>
 {
-    private final TextComponentConverter<Text> textComponentConverter = new TextComponentConverter<>(
-            nativeComponent -> ComponentUtils.deserializeComponent(Text.Serializer.toJsonTree(nativeComponent)),
-            adventureComponent -> Text.Serializer.fromJson(ComponentUtils.serializeComponent(adventureComponent)),
-            adventureComponent -> Objects.requireNonNull(Text.Serializer.fromJson(ComponentUtils.serializeComponent(adventureComponent))).getString()
-    );
     private final NBTConverter<NbtCompound> nbtConverter = new NBTConverter<>(
             (io, nativeCompound) ->
             {
@@ -65,12 +68,41 @@ public class VersionAbstractionLayer extends BaseVersionAbstractionLayer<Minecra
                 }
             },
             NbtCompound::toString);
+    private final TextConverter<Text> textConverter;
     private final OverlayRenderDispatcherImpl renderDispatcher;
     private final CommandRegistrar commandRegistrar;
 
     public VersionAbstractionLayer()
     {
         super(MinecraftClient.getInstance());
+        this.textConverter = new TextConverter<>()
+        {
+            private final PlainTextComponentSerializer plainText = PlainTextComponentSerializer.plainText();
+
+            @Override
+            public Component nativeToAdventure(Text text)
+            {
+                return ComponentUtils.deserializeComponent(Text.Serializer.toJsonTree(text));
+            }
+
+            @Override
+            public Text adventureToNative(Component component)
+            {
+                return Text.Serializer.fromJson(ComponentUtils.serializeComponent(component));
+            }
+
+            @Override
+            public String adventureToString(Component component, boolean useNative)
+            {
+                return useNative ? adventureToNative(component).getString() : plainText.serialize(component);
+            }
+
+            @Override
+            public String jsonToString(JsonElement component)
+            {
+                return Objects.requireNonNull(Text.Serializer.fromJson(component)).getString();
+            }
+        };
         this.renderDispatcher = new OverlayRenderDispatcherImpl();
         this.commandRegistrar = new CommandRegistrar();
     }
@@ -122,6 +154,12 @@ public class VersionAbstractionLayer extends BaseVersionAbstractionLayer<Minecra
     }
 
     @Override
+    public Optional<ClientPlayerEntity> getLocalPlayer()
+    {
+        return Optional.ofNullable(minecraft.player);
+    }
+
+    @Override
     public Optional<Entity> getTargetedEntity()
     {
         return Optional.ofNullable(minecraft.targetedEntity);
@@ -134,9 +172,9 @@ public class VersionAbstractionLayer extends BaseVersionAbstractionLayer<Minecra
     }
 
     @Override
-    public Optional<ClientPlayerEntity> getLocalPlayer()
+    public SessionInterface getSession()
     {
-        return Optional.ofNullable(minecraft.player);
+        return (SessionInterface) minecraft.getSession();
     }
 
     @Override
@@ -158,9 +196,35 @@ public class VersionAbstractionLayer extends BaseVersionAbstractionLayer<Minecra
     }
 
     @Override
-    public TextComponentConverter<Text> text()
+    public void scheduleShutdown()
     {
-        return textComponentConverter;
+        minecraft.scheduleStop();
+    }
+
+    @Override
+    public List<String> getClientOverview()
+    {
+        final List<String> fallback = List.of(String.format("Minecraft %1$s (%1$s/%2$s)", VersionUtils.getGameVersion().getId(), ClientBrandRetriever.getClientModName()),
+                minecraft.fpsDebugString);
+
+        if (minecraft.inGameHud == null)
+            return fallback;
+
+        try
+        {
+            final DebugHudAccessor hud = ((DebugHudAccessor) ((InGameHudAccessor) minecraft.inGameHud).getDebugHud());
+            return hud.getLeftText();
+        }
+        catch (Exception ignored)
+        {
+            return fallback;
+        }
+    }
+
+    @Override
+    public TextConverter<Text> text()
+    {
+        return textConverter;
     }
 
     @Override

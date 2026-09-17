@@ -1,5 +1,6 @@
 package me.videogamesm12.w2k.kernel.abstraction.network;
 
+import com.google.gson.JsonElement;
 import com.mojang.authlib.GameProfile;
 import me.videogamesm12.w2k.kernel.abstraction.ObjectInterface;
 import net.kyori.adventure.text.Component;
@@ -16,7 +17,7 @@ public interface PlayerListEntryInterface extends ObjectInterface
 
     UUID w2k$uuid();
 
-    Component w2k$displayName();
+    JsonElement w2k$displayName();
 
     int w2k$latency();
 
@@ -30,7 +31,7 @@ public interface PlayerListEntryInterface extends ObjectInterface
     {
         return Arrays.asList(
                 w2k$username(),                                     // Username
-                w2k$val().text().adventureToString(w2k$displayName()),  // Display Name
+                w2k$val().text().jsonToString(w2k$displayName()),   // Display Name
                 w2k$uuid(),                                         // UUID
                 w2k$latency(),                                      // Ping
                 w2k$gameMode(),                                     // Gamemode

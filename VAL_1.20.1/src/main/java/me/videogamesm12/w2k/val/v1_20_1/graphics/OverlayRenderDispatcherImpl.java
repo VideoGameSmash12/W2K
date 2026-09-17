@@ -52,4 +52,10 @@ public class OverlayRenderDispatcherImpl implements OverlayRenderDispatcher<Abst
     {
         return (Renderer) rendererMap.get(overlayId);
     }
+
+    @Override
+    public boolean isRendererRegistered(String overlayId)
+    {
+        return rendererMap.containsKey(overlayId);
+    }
 }

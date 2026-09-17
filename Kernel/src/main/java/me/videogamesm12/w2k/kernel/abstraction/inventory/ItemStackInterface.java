@@ -1,5 +1,6 @@
 package me.videogamesm12.w2k.kernel.abstraction.inventory;
 
+import com.google.gson.JsonElement;
 import me.videogamesm12.w2k.kernel.abstraction.ObjectInterface;
 import net.kyori.adventure.text.Component;
 
@@ -8,7 +9,7 @@ import java.util.List;
 
 public interface ItemStackInterface extends ObjectInterface
 {
-    Component w2k$name();
+    JsonElement w2k$name();
 
     String w2k$type();
 
@@ -26,7 +27,7 @@ public interface ItemStackInterface extends ObjectInterface
     {
         return Arrays.asList(
                 w2k$name() != null ?
-                        w2k$val().text().adventureToString(w2k$name()) : null,  // Display Name
+                        w2k$val().text().jsonToString(w2k$name()) : null,       // Display Name
                 w2k$type(),                                                     // ID
                 w2k$count(),                                                    // Count
                 w2k$damage(),                                                   // Damage

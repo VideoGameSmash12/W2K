@@ -269,7 +269,7 @@ public class Supervisor extends Thread
 
     public void shutdownSafely()
     {
-        W2K.getInstance().getDriverManager().getVersionBridge().scheduleSafeShutdown();
+        W2K.getInstance().getVersionAbstractionLayer().scheduleShutdown();
     }
 
     public List<String> dumpThreads()

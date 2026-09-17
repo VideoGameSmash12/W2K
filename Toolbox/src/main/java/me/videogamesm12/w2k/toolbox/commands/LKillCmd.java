@@ -18,7 +18,8 @@ public class LKillCmd extends WCommand
     {
         // TODO: Build the self-exclusion into the resolver itself as a mode, lol
         final List<EntityInterface> entries = selector.w2k$getClientEntities();
-        entries.removeIf(entry -> entry.w2k$internalName().equalsIgnoreCase(W2K.getInstance().getDriverManager().getVersionBridge().getCurrentUsername()));
+        W2K.getInstance().getVersionAbstractionLayer().getLocalPlayer().ifPresent(player ->
+                entries.removeIf(entry -> entry.w2k$uuid().equals(player.w2k$uuid())));
         int amount = 0;
 
         for (EntityInterface entry : entries)

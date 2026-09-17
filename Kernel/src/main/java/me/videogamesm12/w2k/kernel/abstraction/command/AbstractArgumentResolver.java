@@ -1,4 +1,4 @@
-package me.videogamesm12.w2k.kernel.command;
+package me.videogamesm12.w2k.kernel.abstraction.command;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

@@ -3,8 +3,10 @@ package me.videogamesm12.w2k.kernel.driver;
 import lombok.Getter;
 import me.videogamesm12.w2k.kernel.driver.base.*;
 import net.fabricmc.loader.api.FabricLoader;
+import net.fabricmc.loader.api.ModContainer;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -12,40 +14,19 @@ import java.util.Map;
  * <p>W2K's management system for drivers. W2K uses as little Minecraft code as possible and instead opts to outsource a
  * lot of functionality to "drivers" (which are instances of {@link WDriver}). Drivers are registered using specific
  * entrypoints defined in a mod's {@code fabric.mod.json} file.</p>
- * <p>Drivers required for W2K to function on specific versions of Minecraft are as follows:</p>
- * <ul>
- *     <li>{@link WVersionBridgeDriver} ({@code w2k-version-bridge-driver}): A driver to call any Minecraft code.
- *     Implementations should never be re-used across versions unless you are <i>absolutely confident</i> that it
- *     will work and that nothing could possibly go wrong as a result of doing so.</li>
- * </ul>
  * <p>Mods wishing to hook into W2K can do so by registering an instance of {@link WDriver} in the same way under the
  * {@code w2k-optional-driver} entrypoint.</p>
  */
 @Getter
 public class WDriverManager
 {
-    private WVersionBridgeDriver versionBridge;
-    private WAmbassadorDriver communicationsDriver;
-    private final Map<String, WDriver> optionalDrivers = new HashMap<>();
+    private final Map<String, WDriver> drivers = new HashMap<>();
 
-    public void loadRequiredDrivers()
-    {
-                //.orElseThrow(() -> new IllegalStateException("Event pass-through driver not found!"));
-        versionBridge = FabricLoader.getInstance().getEntrypoints("w2k-version-bridge-driver",
-                WVersionBridgeDriver.class).stream().filter(WDriver::isSupported).findAny()
-                .orElse(null);
-                //.orElseThrow(() -> new IllegalStateException("Version bridge driver not found!"));
-        communicationsDriver = FabricLoader.getInstance().getEntrypoints("w2k-communications-driver",
-                WAmbassadorDriver.class).stream().filter(WDriver::isSupported).findAny().orElse(null);
-
-        //eventPassThru.setupEvents();
-    }
-
-    public void loadOptionalDrivers()
+    public void loadDrivers()
     {
         FabricLoader.getInstance().getEntrypoints("w2k-optional-driver", WDriver.class).stream().filter(WDriver::isSupported).forEach(driver ->
         {
-            optionalDrivers.put(driver.getMetadata().identifier(), driver);
+            drivers.put(driver.getMetadata().identifier(), driver);
             driver.onInitialize();
         });
     }

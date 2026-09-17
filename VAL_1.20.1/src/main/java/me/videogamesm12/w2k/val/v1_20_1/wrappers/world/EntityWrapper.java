@@ -1,5 +1,6 @@
 package me.videogamesm12.w2k.val.v1_20_1.wrappers.world;
 
+import com.google.gson.JsonElement;
 import me.videogamesm12.w2k.kernel.abstraction.util.BlockPosInterface;
 import me.videogamesm12.w2k.kernel.abstraction.world.EntityInterface;
 import net.kyori.adventure.text.Component;
@@ -58,7 +59,7 @@ public abstract class EntityWrapper implements EntityInterface
     @Shadow
     private BlockPos blockPos;
     @Unique
-    private Component cachedName = null;
+    private JsonElement cachedName = null;
     @Unique
     private int nameHash = 0;
 
@@ -69,7 +70,7 @@ public abstract class EntityWrapper implements EntityInterface
     }
 
     @Override
-    public Component w2k$name()
+    public JsonElement w2k$name()
     {
         final Text whatToUse = getDisplayName() != null ?
                 getDisplayName() :
@@ -79,7 +80,7 @@ public abstract class EntityWrapper implements EntityInterface
 
         if (cachedName == null || nameHash != whatToUse.hashCode())
         {
-            cachedName = w2k$val().text().nativeToAdventure(whatToUse);
+            cachedName = Text.Serializer.toJsonTree(whatToUse);
             nameHash = whatToUse.hashCode();
         }
 

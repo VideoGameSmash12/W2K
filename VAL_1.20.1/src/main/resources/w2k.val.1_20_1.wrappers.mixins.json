@@ -7,6 +7,7 @@
     "network.ClientPlayNetworkHandlerWrapper",
     "network.DataQueryHandlerWrapper",
     "network.PlayerListEntryWrapper",
+    "util.SessionWrapper",
     "world.ClientPlayerEntityWrapper",
     "world.ClientWorldWrapper"
   ],

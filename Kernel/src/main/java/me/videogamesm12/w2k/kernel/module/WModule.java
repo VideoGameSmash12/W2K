@@ -5,7 +5,6 @@ import me.videogamesm12.w2k.kernel.W2K;
 import me.videogamesm12.w2k.kernel.abstraction.BaseVersionAbstractionLayer;
 import me.videogamesm12.w2k.kernel.data.Overlay;
 import me.videogamesm12.w2k.kernel.driver.base.WAmbassadorDriver;
-import me.videogamesm12.w2k.kernel.driver.base.WVersionBridgeDriver;
 import me.videogamesm12.w2k.kernel.event.module.ModuleStateUpdateEvent;
 import me.videogamesm12.w2k.kernel.module.setting.WModuleSetting;
 import net.kyori.adventure.nbt.*;
@@ -135,16 +134,6 @@ public abstract class WModule
     protected W2K w2k()
     {
         return W2K.getInstance();
-    }
-
-    protected WAmbassadorDriver communicationsDriver()
-    {
-        return w2k().getDriverManager().getCommunicationsDriver();
-    }
-
-    protected WVersionBridgeDriver versionBridge()
-    {
-        return w2k().getDriverManager().getVersionBridge();
     }
 
     protected <Minecraft> BaseVersionAbstractionLayer<Minecraft> versionAbstractionLayer()

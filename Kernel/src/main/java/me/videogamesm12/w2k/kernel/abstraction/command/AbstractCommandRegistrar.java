@@ -1,6 +1,5 @@
 package me.videogamesm12.w2k.kernel.abstraction.command;
 
-import me.videogamesm12.w2k.kernel.command.AbstractArgumentResolver;
 import me.videogamesm12.w2k.kernel.command.WCommand;
 
 import java.util.HashMap;

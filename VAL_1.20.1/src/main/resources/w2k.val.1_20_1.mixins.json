@@ -12,6 +12,8 @@
   },
   "client": [
     "ChatHudInjector",
+    "DebugHudAccessor",
+    "InGameHudAccessor",
     "InGameHudInjector",
     "KeyboardInjector",
     "MinecraftClientInjector"

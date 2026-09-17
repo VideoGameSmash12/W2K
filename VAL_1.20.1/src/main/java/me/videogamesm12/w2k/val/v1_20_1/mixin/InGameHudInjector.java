@@ -25,10 +25,7 @@ public class InGameHudInjector
                 .map(WModule::getOverlays)
                 .flatMap(Collection::stream)
                 .filter(overlay -> overlay.getShouldDisplay().test(overlay))
-                .forEach(overlay ->
-                {
-                    if (impl.getRenderer(overlay.getId()) != null)
-                        impl.getRenderer(overlay.getId()).renderOverlay(overlay, context);
-                });
+                .filter(overlay -> impl.isRendererRegistered(overlay.getId()))
+                .forEach(overlay -> impl.getRenderer(overlay.getId()).renderOverlay(overlay, context));
     }
 }

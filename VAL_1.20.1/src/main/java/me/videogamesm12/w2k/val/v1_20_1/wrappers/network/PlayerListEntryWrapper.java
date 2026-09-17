@@ -1,5 +1,6 @@
 package me.videogamesm12.w2k.val.v1_20_1.wrappers.network;
 
+import com.google.gson.JsonElement;
 import com.mojang.authlib.GameProfile;
 import me.videogamesm12.w2k.kernel.abstraction.network.PlayerListEntryInterface;
 import net.kyori.adventure.text.Component;
@@ -39,7 +40,7 @@ public abstract class PlayerListEntryWrapper implements PlayerListEntryInterface
     public abstract String getModel();
 
     @Unique
-    private Component cachedDisplayName = null;
+    private JsonElement cachedDisplayName = null;
     @Unique
     private int displayNameHash = 0;
 
@@ -62,13 +63,13 @@ public abstract class PlayerListEntryWrapper implements PlayerListEntryInterface
     }
 
     @Override
-    public Component w2k$displayName()
+    public JsonElement w2k$displayName()
     {
         final Text displayName = getDisplayName() != null ? getDisplayName() : Text.literal(getProfile().getName());
 
         if (cachedDisplayName == null || displayName.hashCode() != displayNameHash)
         {
-            cachedDisplayName = w2k$val().text().nativeToAdventure(displayName);
+            cachedDisplayName = Text.Serializer.toJsonTree(displayName);
             displayNameHash = cachedDisplayName.hashCode();
         }
 
@@ -104,7 +105,7 @@ public abstract class PlayerListEntryWrapper implements PlayerListEntryInterface
     {
         return Arrays.asList(
                 w2k$username(),                                         // Username
-                w2k$val().text().adventureToString(w2k$displayName()),      // Display Name
+                w2k$val().text().jsonToString(w2k$displayName()),       // Display Name
                 w2k$uuid(),                                             // UUID
                 w2k$latency(),                                          // Ping
                 w2k$gameMode(),                                         // Gamemode

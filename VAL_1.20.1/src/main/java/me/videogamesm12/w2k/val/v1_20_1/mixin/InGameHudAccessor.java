@@ -1,4 +1,4 @@
-package me.videogamesm12.w2k.drivers.v1_20_1.mixin.accessor;
+package me.videogamesm12.w2k.val.v1_20_1.mixin;
 
 import net.minecraft.client.gui.hud.DebugHud;
 import net.minecraft.client.gui.hud.InGameHud;
@@ -6,7 +6,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
 @Mixin(InGameHud.class)
-public interface IGHAccessor
+public interface InGameHudAccessor
 {
     @Accessor
     DebugHud getDebugHud();
