@@ -12,8 +12,15 @@ import java.util.stream.Collectors;
 
 public class PlayerTableModel extends AbstractTableModel implements Dynamic
 {
-    private final List<String> columns = Arrays.asList("Username", "Display Name",  "UUID", "Ping (ms)");
+    private final List<String> columns;
     private final List<List<Object>> rows = new ArrayList<>();
+
+    public PlayerTableModel(boolean enhanced)
+    {
+        this.columns = enhanced ?
+                Arrays.asList("Username", "Display Name",  "UUID", "Ping (ms)", "Gamemode", "Model", "Skin ID") :
+                Arrays.asList("Username", "Display Name",  "UUID", "Ping (ms)");
+    }
 
     @Override
     public String getColumnName(int column)

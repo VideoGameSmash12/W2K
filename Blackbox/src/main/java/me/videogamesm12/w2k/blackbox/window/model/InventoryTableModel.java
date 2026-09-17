@@ -12,8 +12,15 @@ import java.util.stream.Collectors;
 
 public class InventoryTableModel extends AbstractTableModel implements Dynamic
 {
-    private final List<String> columns = Arrays.asList("Name", "Type", "Count", "Damage", "Slot");
+    private final List<String> columns;
     private final List<List<Object>> rows = new ArrayList<>();
+
+    public InventoryTableModel(boolean enhanced)
+    {
+        this.columns = enhanced ?
+                Arrays.asList("Name", "Type", "Count", "Damage", "Slot", "Data") :
+                Arrays.asList("Name", "Type", "Count", "Damage", "Slot");
+    }
 
     @Override
     public String getColumnName(int column)
