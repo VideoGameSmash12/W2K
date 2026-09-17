@@ -15,24 +15,8 @@ public class OverlayRenderDispatcherImpl implements OverlayRenderDispatcher<Abst
     public OverlayRenderDispatcherImpl()
     {
         // Register our renderers
-        //registerRenderer("w2k:text", new TextOverlayRenderer());
         registerRenderer("w2k:text", new TextOverlayRenderer());
         registerRenderer("w2k:box", new BoxOverlayRenderer());
-
-        // Register our overlay renderer
-        /*HudRenderCallback.EVENT.register((lol, ass) ->
-        {
-            W2K.getInstance().getModuleManager().getIdRegistry().values().stream()
-                    .filter(WModule::isEnabled)
-                    .map(WModule::getOverlays)
-                    .flatMap(Collection::stream)
-                    .filter(overlay -> overlay.getShouldDisplay().test(overlay))
-                    .forEach(overlay ->
-                    {
-                        if (getRenderer(overlay.getId()) != null)
-                            getRenderer(overlay.getId()).renderOverlay(overlay, lol);
-                    });
-        });*/
     }
 
     @Override
