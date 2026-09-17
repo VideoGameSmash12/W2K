@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
-  "id": "w2k-val-v1_20_1",
+  "id": "w2k-val-1_20_1",
   "version": "${version}",
-  "name": "Version Abstraction Layer for 1.20.1",
-  "description": "Implementation of W2K's Version Abstraction Layer for Minecraft 1.20 to 1.20.1",
+  "name": "Version Abstraction Layer",
+  "description": "Implementation of W2K's Version Abstraction Layer for Minecraft 1.20 and 1.20.1",
   "authors": [
     "videogamesm12"
   ],
@@ -11,7 +11,7 @@
     "repo": "https://github.com/videogamesm12/W2K"
   },
   "license": "MIT",
-  "icon": "assets/w2k-val-v1_20_1/icon.png",
+  "icon": "assets/w2k-val-1_20_1/icon.png",
   "environment": "client",
   "entrypoints": {
     "w2k-version-abstraction-layer": [

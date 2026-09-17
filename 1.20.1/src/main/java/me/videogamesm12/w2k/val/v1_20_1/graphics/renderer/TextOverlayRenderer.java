@@ -1,7 +1,5 @@
 package me.videogamesm12.w2k.val.v1_20_1.graphics.renderer;
 
-import me.videogamesm12.w2k.kernel.W2K;
-import me.videogamesm12.w2k.kernel.data.BoxOverlay;
 import me.videogamesm12.w2k.kernel.data.Overlay;
 import me.videogamesm12.w2k.kernel.data.TextOverlay;
 import net.minecraft.client.MinecraftClient;
@@ -9,12 +7,11 @@ import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
 
-import java.awt.*;
 import java.util.List;
 
-public class TextOverlayRenderer2 extends AbstractOverlayRenderer<TextOverlay>
+public class TextOverlayRenderer extends AbstractOverlayRenderer<TextOverlay>
 {
-    public TextOverlayRenderer2()
+    public TextOverlayRenderer()
     {
         super(TextOverlay.class);
     }
