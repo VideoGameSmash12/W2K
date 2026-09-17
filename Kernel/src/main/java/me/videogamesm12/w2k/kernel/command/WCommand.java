@@ -23,7 +23,6 @@ public abstract class WCommand
     private final String name;
     private final String usage;
     private final List<CommandPath<?, ?>> paths;
-    private Predicate<WCommand> predicate;
 
     protected WCommand()
     {

@@ -20,24 +20,26 @@ public class TPSOverlay extends WModule
     public TPSOverlay()
     {
         super("tps_overlay",
-                "TPS Overlay (Not Working)",
-                "Show an overlay of the average tick rate of the server.",
+                "TPS Overlay",
+                "Show an overlay of the average tick rate of the server. Requires LNX or a plugin implementing the WCom standard to be installed on the server-side.",
                 null);
 
         addOverlay(new TextOverlay(0, 0, Overlay.Alignment.LEAST, Overlay.Alignment.MOST,
-                overlay -> isEnabled() /*&& w2k().getDriverManager().getCommunicationsDriver().getStage() == Stage.READY*/,
+                overlay -> isEnabled() && w2k().getCommunicationManager().getStage() == Stage.READY,
                 () -> Collections.singletonList(Component.text("TPS: " + Arrays.toString(ticks))),
-                () -> ticks,
+                () -> ticks[0] + ticks[1] + ticks[2],
                 true));
+
+        w2k().getCommunicationManager().getEventBus().register(this);
     }
 
     @Subscribe
     public void onHeartbeatPacket(WClientboundHeartbeatPacket packet)
     {
+        if (!isEnabled()) return;
+
         ticks[0] = packet.getOneMinute();
         ticks[1] = packet.getFiveMinutes();
         ticks[2] = packet.getTenMinutes();
-
-        W2K.getLogger().info("Debug - got tps update packet");
     }
 }

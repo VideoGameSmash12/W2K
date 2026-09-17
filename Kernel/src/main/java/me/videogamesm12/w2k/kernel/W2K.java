@@ -8,6 +8,7 @@ import me.videogamesm12.w2k.kernel.command.WCommand;
 import me.videogamesm12.w2k.kernel.command.WCommandManager;
 import me.videogamesm12.w2k.kernel.commands.TestCmd;
 import me.videogamesm12.w2k.kernel.commands.W2KCmd;
+import me.videogamesm12.w2k.kernel.communication.WCommunicationManager;
 import me.videogamesm12.w2k.kernel.data.BuildMetadata;
 import me.videogamesm12.w2k.kernel.driver.WDriverManager;
 import me.videogamesm12.w2k.kernel.event.diagnostics.PopulateCrashReportEvent;
@@ -51,6 +52,8 @@ public class W2K implements ModInitializer
     @Getter
     private WCommandManager commandManager;
     @Getter
+    private WCommunicationManager communicationManager;
+    @Getter
     private WModuleManager moduleManager;
 
     @Override
@@ -65,6 +68,8 @@ public class W2K implements ModInitializer
         driverManager = new WDriverManager();
         logger.info("Setting up command manager");
         commandManager = new WCommandManager();
+        logger.info("Setting up communication manager");
+        communicationManager = new WCommunicationManager();
         logger.info("Setting up module manager");
         moduleManager = new WModuleManager();
         logger.info("Kernel successfully initialized");
@@ -106,11 +111,9 @@ public class W2K implements ModInitializer
     {
         versionAbstractionLayer = FabricLoader.getInstance().getEntrypoints("w2k-version-abstraction-layer", BaseVersionAbstractionLayer.class).stream()
                 .findAny()
-                .orElse(null);
-                //.orElseThrow(() -> new IllegalStateException("Unable to find a version abstraction layer compatible with this version of the game"));
+                .orElseThrow(() -> new IllegalStateException("Unable to find a version abstraction layer compatible with this version of the game"));
 
-        if (versionAbstractionLayer != null)
-            versionAbstractionLayer.setup();
+        versionAbstractionLayer.setup();
     }
 
     @Subscribe

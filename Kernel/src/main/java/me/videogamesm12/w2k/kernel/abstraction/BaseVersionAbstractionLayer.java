@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import me.videogamesm12.w2k.kernel.abstraction.command.AbstractCommandRegistrar;
 import me.videogamesm12.w2k.kernel.abstraction.conversion.NBTConverter;
 import me.videogamesm12.w2k.kernel.abstraction.conversion.TextConverter;
+import me.videogamesm12.w2k.kernel.abstraction.network.AbstractPacketTranslator;
 import me.videogamesm12.w2k.kernel.abstraction.network.PlayNetworkHandlerInterface;
 import me.videogamesm12.w2k.kernel.abstraction.util.SessionInterface;
 import me.videogamesm12.w2k.kernel.abstraction.render.OverlayRenderDispatcher;
@@ -138,7 +139,16 @@ public abstract class BaseVersionAbstractionLayer<Minecraft>
      * @param <Resolver>    An extension of {@link AbstractArgumentResolver}
      */
     @Nullable
-    public abstract <Resolver extends AbstractArgumentResolver<?>> AbstractCommandRegistrar<Resolver> commandRegistrar();
+    public <Resolver extends AbstractArgumentResolver<?>> AbstractCommandRegistrar<Resolver> commandRegistrar()
+    {
+        return null;
+    }
+
+    @Nullable
+    public AbstractPacketTranslator packetTranslator()
+    {
+        return null;
+    }
 
     /**
      * Gets the text that you typically see when you open the F3 overlay. In newer versions of Minecraft, this system

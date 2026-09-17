@@ -7,6 +7,7 @@ import me.videogamesm12.w2k.kernel.W2K;
 import me.videogamesm12.w2k.kernel.abstraction.BaseVersionAbstractionLayer;
 import me.videogamesm12.w2k.kernel.abstraction.conversion.NBTConverter;
 import me.videogamesm12.w2k.kernel.abstraction.conversion.TextConverter;
+import me.videogamesm12.w2k.kernel.abstraction.network.AbstractPacketTranslator;
 import me.videogamesm12.w2k.kernel.abstraction.network.PlayNetworkHandlerInterface;
 import me.videogamesm12.w2k.kernel.abstraction.util.SessionInterface;
 import me.videogamesm12.w2k.kernel.abstraction.world.ClientPlayerEntityInterface;
@@ -16,13 +17,16 @@ import me.videogamesm12.w2k.kernel.event.lifecycle.ClientStartedEvent;
 import me.videogamesm12.w2k.kernel.event.lifecycle.ClientStoppedEvent;
 import me.videogamesm12.w2k.kernel.event.network.DisconnectEvent;
 import me.videogamesm12.w2k.kernel.event.network.JoinEvent;
+import me.videogamesm12.w2k.kernel.event.network.RegisterPluginMessageEvent;
 import me.videogamesm12.w2k.kernel.util.ComponentUtils;
 import me.videogamesm12.w2k.kernel.util.VersionUtils;
 import me.videogamesm12.w2k.val.v1_20_1.command.CommandRegistrar;
 import me.videogamesm12.w2k.val.v1_20_1.graphics.OverlayRenderDispatcherImpl;
 import me.videogamesm12.w2k.val.v1_20_1.mixin.DebugHudAccessor;
 import me.videogamesm12.w2k.val.v1_20_1.mixin.InGameHudAccessor;
+import me.videogamesm12.w2k.val.v1_20_1.protocol.PacketTranslator;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
+import net.fabricmc.fabric.api.client.networking.v1.C2SPlayChannelEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.event.player.AttackEntityCallback;
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
@@ -71,6 +75,7 @@ public class VersionAbstractionLayer extends BaseVersionAbstractionLayer<Minecra
     private final TextConverter<Text> textConverter;
     private final OverlayRenderDispatcherImpl renderDispatcher;
     private final CommandRegistrar commandRegistrar;
+    private final PacketTranslator packetTranslator;
 
     public VersionAbstractionLayer()
     {
@@ -105,6 +110,7 @@ public class VersionAbstractionLayer extends BaseVersionAbstractionLayer<Minecra
         };
         this.renderDispatcher = new OverlayRenderDispatcherImpl();
         this.commandRegistrar = new CommandRegistrar();
+        this.packetTranslator = new PacketTranslator();
     }
 
     @Override
@@ -115,6 +121,7 @@ public class VersionAbstractionLayer extends BaseVersionAbstractionLayer<Minecra
         ClientLifecycleEvents.CLIENT_STOPPING.register((client) -> W2K.getEventBus().post(new ClientStoppedEvent(client)));
         ClientPlayConnectionEvents.DISCONNECT.register((connection, client) -> W2K.getEventBus().post(new DisconnectEvent(connection, client)));
         ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> W2K.getEventBus().post(new JoinEvent(handler, sender, client)));
+        C2SPlayChannelEvents.REGISTER.register(((handler, sender, client, channels) -> W2K.getEventBus().post(new RegisterPluginMessageEvent(client))));
         AttackEntityCallback.EVENT.register((player, world, hand, target, nullableHitResult) ->
         {
             if (player instanceof ClientPlayerEntity clientPlayer)
@@ -243,5 +250,11 @@ public class VersionAbstractionLayer extends BaseVersionAbstractionLayer<Minecra
     public CommandRegistrar commandRegistrar()
     {
         return commandRegistrar;
+    }
+
+    @Override
+    public PacketTranslator packetTranslator()
+    {
+        return packetTranslator;
     }
 }

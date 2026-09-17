@@ -10,4 +10,11 @@ public interface Driver
     Map<String, AbstractAction<?>> actions();
 
     ModContainer mod();
+
+    class Meta
+    {
+        String name;
+
+        String[] dependencies;
+    }
 }

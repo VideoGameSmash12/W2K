@@ -11,7 +11,7 @@ import java.util.function.Function;
 
 /**
  * <h1>NBTConverter</h1>
- * <p>An object containing a series of functions  which allows you to convert NBT tags between the Adventure NBT and
+ * <p>An object containing a series of functions which allows you to convert NBT tags between the Adventure NBT and
  *  native Minecraft formats.</p>
  * <p>Instances of this class can be obtained by calling {@link BaseVersionAbstractionLayer#nbt()}.</p>
  * @param <NbtCompound>     {@code NbtCompound} or {@code CompoundTag} (depending on your mappings)
