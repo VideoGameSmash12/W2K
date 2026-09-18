@@ -21,6 +21,7 @@ public class IncomingInventoryDataPacketEvent extends CustomEvent
         {
             setCancelled(false);
             this.syncId = syncId;
+            this.revision = revision;
             this.contents = contents;
             return this;
         }
