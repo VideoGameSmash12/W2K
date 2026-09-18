@@ -2,6 +2,7 @@ package me.videogamesm12.w2k.val.v1_20_1.mixin;
 
 import me.videogamesm12.w2k.kernel.W2K;
 import me.videogamesm12.w2k.kernel.abstraction.ObjectInterface;
+import me.videogamesm12.w2k.kernel.abstraction.inventory.ItemStackInterface;
 import me.videogamesm12.w2k.kernel.event.network.packet.*;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.network.packet.s2c.play.*;
@@ -13,6 +14,8 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import java.util.List;
 
 @Mixin(ClientPlayNetworkHandler.class)
 public class ClientPlayNetworkHandlerInjector
@@ -29,6 +32,8 @@ public class ClientPlayNetworkHandlerInjector
     private final IncomingMapUpdatePacketEvent mapUpdatePacketEvent = new IncomingMapUpdatePacketEvent();
     @Unique
     private final IncomingOpenScreenPacketEvent openScreenPacketEvent = new IncomingOpenScreenPacketEvent();
+    @Unique
+    private final IncomingInventoryDataPacketEvent inventoryDataPacketEvent = new IncomingInventoryDataPacketEvent();
 
     @Inject(method = "onEntitySpawn", at = @At("HEAD"), cancellable = true)
     public void callIncomingEntitySpawnPacketEvent(EntitySpawnS2CPacket packet, CallbackInfo ci)
@@ -108,6 +113,27 @@ public class ClientPlayNetworkHandlerInjector
                 packet.getSyncId()));
 
         if (openScreenPacketEvent.isCancelled())
+        {
+            ci.cancel();
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    @Inject(method = "onInventory", at = @At("HEAD"), cancellable = true)
+    public void callIncomingInventoryDataPacketEvent(InventoryS2CPacket packet, CallbackInfo ci)
+    {
+        // Also ignore the inventory data tied to the last
+        if (openScreenPacketEvent.isCancelled() &&
+                openScreenPacketEvent.getSyncId() == packet.getSyncId())
+        {
+            ci.cancel();
+            return;
+        }
+
+        W2K.getEventBus().post(inventoryDataPacketEvent.update(packet.getSyncId(),
+                packet.getRevision(),
+                (List) packet.getContents()));
+        if (inventoryDataPacketEvent.isCancelled())
         {
             ci.cancel();
         }
