@@ -37,6 +37,10 @@ import me.videogamesm12.w2k.kernel.event.lifecycle.ClientCleanedUpAfterCrashEven
 import me.videogamesm12.w2k.kernel.event.lifecycle.ClientCrashedEvent;
 import me.videogamesm12.w2k.kernel.event.lifecycle.ClientStartedEvent;
 import me.videogamesm12.w2k.kernel.event.lifecycle.ClientStoppedEvent;
+import me.videogamesm12.w2k.kernel.event.network.packet.*;
+import me.videogamesm12.w2k.kernel.event.render.BlockEntityRenderEvent;
+import me.videogamesm12.w2k.kernel.event.render.EntityRenderEvent;
+import me.videogamesm12.w2k.kernel.event.render.GameRenderEvent;
 import me.videogamesm12.w2k.supervisor.api.SVComponent;
 import me.videogamesm12.w2k.supervisor.components.fantasia.Fantasia;
 import me.videogamesm12.w2k.supervisor.components.flags.Flags;
@@ -138,6 +142,89 @@ public class Supervisor extends Thread
         });
 
         event.appendSection("Supervisor", lines.toArray(new String[0]));
+    }
+
+    @Subscribe
+    public void onGameRender(GameRenderEvent event)
+    {
+        if (config.getRenderingSettings().isGameRenderingDisabled())
+        {
+            event.setCancelled(true);
+        }
+    }
+
+    @Subscribe
+    public void onBlockEntityRender(BlockEntityRenderEvent event)
+    {
+        if (config.getRenderingSettings().isTileEntityRenderingDisabled()
+                || config.getRenderingSettings().isGameRenderingDisabled())
+        {
+            event.setCancelled(true);
+        }
+    }
+
+    @Subscribe
+    public void onEntityRender(EntityRenderEvent event)
+    {
+        if (config.getRenderingSettings().isTileEntityRenderingDisabled()
+                || config.getRenderingSettings().isGameRenderingDisabled())
+        {
+            event.setCancelled(true);
+        }
+    }
+
+    @Subscribe
+    public void onIncomingEntityPacket(IncomingEntitySpawnPacketEvent event)
+    {
+        if (config.getNetworkSettings().isIgnoringEntitySpawns())
+        {
+            event.setCancelled(true);
+        }
+    }
+
+    @Subscribe
+    public void onExplosionPacket(IncomingExplosionPacketEvent event)
+    {
+        if (config.getNetworkSettings().isIgnoringExplosions())
+        {
+            event.setCancelled(true);
+        }
+    }
+
+    @Subscribe
+    public void onLightUpdatePacket(IncomingLightUpdatePacketEvent event)
+    {
+        if (config.getNetworkSettings().isIgnoringLightUpdates())
+        {
+            event.setCancelled(true);
+        }
+    }
+
+    @Subscribe
+    public void onParticleSpawnPacket(IncomingParticleSpawnPacketEvent event)
+    {
+        if (config.getNetworkSettings().isIgnoringParticleSpawns())
+        {
+            event.setCancelled(true);
+        }
+    }
+
+    @Subscribe
+    public void onMapUpdatePacket(IncomingMapUpdatePacketEvent event)
+    {
+        if (config.getNetworkSettings().isIgnoringMapUpdates())
+        {
+            event.setCancelled(true);
+        }
+    }
+
+    @Subscribe
+    public void onOpenScreenPacket(IncomingOpenScreenPacketEvent event)
+    {
+        if (config.getNetworkSettings().isIgnoringScreens())
+        {
+            event.setCancelled(true);
+        }
     }
 
     public Configuration loadConfiguration()

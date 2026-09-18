@@ -167,6 +167,13 @@ public class VersionAbstractionLayer extends BaseVersionAbstractionLayer<Minecra
     }
 
     @Override
+    public ClientPlayerEntityInterface getLocalPlayerUnsafe()
+    {
+        return (ClientPlayerEntityInterface) minecraft.player;
+    }
+
+
+    @Override
     public Optional<Entity> getTargetedEntity()
     {
         return Optional.ofNullable(minecraft.targetedEntity);

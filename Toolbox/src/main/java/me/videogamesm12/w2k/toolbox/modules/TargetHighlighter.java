@@ -1,8 +1,11 @@
 package me.videogamesm12.w2k.toolbox.modules;
 
+import com.google.common.eventbus.Subscribe;
 import me.videogamesm12.w2k.kernel.abstraction.world.EntityInterface;
 import me.videogamesm12.w2k.kernel.data.TextOverlay;
 import me.videogamesm12.w2k.kernel.data.Overlay;
+import me.videogamesm12.w2k.kernel.event.render.EntityGlowCheckEvent;
+import me.videogamesm12.w2k.kernel.event.render.EntityGlowColorEvent;
 import me.videogamesm12.w2k.kernel.module.WModule;
 import me.videogamesm12.w2k.kernel.module.setting.BooleanSetting;
 import me.videogamesm12.w2k.kernel.module.setting.ColorSetting;
@@ -29,6 +32,34 @@ public class TargetHighlighter extends WModule
                     return entity != null ? entity.w2k$id() : null;
                 },
                 true));
+    }
+
+    @Subscribe
+    public void onEntityGlowCheck(EntityGlowCheckEvent event)
+    {
+        if (!isEnabled()
+                || !lookingAtValidTarget(event.getEntity()))
+        {
+            return;
+        }
+
+        event.setOutcome(true);
+    }
+
+    @Subscribe
+    public void onEntityGlowColor(EntityGlowColorEvent event)
+    {
+        if (!isEnabled()
+                || event.isCancelled()
+                || !event.getEntity().equals(versionAbstractionLayer().getTargetedEntityUnsafe())
+                || !useCustomHighlightColor.get()
+                || !lookingAtValidTarget(event.getEntity()))
+        {
+            return;
+        }
+
+        event.addColor(highlightColor.get());
+        event.setCancelled(true);
     }
 
     public boolean lookingAtValidTarget(EntityInterface entity)

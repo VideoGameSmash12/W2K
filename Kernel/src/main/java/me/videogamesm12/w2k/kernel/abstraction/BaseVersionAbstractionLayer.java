@@ -63,6 +63,8 @@ public abstract class BaseVersionAbstractionLayer<Minecraft>
      */
     public abstract <Player extends ClientPlayerEntityInterface> Optional<Player> getLocalPlayer();
 
+    public abstract ClientPlayerEntityInterface getLocalPlayerUnsafe();
+
     /**
      * <p>Gets the {@code ClientWorld} representing the client-side world.</p>
      * <p>This is an optional to allow you to perform actions only if the player is in-game.</p>

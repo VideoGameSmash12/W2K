@@ -22,7 +22,9 @@
 
 package me.videogamesm12.w2k.supervisor.components.watchdog;
 
+import com.google.common.eventbus.Subscribe;
 import me.videogamesm12.w2k.kernel.W2K;
+import me.videogamesm12.w2k.kernel.event.render.RenderCompleteEvent;
 import me.videogamesm12.w2k.supervisor.Supervisor;
 import me.videogamesm12.w2k.supervisor.api.SVComponent;
 import me.videogamesm12.w2k.supervisor.api.event.ClientFreezeEvent;
@@ -87,5 +89,14 @@ public class Watchdog implements SVComponent
         Supervisor.getConfig().getWatchdogSettings().getSettings().forEach((name, value) ->
                 details.add("\t\t" + name + ": " + value));
         return details;
+    }
+
+    @Subscribe
+    private void onRenderComplete(final RenderCompleteEvent event)
+    {
+        if (Supervisor.getConfig().getWatchdogSettings().isFreezeDetectionEnabled())
+        {
+            LAST_RENDERED_TIME = event.getTimestamp();
+        }
     }
 }

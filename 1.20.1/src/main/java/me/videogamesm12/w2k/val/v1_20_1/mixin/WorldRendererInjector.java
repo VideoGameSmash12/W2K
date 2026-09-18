@@ -1,19 +1,18 @@
-package me.videogamesm12.w2k.drivers.v1_20_1.mixin.injector;
+package me.videogamesm12.w2k.val.v1_20_1.mixin;
 
 import com.llamalad7.mixinextras.sugar.Local;
 import me.videogamesm12.w2k.kernel.W2K;
-import me.videogamesm12.w2k.kernel.abstraction.inventory.ItemStackInterface;
-import me.videogamesm12.w2k.toolbox.modules.BanHammer;
-import me.videogamesm12.w2k.toolbox.modules.TargetHighlighter;
+import me.videogamesm12.w2k.kernel.abstraction.world.EntityInterface;
+import me.videogamesm12.w2k.kernel.event.render.EntityGlowColorEvent;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.*;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
-import net.minecraft.util.math.ColorHelper;
 import org.joml.Matrix4f;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -21,42 +20,27 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.awt.*;
 
 @Mixin(WorldRenderer.class)
-public class WorldRendererMixin
+public class WorldRendererInjector
 {
     @Shadow
     @Final
     private MinecraftClient client;
 
+    @Unique
+    private final EntityGlowColorEvent glowColorEvent = new EntityGlowColorEvent();
+
     @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/OutlineVertexConsumerProvider;setColor(IIII)V", shift = At.Shift.AFTER))
     public void applyOverlayColor(MatrixStack matrices, float tickDelta, long limitTime, boolean renderBlockOutline, Camera camera, GameRenderer gameRenderer, LightmapTextureManager lightmapTextureManager, Matrix4f projectionMatrix, CallbackInfo ci, @Local Entity entity, @Local OutlineVertexConsumerProvider provider)
     {
-        if (client.player == null || client.targetedEntity != entity)
+        if (client.player == null)
         {
             return;
         }
 
-        Color proposedReplacement = null;
-
-        final TargetHighlighter targetHighlighter = W2K.getInstance().getModuleManager().getModule(TargetHighlighter.class);
-        if (targetHighlighter.isEnabled()
-                && targetHighlighter.useCustomHighlightColor.get())
+        W2K.getEventBus().post(glowColorEvent.update((EntityInterface) entity));
+        if (glowColorEvent.isCancelled() && !glowColorEvent.getColors().isEmpty())
         {
-            proposedReplacement = targetHighlighter.highlightColor.get();
-        }
-
-        // Ban Hammer takes priority over Target Highlighter
-        final BanHammer banHammer = W2K.getInstance().getModuleManager().getModule(BanHammer.class);
-        if (banHammer.isEnabled()
-                && banHammer.useCustomHighlightColor.get()
-                && banHammer.outlineTarget.get()
-                && banHammer.isHammerActive(ItemStackInterface.class.cast(client.player.getInventory().getMainHandStack()))
-                && client.targetedEntity == entity)
-        {
-            proposedReplacement = banHammer.highlightColor.get();
-        }
-
-        if (proposedReplacement != null)
-        {
+            final Color proposedReplacement = glowColorEvent.getColors().get(0);
             provider.setColor(proposedReplacement.getRed(), proposedReplacement.getGreen(), proposedReplacement.getBlue(), proposedReplacement.getAlpha());
         }
     }

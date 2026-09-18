@@ -7,11 +7,14 @@ import me.videogamesm12.w2k.blackbox.command.BlackboxCmd;
 import me.videogamesm12.w2k.blackbox.theming.ITheme;
 import me.videogamesm12.w2k.blackbox.window.tool.crashpad.Crashpad;
 import me.videogamesm12.w2k.kernel.W2K;
+import me.videogamesm12.w2k.kernel.event.miscellaneous.KeyPressEvent;
 import me.videogamesm12.w2k.kernel.event.miscellaneous.PanicKeyCombinationEvent;
 import me.videogamesm12.w2k.kernel.event.lifecycle.ClientCrashedEvent;
 import me.videogamesm12.w2k.kernel.event.lifecycle.ClientStartedEvent;
 import me.videogamesm12.w2k.kernel.event.lifecycle.ClientStoppedEvent;
+import me.videogamesm12.w2k.kernel.util.KeyboardUtils;
 import me.videogamesm12.w2k.kernel.util.SysUtils;
+import me.videogamesm12.w2k.kernel.util.VersionUtils;
 import me.videogamesm12.w2k.supervisor.Supervisor;
 import me.videogamesm12.w2k.blackbox.theming.ThemeRegistry;
 import me.videogamesm12.w2k.blackbox.window.GUI;
@@ -215,10 +218,31 @@ public class Blackbox extends Thread
     }
 
     @Subscribe
-    public void onPanicKeyCombination(PanicKeyCombinationEvent event)
+    public void onPanicKeyCombination(KeyPressEvent event)
     {
-        W2K.getLogger().info("Received panic alert with ID {}, opening Blackbox", event.getTimestamp());
-        SwingUtilities.invokeLater(() -> Blackbox.getInstance().openWindow());
+        // Microsoft, in their infinite "wisdom", replaced the context menu key with the stupid Copilot key because they
+        //  were huffling glue trying to shove AI into absolutely everything they could. As such, some keyboards no
+        //  longer have the context menu key, so we have to have a secondary combination as a backup.
+        //
+        // I chose CTRL + Context Menu for the primary combination and CTRL + ALT + Z for the backup combination.
+
+        final Integer controlModifier = KeyboardUtils.getModifier("modifier.control");
+        final Integer altModifier = KeyboardUtils.getModifier("modifier.alt");
+        final Integer menuKey = KeyboardUtils.getKeyId("key.keyboard.menu");
+        final Integer zKey = KeyboardUtils.getKeyId("key.keyboard.z");
+
+        // Don't bother if our keys don't exist
+        if (controlModifier == null || altModifier == null || menuKey == null || zKey == null)
+        {
+            return;
+        }
+
+        // Ctrl + Alt + Z or Ctrl + Menu opens the Blackbox
+        if ((event.getModifiers() == controlModifier + altModifier && event.getKeyCode() == zKey)
+                || event.getModifiers() == controlModifier && event.getKeyCode() == menuKey)
+        {
+            SwingUtilities.invokeLater(() -> Blackbox.getInstance().openWindow());
+        }
     }
 
     private void startup()

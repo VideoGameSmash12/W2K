@@ -11,11 +11,17 @@
     "defaultRequire": 1
   },
   "client": [
+    "BlockEntityRendererInjector",
     "ChatHudInjector",
+    "ClientPlayNetworkHandlerInjector",
     "DebugHudAccessor",
+    "EntityRendererInjector",
+    "GameRendererInjector",
     "InGameHudAccessor",
     "InGameHudInjector",
     "KeyboardInjector",
-    "MinecraftClientInjector"
+    "MainInjector",
+    "MinecraftClientInjector",
+    "WorldRendererInjector"
   ]
 }

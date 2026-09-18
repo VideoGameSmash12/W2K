@@ -6,16 +6,24 @@ import com.llamalad7.mixinextras.sugar.Local;
 import me.videogamesm12.w2k.kernel.W2K;
 import me.videogamesm12.w2k.kernel.abstraction.network.DataQueryHandlerInterface;
 import me.videogamesm12.w2k.kernel.abstraction.util.BlockPosInterface;
+import me.videogamesm12.w2k.kernel.event.miscellaneous.KeyPressEvent;
+import me.videogamesm12.w2k.kernel.event.miscellaneous.PanicKeyCombinationEvent;
 import me.videogamesm12.w2k.kernel.event.network.DataQueryResponseEvent;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Keyboard;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.DataQueryHandler;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.concurrent.TimeoutException;
 import java.util.function.Consumer;
@@ -23,6 +31,22 @@ import java.util.function.Consumer;
 @Mixin(Keyboard.class)
 public class KeyboardInjector
 {
+    @Shadow
+    @Final
+    private MinecraftClient client;
+
+    @Unique
+    private final KeyPressEvent keyPressEvent = new KeyPressEvent();
+
+    @Inject(method = "onKey", at = @At("HEAD"))
+    public void triggerKeyPressEvent(long window, int key, int scancode, int action, int modifiers, CallbackInfo ci)
+    {
+        if (window == client.getWindow().getHandle())
+        {
+            W2K.getEventBus().post(keyPressEvent.update(modifiers, key));
+        }
+    }
+
     @WrapOperation(method = "copyLookAt", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/DataQueryHandler;queryEntityNbt(ILjava/util/function/Consumer;)V"))
     public void parallelCopyEntity(DataQueryHandler instance, int entityNetworkId, Consumer<NbtCompound> callback, Operation<Void> original, @Local Entity entity, @Local Identifier identifier)
     {

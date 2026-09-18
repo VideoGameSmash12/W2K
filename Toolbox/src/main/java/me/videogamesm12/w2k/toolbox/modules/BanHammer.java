@@ -5,6 +5,8 @@ import me.videogamesm12.w2k.kernel.abstraction.inventory.ItemStackInterface;
 import me.videogamesm12.w2k.kernel.abstraction.world.ClientPlayerEntityInterface;
 import me.videogamesm12.w2k.kernel.abstraction.world.EntityInterface;
 import me.videogamesm12.w2k.kernel.event.entity.EntityInteractionEvent;
+import me.videogamesm12.w2k.kernel.event.render.EntityGlowCheckEvent;
+import me.videogamesm12.w2k.kernel.event.render.EntityGlowColorEvent;
 import me.videogamesm12.w2k.kernel.module.WModule;
 import me.videogamesm12.w2k.kernel.module.setting.BooleanSetting;
 import me.videogamesm12.w2k.kernel.module.setting.ColorSetting;
@@ -52,6 +54,36 @@ public class BanHammer extends WModule
                 .replaceAll("%username%", target.w2k$internalName());
 
         versionAbstractionLayer().networkHandler().ifPresent(handler -> handler.w2k$sendCommand(command));
+    }
+
+    @Subscribe
+    public void onEntityGlowCheck(EntityGlowCheckEvent event)
+    {
+        if (!isEnabled()
+                || !outlineTarget.get()
+                || !event.getEntity().equals(versionAbstractionLayer().getTargetedEntityUnsafe())
+                || !isHammerActive(versionAbstractionLayer().getLocalPlayerUnsafe().w2k$getStackInMainHandUnsafe()))
+        {
+            return;
+        }
+
+        event.setOutcome(true);
+    }
+
+    @Subscribe
+    public void onEntityGlowColor(EntityGlowColorEvent event)
+    {
+        if (!isEnabled()
+                || !event.getEntity().equals(versionAbstractionLayer().getTargetedEntityUnsafe())
+                || !outlineTarget.get()
+                || !useCustomHighlightColor.get()
+                || !isHammerActive(versionAbstractionLayer().getLocalPlayerUnsafe().w2k$getStackInMainHandUnsafe()))
+        {
+            return;
+        }
+
+        event.addColor(highlightColor.get());
+        event.setCancelled(true);
     }
 
     public boolean isHammerActive(final ItemStackInterface stack)

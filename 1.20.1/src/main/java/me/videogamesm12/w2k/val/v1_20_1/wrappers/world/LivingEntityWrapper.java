@@ -28,6 +28,17 @@ public abstract class LivingEntityWrapper implements LivingEntityInterface
     }
 
     @Override
+    public ItemStackInterface w2k$getStackInMainHandUnsafe()
+    {
+        final ItemStack stack = getStackInHand(Hand.MAIN_HAND);
+        if (stack == null)
+        {
+            return null;
+        }
+        return ItemStackInterface.class.cast(stack);
+    }
+
+    @Override
     public Optional<ItemStackInterface> w2k$getStackInOffHand()
     {
         final ItemStack stack = getStackInHand(Hand.OFF_HAND);
@@ -37,4 +48,16 @@ public abstract class LivingEntityWrapper implements LivingEntityInterface
         }
         return Optional.of(ItemStackInterface.class.cast(stack));
     }
+
+    @Override
+    public ItemStackInterface w2k$getStackInOffHandUnsafe()
+    {
+        final ItemStack stack = getStackInHand(Hand.OFF_HAND);
+        if (stack == null)
+        {
+            return null;
+        }
+        return ItemStackInterface.class.cast(stack);
+    }
+
 }

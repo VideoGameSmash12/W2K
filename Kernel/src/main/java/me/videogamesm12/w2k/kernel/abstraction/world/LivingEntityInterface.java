@@ -8,5 +8,9 @@ public interface LivingEntityInterface extends EntityInterface
 {
     Optional<ItemStackInterface> w2k$getStackInMainHand();
 
+    ItemStackInterface w2k$getStackInMainHandUnsafe();
+
     Optional<ItemStackInterface> w2k$getStackInOffHand();
+
+    ItemStackInterface w2k$getStackInOffHandUnsafe();
 }
