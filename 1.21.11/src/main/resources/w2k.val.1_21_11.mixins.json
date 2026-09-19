@@ -1,0 +1,28 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "me.videogamesm12.w2k.val.v1_21_11.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "CrashReportInjector",
+    "WorldAccessor"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "client": [
+    "BlockEntityRenderManagerInjector",
+    "ChatHudInjector",
+    "ClientPlayNetworkHandlerInjector",
+    "DebugHudAccessor",
+    "DebugHudInjector",
+    "DebugHudProfileAccessor",
+    "EntityRendererInjector",
+    "EntityRenderManagerInjector",
+    "GameRendererInjector",
+    "InGameHudInjector",
+    "KeyboardInjector",
+    "MainInjector",
+    "MinecraftClientInjector"
+  ]
+}

@@ -17,6 +17,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * <h1>BaseVersionAbstractionLayer</h1>
@@ -158,7 +159,6 @@ public abstract class BaseVersionAbstractionLayer<Minecraft>
      *  anything that calls this may instead be replaced with something else.
      * @return  String
      */
-    @Deprecated
     public abstract List<String> getClientOverview();
 
     /**

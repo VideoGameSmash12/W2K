@@ -44,6 +44,7 @@ import net.minecraft.util.ActionResult;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 
 @SuppressWarnings("unchecked")
 public class VersionAbstractionLayer extends BaseVersionAbstractionLayer<MinecraftClient>
@@ -222,7 +223,9 @@ public class VersionAbstractionLayer extends BaseVersionAbstractionLayer<Minecra
                 minecraft.fpsDebugString);
 
         if (minecraft.inGameHud == null)
+        {
             return fallback;
+        }
 
         try
         {

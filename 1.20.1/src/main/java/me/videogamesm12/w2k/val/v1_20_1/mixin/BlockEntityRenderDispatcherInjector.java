@@ -14,7 +14,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(BlockEntityRenderDispatcher.class)
-public class BlockEntityRendererInjector
+public class BlockEntityRenderDispatcherInjector
 {
     @Unique
     private final BlockEntityRenderEvent blockEntityRenderEvent = new BlockEntityRenderEvent();

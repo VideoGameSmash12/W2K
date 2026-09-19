@@ -1,8 +1,6 @@
 package me.videogamesm12.w2k.blackbox.window.tab;
 
 import me.videogamesm12.w2k.kernel.W2K;
-import me.videogamesm12.w2k.supervisor.Supervisor;
-import org.apache.commons.lang3.StringUtils;
 
 import javax.swing.*;
 import java.awt.*;

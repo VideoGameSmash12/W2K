@@ -18,6 +18,7 @@ pluginManagement {
 
 include "Kernel"
 include "1.20.1"
+include "1.21.11"
 //include "Drivers_v1_8"
 //include "Drivers_v1_12"
 //include "Drivers_v1_13"
