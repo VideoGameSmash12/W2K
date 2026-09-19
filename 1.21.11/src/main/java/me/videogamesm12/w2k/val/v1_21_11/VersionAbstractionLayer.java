@@ -3,16 +3,13 @@ package me.videogamesm12.w2k.val.v1_21_11;
 import com.google.gson.JsonElement;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.serialization.JsonOps;
-import lombok.Getter;
 import me.videogamesm12.w2k.kernel.W2K;
 import me.videogamesm12.w2k.kernel.abstraction.BaseVersionAbstractionLayer;
 import me.videogamesm12.w2k.kernel.abstraction.conversion.NBTConverter;
 import me.videogamesm12.w2k.kernel.abstraction.conversion.TextConverter;
 import me.videogamesm12.w2k.kernel.abstraction.network.PlayNetworkHandlerInterface;
-import me.videogamesm12.w2k.kernel.abstraction.render.OverlayRenderDispatcher;
 import me.videogamesm12.w2k.kernel.abstraction.util.SessionInterface;
 import me.videogamesm12.w2k.kernel.abstraction.world.ClientPlayerEntityInterface;
-import me.videogamesm12.w2k.kernel.abstraction.world.ClientWorldInterface;
 import me.videogamesm12.w2k.kernel.abstraction.world.EntityInterface;
 import me.videogamesm12.w2k.kernel.event.entity.EntityInteractionEvent;
 import me.videogamesm12.w2k.kernel.event.lifecycle.ClientStartedEvent;
@@ -23,7 +20,6 @@ import me.videogamesm12.w2k.kernel.event.network.RegisterPluginMessageEvent;
 import me.videogamesm12.w2k.kernel.util.ComponentUtils;
 import me.videogamesm12.w2k.val.v1_21_11.command.CommandRegistrar;
 import me.videogamesm12.w2k.val.v1_21_11.graphics.OverlayRenderDispatcherImpl;
-import me.videogamesm12.w2k.val.v1_21_11.miscellaneous.DebugHudHandler;
 import me.videogamesm12.w2k.val.v1_21_11.protocol.PacketTranslator;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.client.networking.v1.C2SPlayChannelEvents;
@@ -46,7 +42,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
 
 public class VersionAbstractionLayer extends BaseVersionAbstractionLayer<MinecraftClient>
 {
@@ -78,8 +73,6 @@ public class VersionAbstractionLayer extends BaseVersionAbstractionLayer<Minecra
     private final OverlayRenderDispatcherImpl renderDispatcher;
     private final CommandRegistrar commandRegistrar;
     private final PacketTranslator packetTranslator;
-    @Getter
-    private final DebugHudHandler debugHudHandler;
 
     public VersionAbstractionLayer()
     {
@@ -115,7 +108,6 @@ public class VersionAbstractionLayer extends BaseVersionAbstractionLayer<Minecra
         this.renderDispatcher = new OverlayRenderDispatcherImpl();
         this.commandRegistrar = new CommandRegistrar();
         this.packetTranslator = new PacketTranslator();
-        this.debugHudHandler = new DebugHudHandler();
     }
 
     @Override
