@@ -108,8 +108,8 @@ public abstract class WModule
                     return;
                 }
 
-                // iT's RaW
-                final WModuleSetting setting = settings.get(key);
+                // Get a generic form of the setting that we can read from
+                final WModuleSetting<BinaryTag, Object> setting = (WModuleSetting<BinaryTag, Object>) settings.get(key);
 
                 if (setting.getType() != entry.getValue().type().id())
                 {
@@ -117,15 +117,7 @@ public abstract class WModule
                     return;
                 }
 
-                // UnCheCKeD CaLl
-                try
-                {
-                    setting.read(entry.getValue());
-                }
-                catch (Throwable ex)
-                {
-                    W2K.getLogger().error("Unable to read value for setting {} in module {}", key, id, ex);
-                }
+                setting.read(entry.getValue());
             });
         }
     }
