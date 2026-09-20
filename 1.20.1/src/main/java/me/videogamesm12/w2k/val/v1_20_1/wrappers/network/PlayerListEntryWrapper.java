@@ -3,6 +3,7 @@ package me.videogamesm12.w2k.val.v1_20_1.wrappers.network;
 import com.google.gson.JsonElement;
 import com.mojang.authlib.GameProfile;
 import me.videogamesm12.w2k.kernel.abstraction.network.PlayerListEntryInterface;
+import me.videogamesm12.w2k.kernel.abstraction.profile.GameProfileInterface;
 import net.kyori.adventure.text.Component;
 import net.minecraft.client.network.PlayerListEntry;
 import net.minecraft.text.Text;
@@ -45,21 +46,21 @@ public abstract class PlayerListEntryWrapper implements PlayerListEntryInterface
     private int displayNameHash = 0;
 
     @Override
-    public GameProfile w2k$profile()
+    public GameProfileInterface w2k$profile()
     {
-        return getProfile();
+        return (GameProfileInterface) getProfile();
     }
 
     @Override
     public String w2k$username()
     {
-        return getProfile().getName();
+        return w2k$profile().w2k$name();
     }
 
     @Override
     public UUID w2k$uuid()
     {
-        return getProfile().getId();
+        return w2k$profile().w2k$uuid();
     }
 
     @Override

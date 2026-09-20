@@ -53,14 +53,14 @@ public class ProfileUtil
                     .map(PlayNetworkHandlerInterface::w2k$getOnlinePlayers)
                     .orElse(Collections.emptyList());
             final Optional<PlayerListEntryInterface> candidate = players.stream()
-                    .filter(profile -> profile.w2k$profile().getName().equalsIgnoreCase(nameOrUuid)
-                            || profile.w2k$profile().getId().toString().equalsIgnoreCase(nameOrUuid))
+                    .filter(profile -> profile.w2k$profile().w2k$name().equalsIgnoreCase(nameOrUuid)
+                            || profile.w2k$profile().w2k$uuid().toString().equalsIgnoreCase(nameOrUuid))
                     .findAny();
 
             if (candidate.isPresent())
             {
-                future.complete(new ProfileLookupResult(candidate.get().w2k$profile().getName(),
-                        candidate.get().w2k$profile().getId().toString()));
+                future.complete(new ProfileLookupResult(candidate.get().w2k$profile().w2k$name(),
+                        candidate.get().w2k$profile().w2k$uuid().toString()));
             }
             else
             {

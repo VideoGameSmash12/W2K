@@ -4,6 +4,7 @@ import com.google.gson.JsonElement;
 import com.mojang.authlib.GameProfile;
 import com.mojang.serialization.JsonOps;
 import me.videogamesm12.w2k.kernel.abstraction.network.PlayerListEntryInterface;
+import me.videogamesm12.w2k.kernel.abstraction.profile.GameProfileInterface;
 import net.minecraft.client.network.PlayerListEntry;
 import net.minecraft.entity.player.SkinTextures;
 import net.minecraft.text.Text;
@@ -43,9 +44,9 @@ public abstract class PlayerListEntryWrapper implements PlayerListEntryInterface
     private int displayNameHash = 0;
 
     @Override
-    public GameProfile w2k$profile()
+    public GameProfileInterface w2k$profile()
     {
-        return getProfile();
+        return GameProfileInterface.class.cast(getProfile());
     }
 
     @Override

@@ -3,6 +3,7 @@ package me.videogamesm12.w2k.kernel.abstraction.network;
 import com.google.gson.JsonElement;
 import com.mojang.authlib.GameProfile;
 import me.videogamesm12.w2k.kernel.abstraction.ObjectInterface;
+import me.videogamesm12.w2k.kernel.abstraction.profile.GameProfileInterface;
 import net.kyori.adventure.text.Component;
 
 import java.util.Arrays;
@@ -11,7 +12,7 @@ import java.util.UUID;
 
 public interface PlayerListEntryInterface extends ObjectInterface
 {
-    GameProfile w2k$profile();
+    GameProfileInterface w2k$profile();
 
     String w2k$username();
 

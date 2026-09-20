@@ -18,5 +18,6 @@ public class Toolbox implements ClientModInitializer
         commandManager.registerCommand(DumpCmd.class);
         commandManager.registerCommand(LKillCmd.class);
         commandManager.registerCommand(QueryCmd.class);
+        commandManager.registerCommand(ProfileCmd.class);
     }
 }

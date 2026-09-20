@@ -15,7 +15,7 @@
     "ChatHudInjector",
     "ClientPlayNetworkHandlerInjector",
     "DebugHudAccessor",
-    "EntityRendererInjector",
+    "EntityRenderDispatcherInjector",
     "GameRendererInjector",
     "InGameHudAccessor",
     "InGameHudInjector",

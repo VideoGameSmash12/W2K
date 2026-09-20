@@ -17,6 +17,8 @@
   "mixins": [
     "command.EntitySelectorWrapper",
     "inventory.ItemStackWrapper",
+    "profile.GameProfileWrapper",
+    "profile.PropertyWrapper",
     "util.BlockPosWrapper",
     "world.BlockEntityWrapper",
     "world.EntityWrapper",

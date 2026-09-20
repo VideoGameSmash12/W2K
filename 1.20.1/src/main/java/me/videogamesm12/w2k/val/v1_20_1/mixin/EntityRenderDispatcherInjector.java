@@ -14,7 +14,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(EntityRenderDispatcher.class)
-public class EntityRendererInjector
+public class EntityRenderDispatcherInjector
 {
     @Unique
     private final EntityRenderEvent event = new EntityRenderEvent();

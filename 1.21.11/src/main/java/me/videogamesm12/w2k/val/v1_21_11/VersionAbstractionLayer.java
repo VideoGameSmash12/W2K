@@ -34,9 +34,12 @@ import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.StringNbtReader;
+import net.minecraft.registry.BuiltinRegistries;
+import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.text.Text;
 import net.minecraft.text.TextCodecs;
 import net.minecraft.util.ActionResult;
+import net.minecraft.world.World;
 
 import java.io.IOException;
 import java.util.List;
@@ -80,17 +83,18 @@ public class VersionAbstractionLayer extends BaseVersionAbstractionLayer<Minecra
         this.textConverter = new TextConverter<>()
         {
             private final PlainTextComponentSerializer plainText = PlainTextComponentSerializer.plainText();
+            private final RegistryWrapper.WrapperLookup backupLookup = BuiltinRegistries.createWrapperLookup();
 
             @Override
             public Component nativeToAdventure(Text text)
             {
-                return ComponentUtils.deserializeComponent(TextCodecs.CODEC.encodeStart(JsonOps.INSTANCE, text).getOrThrow());
+                return ComponentUtils.deserializeComponent(TextCodecs.CODEC.encodeStart(getLookupOrElse(backupLookup).getOps(JsonOps.INSTANCE), text).getOrThrow());
             }
 
             @Override
             public Text adventureToNative(Component component)
             {
-                return TextCodecs.CODEC.parse(JsonOps.INSTANCE, ComponentUtils.serializeComponent(component)).getOrThrow();
+                return TextCodecs.CODEC.parse(getLookupOrElse(backupLookup).getOps(JsonOps.INSTANCE), ComponentUtils.serializeComponent(component)).getOrThrow();
             }
 
             @Override
@@ -102,7 +106,7 @@ public class VersionAbstractionLayer extends BaseVersionAbstractionLayer<Minecra
             @Override
             public String jsonToString(JsonElement component)
             {
-                return Objects.requireNonNull(TextCodecs.CODEC.parse(JsonOps.INSTANCE, component)).getOrThrow().getString();
+                return Objects.requireNonNull(TextCodecs.CODEC.parse(getLookupOrElse(backupLookup).getOps(JsonOps.INSTANCE), component)).getOrThrow().getString();
             }
         };
         this.renderDispatcher = new OverlayRenderDispatcherImpl();
@@ -245,5 +249,10 @@ public class VersionAbstractionLayer extends BaseVersionAbstractionLayer<Minecra
     public PacketTranslator packetTranslator()
     {
         return packetTranslator;
+    }
+
+    private RegistryWrapper.WrapperLookup getLookupOrElse(RegistryWrapper.WrapperLookup lookup)
+    {
+        return minecraft.world != null ? minecraft.world.getRegistryManager() : lookup;
     }
 }

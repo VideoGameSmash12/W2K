@@ -46,11 +46,11 @@ public class OnlinePlayersArgumentType implements ArgumentType<String>
         if (includeUuids)
         {
             return CommandSource.suggestMatching(getOnlinePlayers().stream()
-                    .map(entry -> List.of(entry.w2k$profile().name(), entry.w2k$profile().id().toString()))
+                    .map(entry -> List.of(entry.w2k$profile().w2k$name(), entry.w2k$profile().w2k$uuid().toString()))
                     .flatMap(Collection::stream), builder);
         }
 
-        return CommandSource.suggestMatching(getOnlinePlayers().stream().map(entry -> entry.w2k$profile().name()), builder);
+        return CommandSource.suggestMatching(getOnlinePlayers().stream().map(entry -> entry.w2k$profile().w2k$name()), builder);
     }
 
     @Override
