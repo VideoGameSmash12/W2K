@@ -1,6 +1,5 @@
 package me.videogamesm12.w2k.blackbox.window.tool.console;
 
-import com.google.gson.JsonElement;
 import lombok.Getter;
 import me.videogamesm12.w2k.blackbox.Blackbox;
 import me.videogamesm12.w2k.supervisor.Supervisor;
@@ -10,7 +9,6 @@ import me.videogamesm12.w2k.supervisor.components.fantasia.event.SessionStartedE
 import me.videogamesm12.w2k.supervisor.components.fantasia.event.SessionStartedPreSetupEvent;
 import me.videogamesm12.w2k.supervisor.components.fantasia.session.CommandSender;
 import me.videogamesm12.w2k.supervisor.components.fantasia.session.ISession;
-import net.kyori.adventure.text.Component;
 
 import javax.swing.*;
 import java.awt.*;
@@ -33,12 +31,6 @@ public class FantasiaTab extends AbstractTab<JTextArea>
         session = new BlackboxSession(this);
         //--
         Fantasia.getInstance().getServer().addSession(session);
-    }
-
-    @Override
-    public boolean shouldDisplay(Component message)
-    {
-        return false;
     }
 
     @Override
