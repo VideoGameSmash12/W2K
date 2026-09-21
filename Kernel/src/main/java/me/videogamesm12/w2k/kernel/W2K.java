@@ -64,18 +64,15 @@ public class W2K implements ModInitializer
         logger.info("Setting up version abstraction layer");
         installVersionAbstractionLayer();
 
-        logger.info("Setting up driver manager");
-        driverManager = new WDriverManager();
         logger.info("Setting up command manager");
         commandManager = new WCommandManager();
         logger.info("Setting up communication manager");
         communicationManager = new WCommunicationManager();
         logger.info("Setting up module manager");
         moduleManager = new WModuleManager();
+        logger.info("Setting up driver manager");
+        driverManager = new WDriverManager();
         logger.info("Kernel successfully initialized");
-
-        logger.info("Loading drivers");
-        driverManager.loadDrivers();
 
         logger.info("Registering commands");
         commandManager.registerCommand(W2KCmd.class);

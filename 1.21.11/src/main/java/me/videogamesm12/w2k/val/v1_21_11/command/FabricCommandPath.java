@@ -90,9 +90,11 @@ public class FabricCommandPath extends WCommand.CommandPath<CommandNode<FabricCl
             }
             catch (Throwable ex)
             {
-                getCommand().msg(Component.translatable("w2k.command.command_error", Component.text(ex.getLocalizedMessage() != null ? ex.getLocalizedMessage() : ex.getClass().getName()))
+                final Throwable whatToUse = ex.getCause() != null ? ex.getCause() : ex;
+
+                getCommand().msg(Component.translatable("w2k.command.command_error", Component.text(whatToUse.getLocalizedMessage() != null ? whatToUse.getLocalizedMessage() : whatToUse.getClass().getName()))
                         .color(NamedTextColor.RED));
-                W2K.getLogger().error("An error occurred whilst processing command '{}'", ctx.getInput(), ex);
+                W2K.getLogger().error("An error occurred whilst processing command '{}'", ctx.getInput(), whatToUse);
             }
 
             return 0;

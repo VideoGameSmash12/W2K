@@ -1,13 +1,14 @@
 package me.videogamesm12.w2k.kernel.driver;
 
+import com.google.common.collect.Multimap;
+import com.google.common.collect.MultimapBuilder;
 import lombok.Getter;
 import me.videogamesm12.w2k.kernel.driver.base.*;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * <h1>WDriverManager</h1>
@@ -21,6 +22,7 @@ import java.util.Map;
 public class WDriverManager
 {
     private final Map<String, WDriver> drivers = new HashMap<>();
+    private final Multimap<ModContainer, Driver> newDrivers = Objects.requireNonNull(Objects.requireNonNull(MultimapBuilder.hashKeys().arrayListValues()).build());
 
     public void loadDrivers()
     {
@@ -29,5 +31,8 @@ public class WDriverManager
             drivers.put(driver.getMetadata().identifier(), driver);
             driver.onInitialize();
         });
+
+        FabricLoader.getInstance().getEntrypointContainers("w2k-driver", Driver.class).forEach(container ->
+                newDrivers.put(container.getProvider(), container.getEntrypoint().mod(container.getProvider())));
     }
 }

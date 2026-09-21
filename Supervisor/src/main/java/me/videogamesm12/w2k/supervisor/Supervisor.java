@@ -46,11 +46,15 @@ import me.videogamesm12.w2k.supervisor.components.fantasia.Fantasia;
 import me.videogamesm12.w2k.supervisor.components.flags.Flags;
 import me.videogamesm12.w2k.supervisor.components.watchdog.Watchdog;
 import net.fabricmc.loader.api.FabricLoader;
+import net.kyori.adventure.nbt.BinaryTag;
+import net.kyori.adventure.nbt.BinaryTagIO;
+import net.kyori.adventure.nbt.CompoundBinaryTag;
 import net.kyori.adventure.text.Component;
 
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -229,34 +233,34 @@ public class Supervisor extends Thread
 
     public Configuration loadConfiguration()
     {
-        File file = new File(FabricLoader.getInstance().getConfigDir().toFile(), "w2k-supervisor.json");
+        final File file = new File(W2K.getModFolder(), "supervisor.nbt");
+
+        CompoundBinaryTag tag = CompoundBinaryTag.empty();
 
         if (file.exists())
         {
             try
             {
-                return new Gson().fromJson(new FileReader(file), Configuration.class);
+                tag = BinaryTagIO.reader().read(file.toPath());
             }
-            catch (Exception ex)
+            catch (IOException ex)
             {
                 W2K.getLogger().error("Failed to read Supervisor configuration", ex);
-                return new Configuration();
             }
         }
-        else
-        {
-            return new Configuration();
-        }
+
+        return Configuration.fromNbt(tag);
     }
 
     public void saveConfiguration()
     {
-        File file = new File(FabricLoader.getInstance().getConfigDir().toFile(), "w2k-supervisor.json");
-        try (FileWriter writer = new FileWriter(file))
+        final File file = new File(W2K.getModFolder(), "supervisor.nbt");
+
+        try
         {
-            writer.write(new GsonBuilder().setPrettyPrinting().create().toJson(config));
+            BinaryTagIO.writer().write(config.toNbt(), file.toPath());
         }
-        catch (Exception ex)
+        catch (IOException ex)
         {
             W2K.getLogger().error("Failed to write Supervisor configuration", ex);
         }
@@ -332,6 +336,7 @@ public class Supervisor extends Thread
     {
         saveConfiguration();
         components.forEach(SVComponent::shutdown);
+        interrupt();
     }
 
     public void crashClient()
