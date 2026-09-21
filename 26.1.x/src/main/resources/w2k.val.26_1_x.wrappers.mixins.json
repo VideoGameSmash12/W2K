@@ -1,0 +1,29 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "me.videogamesm12.w2k.val.v26_1_x.wrappers",
+  "compatibilityLevel": "JAVA_21",
+  "client": [
+    "network.ClientPacketListenerWrapper",
+    "network.DebugQueryHandlerWrapper",
+    "network.PlayerInfoWrapper",
+    "util.SessionWrapper",
+    "world.LocalPlayerWrapper",
+    "world.ClientWorldWrapper"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "mixins": [
+    "command.EntitySelectorWrapper",
+    "inventory.ItemStackWrapper",
+    "profile.GameProfileWrapper",
+    "profile.PropertyWrapper",
+    "util.BlockPosWrapper",
+    "world.BlockEntityWrapper",
+    "world.EntityWrapper",
+    "world.LivingEntityWrapper",
+    "world.MapItemSavedDataWrapper",
+    "world.PlayerWrapper"
+  ]
+}
