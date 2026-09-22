@@ -31,6 +31,7 @@ public class Toolbox extends Driver
                 new UuidCmd(),
                 new PremiumCmd(),
                 new DumpCmd(),
+                new QueryCmd(),
                 new LKillCmd(),
                 new ProfileCmd());
     }
