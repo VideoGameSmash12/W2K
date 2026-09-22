@@ -80,7 +80,6 @@ public abstract class WModule
         // Create root compound
         final CompoundBinaryTag.Builder builder = CompoundBinaryTag.builder();
         builder.putBoolean("enabled", enabled);
-        synchronizeEventDispatchers(enabled);
 
         // Create settings compound
         final CompoundBinaryTag.Builder settingsBuilder = CompoundBinaryTag.builder();
@@ -102,6 +101,7 @@ public abstract class WModule
 
         // Read enabled state
         this.enabled = tag.getBoolean("enabled", false);
+        synchronizeEventDispatchers(enabled);
 
         // Read settings
         final CompoundBinaryTag settingsTag = tag.getCompound("settings");

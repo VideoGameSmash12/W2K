@@ -48,6 +48,9 @@ public class DataQueryHandlerWrapper implements DataQueryHandlerInterface
         // Make sure it doesn't linger on forever
         future.orTimeout(10, TimeUnit.SECONDS);
 
+        // Remove from map when completed
+        future.whenComplete((result, throwable) -> map.remove(id));
+
         // Store the future so we can refer back to it later
         map.put(id, future);
 
@@ -73,6 +76,9 @@ public class DataQueryHandlerWrapper implements DataQueryHandlerInterface
         // Make sure it doesn't linger on forever
         future.orTimeout(10, TimeUnit.SECONDS);
 
+        // Remove from map when completed
+        future.whenComplete((result, throwable) -> map.remove(pos.hashCode()));
+
         // Store the future so we can refer back to it later
         map.put(pos.hashCode(), future);
 
@@ -96,7 +102,6 @@ public class DataQueryHandlerWrapper implements DataQueryHandlerInterface
         {
             final CompletableFuture<CompoundBinaryTag> compound = map.get(i);
             compound.completeAsync(() -> W2K.getInstance().getVersionAbstractionLayer().nbt().nativeToAdventure(nbtCompound));
-            map.remove(i);
             cir.setReturnValue(true);
         }
     }
