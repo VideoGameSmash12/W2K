@@ -25,7 +25,6 @@ package me.videogamesm12.w2k.supervisor.components.fantasia;
 import com.google.common.eventbus.Subscribe;
 import lombok.Getter;
 import me.videogamesm12.w2k.kernel.W2K;
-import me.videogamesm12.w2k.kernel.event.miscellaneous.PanicKeyCombinationEvent;
 import me.videogamesm12.w2k.supervisor.Supervisor;
 import me.videogamesm12.w2k.supervisor.api.event.ClientFreezeEvent;
 import me.videogamesm12.w2k.supervisor.components.fantasia.command.*;
@@ -33,13 +32,11 @@ import me.videogamesm12.w2k.supervisor.components.fantasia.event.SessionPreProce
 import me.videogamesm12.w2k.supervisor.components.fantasia.event.SessionStartedEvent;
 import me.videogamesm12.w2k.supervisor.components.fantasia.event.SessionStartedPreSetupEvent;
 import me.videogamesm12.w2k.supervisor.components.fantasia.listener.IConnectionListener;
-import me.videogamesm12.w2k.supervisor.components.fantasia.listener.TelnetConnectionListener;
 import me.videogamesm12.w2k.supervisor.components.fantasia.session.CommandSender;
 import me.videogamesm12.w2k.supervisor.components.fantasia.session.ISession;
 import org.apache.commons.lang3.ArrayUtils;
 
 import java.io.IOException;
-import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -174,12 +171,6 @@ public class Server extends Thread
     public void onClientFreeze(ClientFreezeEvent event)
     {
         broadcast(" ** WARNING: CLIENT FREEZE DETECTED, LAST RENDERED " + event.getLastRendered() + " MS AGO ** ");
-    }
-
-    @Subscribe
-    public void onPanicCombination(PanicKeyCombinationEvent event)
-    {
-        broadcast(" ** ATTENTION: PANIC KEY COMBINATION ENTERED AT " + event.getTimestamp() + " MS ** ");
     }
 
     @Subscribe

@@ -7,7 +7,6 @@ import me.videogamesm12.w2k.kernel.W2K;
 import me.videogamesm12.w2k.kernel.abstraction.network.DataQueryHandlerInterface;
 import me.videogamesm12.w2k.kernel.abstraction.util.BlockPosInterface;
 import me.videogamesm12.w2k.kernel.event.miscellaneous.KeyPressEvent;
-import me.videogamesm12.w2k.kernel.event.miscellaneous.PanicKeyCombinationEvent;
 import me.videogamesm12.w2k.kernel.event.network.DataQueryResponseEvent;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Keyboard;

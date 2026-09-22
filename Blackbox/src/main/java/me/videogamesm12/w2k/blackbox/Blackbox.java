@@ -6,16 +6,13 @@ import lombok.Getter;
 import me.videogamesm12.w2k.blackbox.command.BlackboxCmd;
 import me.videogamesm12.w2k.blackbox.theming.ITheme;
 import me.videogamesm12.w2k.blackbox.window.tool.crashpad.Bootstrap;
-import me.videogamesm12.w2k.blackbox.window.tool.crashpad.Crashpad;
 import me.videogamesm12.w2k.kernel.W2K;
 import me.videogamesm12.w2k.kernel.event.miscellaneous.KeyPressEvent;
-import me.videogamesm12.w2k.kernel.event.miscellaneous.PanicKeyCombinationEvent;
 import me.videogamesm12.w2k.kernel.event.lifecycle.ClientCrashedEvent;
 import me.videogamesm12.w2k.kernel.event.lifecycle.ClientStartedEvent;
 import me.videogamesm12.w2k.kernel.event.lifecycle.ClientStoppedEvent;
 import me.videogamesm12.w2k.kernel.util.KeyboardUtils;
 import me.videogamesm12.w2k.kernel.util.SysUtils;
-import me.videogamesm12.w2k.kernel.util.VersionUtils;
 import me.videogamesm12.w2k.supervisor.Supervisor;
 import me.videogamesm12.w2k.blackbox.theming.ThemeRegistry;
 import me.videogamesm12.w2k.blackbox.window.GUI;
@@ -25,16 +22,10 @@ import net.fabricmc.loader.api.FabricLoader;
 
 import javax.swing.*;
 import javax.swing.plaf.metal.MetalLookAndFeel;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.stream.Collectors;
 
 public class Blackbox extends Thread
 {
