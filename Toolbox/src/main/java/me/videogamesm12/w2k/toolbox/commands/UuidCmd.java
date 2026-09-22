@@ -14,9 +14,13 @@ import net.kyori.adventure.text.format.TextDecoration;
 
 import java.io.FileNotFoundException;
 
-@Parameters(name = "uuid", usage = "/<command> <name>")
 public class UuidCmd extends WCommand
 {
+    public UuidCmd()
+    {
+        super("uuid");
+    }
+
     @ExecutionPath("<username|w2k:online_players/name>")
     public void fetchUuid(final String name)
     {

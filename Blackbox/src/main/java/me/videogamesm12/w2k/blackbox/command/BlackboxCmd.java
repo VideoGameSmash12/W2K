@@ -9,9 +9,13 @@ import net.kyori.adventure.text.format.NamedTextColor;
 
 import javax.swing.*;
 
-@Parameters(name = "blackbox", usage = "/<command> <open | status>")
 public class BlackboxCmd extends WCommand
 {
+    public BlackboxCmd()
+    {
+        super("blackbox");
+    }
+
     @ExecutionPath("open")
     public void open()
     {

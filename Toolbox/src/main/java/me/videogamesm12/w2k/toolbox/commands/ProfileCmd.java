@@ -7,9 +7,13 @@ import me.videogamesm12.w2k.kernel.command.Parameters;
 import me.videogamesm12.w2k.kernel.command.WCommand;
 import net.kyori.adventure.text.Component;
 
-@Parameters(name = "profile", usage = "")
 public class ProfileCmd extends WCommand
 {
+    public ProfileCmd()
+    {
+        super("profile");
+    }
+
     @ExecutionPath({"properties", "<username or UUID|w2k:online_players/both>"})
     public void properties(final String nameOrUuid)
     {

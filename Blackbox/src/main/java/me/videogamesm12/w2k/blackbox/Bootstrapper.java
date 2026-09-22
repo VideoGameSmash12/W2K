@@ -1,13 +1,21 @@
 package me.videogamesm12.w2k.blackbox;
 
+import me.videogamesm12.w2k.blackbox.command.BlackboxCmd;
 import me.videogamesm12.w2k.kernel.W2K;
+import me.videogamesm12.w2k.kernel.command.WCommand;
+import me.videogamesm12.w2k.kernel.driver.base.Driver;
+import me.videogamesm12.w2k.kernel.module.WModule;
 import me.videogamesm12.w2k.kernel.util.SysUtils;
-import net.fabricmc.api.ClientModInitializer;
 
-public class Entrypoints implements ClientModInitializer
+import java.util.Collections;
+import java.util.List;
+
+public class Bootstrapper extends Driver
 {
+    private List<WCommand> command;
+
     @Override
-    public void onInitializeClient()
+    public void init()
     {
         if (System.getProperties().getProperty("me.videogamesm12.w2k.no_blackbox", "f").toLowerCase().startsWith("t"))
         {
@@ -45,5 +53,18 @@ public class Entrypoints implements ClientModInitializer
         }
 
         Blackbox.setup();
+        this.command = Collections.singletonList(new BlackboxCmd());
+    }
+
+    @Override
+    public List<WModule> modules()
+    {
+        return Collections.emptyList();
+    }
+
+    @Override
+    public List<WCommand> commands()
+    {
+        return command;
     }
 }

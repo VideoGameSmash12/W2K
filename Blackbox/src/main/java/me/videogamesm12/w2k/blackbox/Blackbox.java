@@ -3,7 +3,6 @@ package me.videogamesm12.w2k.blackbox;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import lombok.Getter;
-import me.videogamesm12.w2k.blackbox.command.BlackboxCmd;
 import me.videogamesm12.w2k.blackbox.theming.ITheme;
 import me.videogamesm12.w2k.blackbox.window.tool.crashpad.Bootstrap;
 import me.videogamesm12.w2k.kernel.W2K;
@@ -49,7 +48,7 @@ public class Blackbox extends Thread
 
     public static File getFolder()
     {
-        return new File(FabricLoader.getInstance().getConfigDir().toFile(), "w2k-blackbox");
+        return new File(W2K.getModFolder(), "blackbox");
     }
 
     @Getter
@@ -96,8 +95,6 @@ public class Blackbox extends Thread
         {
             startup();
         }
-
-        W2K.getInstance().getCommandManager().registerCommand(BlackboxCmd.class);
     }
     
     @Subscribe

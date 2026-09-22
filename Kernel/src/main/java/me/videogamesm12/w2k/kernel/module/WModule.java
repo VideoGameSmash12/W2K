@@ -1,5 +1,6 @@
 package me.videogamesm12.w2k.kernel.module;
 
+import com.google.common.eventbus.EventBus;
 import lombok.Getter;
 import me.videogamesm12.w2k.kernel.W2K;
 import me.videogamesm12.w2k.kernel.abstraction.BaseVersionAbstractionLayer;
@@ -23,6 +24,7 @@ public abstract class WModule
     private final Consumer<Boolean> onToggle;
     private final Map<String, WModuleSetting<? extends BinaryTag, ?>> settings = new HashMap<>();
     private final List<Overlay> overlays = new ArrayList<>();
+    private final List<EventBus> eventDispatchers = new ArrayList<>();
     private boolean enabled;
 
     public WModule(final String name, final String description)
@@ -32,7 +34,7 @@ public abstract class WModule
         this.description = description;
         this.onToggle = null;
         //--
-        W2K.getEventBus().register(this);
+        registerEventDispatcher(W2K.getEventBus());
     }
 
     public WModule(final String id, final String name, final String description, final Consumer<Boolean> onToggle)
@@ -42,7 +44,7 @@ public abstract class WModule
         this.description = description;
         this.onToggle = onToggle;
         //--
-        W2K.getEventBus().register(this);
+        registerEventDispatcher(W2K.getEventBus());
     }
 
     public <T extends BinaryTag, R, W extends WModuleSetting<T, R>> W register(W setting)
@@ -59,11 +61,17 @@ public abstract class WModule
 
     public <T extends WModule> void setEnabled(boolean value)
     {
+        if (enabled == value)
+        {
+            return;
+        }
+
         final ModuleStateUpdateEvent<T> event = new ModuleStateUpdateEvent<>((T) this, this.enabled, value);
         W2K.getEventBus().post(event);
         if (!event.isCancelled())
         {
             this.enabled = value;
+            synchronizeEventDispatchers(enabled);
         }
     }
 
@@ -72,6 +80,7 @@ public abstract class WModule
         // Create root compound
         final CompoundBinaryTag.Builder builder = CompoundBinaryTag.builder();
         builder.putBoolean("enabled", enabled);
+        synchronizeEventDispatchers(enabled);
 
         // Create settings compound
         final CompoundBinaryTag.Builder settingsBuilder = CompoundBinaryTag.builder();
@@ -120,6 +129,35 @@ public abstract class WModule
                 setting.read(entry.getValue());
             });
         }
+    }
+
+    public void registerEventDispatcher(final EventBus dispatcher)
+    {
+        if (!eventDispatchers.contains(dispatcher))
+        {
+            eventDispatchers.add(dispatcher);
+        }
+    }
+
+    private void synchronizeEventDispatchers(boolean value)
+    {
+        eventDispatchers.forEach(dispatcher ->
+        {
+            if (value)
+            {
+                dispatcher.register(this);
+            }
+            else
+            {
+                try
+                {
+                    dispatcher.unregister(this);
+                }
+                catch (Throwable ignored)
+                {
+                }
+            }
+        });
     }
 
     protected W2K w2k()

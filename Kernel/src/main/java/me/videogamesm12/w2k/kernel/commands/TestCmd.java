@@ -9,9 +9,9 @@ import java.util.Objects;
 @Parameters(name = "test", usage = "No point here")
 public class TestCmd extends WCommand
 {
-    public TestCmd() throws InvocationTargetException, IllegalAccessException
+    public TestCmd()
     {
-        super();
+        super("test");
     }
 
     @ExecutionPath

@@ -1,7 +1,6 @@
 package me.videogamesm12.w2k.toolbox.modules;
 
 import lombok.Getter;
-import me.videogamesm12.w2k.kernel.data.BoxOverlay;
 import me.videogamesm12.w2k.kernel.data.BuildMetadata;
 import me.videogamesm12.w2k.kernel.data.Overlay;
 import me.videogamesm12.w2k.kernel.data.StaticTextOverlay;
@@ -10,19 +9,18 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 
-import java.awt.*;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-public class DevelopmentBuildWatermark extends WModule
+public class Watermark extends WModule
 {
     @Getter
     private static final BuildMetadata meta = BuildMetadata.getMetadataFromMod("w2k");
 
-    public DevelopmentBuildWatermark()
+    public Watermark()
     {
-        super("Watermark", "Displays a watermark when you are using a build with uncommitted changes.");
+        super("Watermark", "Displays a watermark containing details about the build you are running");
 
         addOverlay(new StaticTextOverlay(2, 2,
                 Overlay.Alignment.MOST, Overlay.Alignment.LEAST,

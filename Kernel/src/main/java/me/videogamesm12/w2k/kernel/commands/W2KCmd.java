@@ -19,9 +19,13 @@ import net.kyori.adventure.text.format.TextDecoration;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Parameters(name = "w2k", usage = "/<command> [details]")
 public class W2KCmd extends WCommand
 {
+    public W2KCmd()
+    {
+        super("w2k");
+    }
+
     @ExecutionPath
     public void summary()
     {

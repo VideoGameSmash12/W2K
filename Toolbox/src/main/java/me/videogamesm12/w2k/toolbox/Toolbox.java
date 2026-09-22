@@ -1,23 +1,49 @@
 package me.videogamesm12.w2k.toolbox;
 
-import me.videogamesm12.w2k.kernel.W2K;
-import me.videogamesm12.w2k.kernel.command.WCommandManager;
+import me.videogamesm12.w2k.kernel.command.WCommand;
+import me.videogamesm12.w2k.kernel.driver.base.Driver;
+import me.videogamesm12.w2k.kernel.module.WModule;
 import me.videogamesm12.w2k.toolbox.commands.*;
-import net.fabricmc.api.ClientModInitializer;
+import me.videogamesm12.w2k.toolbox.modules.*;
 
-public class Toolbox implements ClientModInitializer
+import java.util.Arrays;
+import java.util.List;
+
+public class Toolbox extends Driver
 {
-    @Override
-    public void onInitializeClient()
-    {
-        final WCommandManager commandManager = W2K.getInstance().getCommandManager();
+    private List<WModule> modules = null;
+    private List<WCommand> commands = null;
 
-        commandManager.registerCommand(NameCmd.class);
-        commandManager.registerCommand(UuidCmd.class);
-        commandManager.registerCommand(PremiumCmd.class);
-        commandManager.registerCommand(DumpCmd.class);
-        commandManager.registerCommand(LKillCmd.class);
-        commandManager.registerCommand(QueryCmd.class);
-        commandManager.registerCommand(ProfileCmd.class);
+    @Override
+    public void init()
+    {
+        modules = Arrays.asList(
+                new AntiLockup(),
+                new BanHammer(),
+                new EaglerPrint(),
+                new QueryLogger(),
+                new TargetHighlighter(),
+                new TPSOverlay(),
+                new Watermark());
+
+        commands = Arrays.asList(
+                new NameCmd(),
+                new UuidCmd(),
+                new PremiumCmd(),
+                new DumpCmd(),
+                new LKillCmd(),
+                new ProfileCmd());
+    }
+
+    @Override
+    public List<WModule> modules()
+    {
+        return modules;
+    }
+
+    @Override
+    public List<WCommand> commands()
+    {
+        return commands;
     }
 }

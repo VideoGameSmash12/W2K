@@ -78,6 +78,29 @@ public class W2K implements ModInitializer
         commandManager.registerCommand(W2KCmd.class);
         commandManager.registerCommand(TestCmd.class);
 
+        logger.info("Loading drivers");
+        driverManager.loadDrivers();
+        logger.info("Setting up drivers");
+        driverManager.driversByMod().forEach((mod, drivers) ->
+        {
+            drivers.forEach(driver ->
+            {
+                try
+                {
+                    driver.init();
+                }
+                catch (Throwable ex)
+                {
+                    W2K.getLogger().error("Driver {} failed to initialize, skipping", driver.getClass().getName(), ex);
+                    return;
+                }
+
+                driver.commands().forEach(commandManager::registerCommand);
+                driver.modules().forEach(module -> moduleManager.registerModule(mod, module));
+            });
+        });
+        logger.info("Drivers successfully set up");
+
         // Experiment
         if (!ExperimentManager.getEnabledExperiments().isEmpty())
         {
@@ -85,10 +108,9 @@ public class W2K implements ModInitializer
             ExperimentManager.getEnabledExperiments().forEach(experiment -> logger.warn("[!]  - {}", experiment.getIdentifier()));
         }
 
-        logger.info("Initializing modules");
-        moduleManager.registerModules();
+        logger.info("Loading module configuration");
         moduleManager.loadModules();
-        logger.info("Modules successfully initialized");
+        logger.info("Modules successfully configured");
 
         getEventBus().register(this);
     }

@@ -11,9 +11,13 @@ import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 
-@Parameters(name = "dump", usage = "/dump <<entities | maps | screen | tiles [heap]> | threads | <heap [live objects?]>>")
 public class DumpCmd extends WCommand
 {
+	public DumpCmd()
+	{
+		super("dump");
+	}
+
 	@ExecutionPath("heap")
 	public void heap()
 	{

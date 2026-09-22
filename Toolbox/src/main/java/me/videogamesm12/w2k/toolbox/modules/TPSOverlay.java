@@ -30,14 +30,12 @@ public class TPSOverlay extends WModule
                 () -> ticks[0] + ticks[1] + ticks[2],
                 true));
 
-        w2k().getCommunicationManager().getEventBus().register(this);
+        registerEventDispatcher(w2k().getCommunicationManager().getEventBus());
     }
 
     @Subscribe
     public void onHeartbeatPacket(WClientboundHeartbeatPacket packet)
     {
-        if (!isEnabled()) return;
-
         ticks[0] = packet.getOneMinute();
         ticks[1] = packet.getFiveMinutes();
         ticks[2] = packet.getTenMinutes();

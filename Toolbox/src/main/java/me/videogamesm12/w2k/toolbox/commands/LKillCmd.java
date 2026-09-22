@@ -10,9 +10,13 @@ import net.kyori.adventure.text.Component;
 
 import java.util.List;
 
-@Parameters(name = "lkill", usage = "")
 public class LKillCmd extends WCommand
 {
+    public LKillCmd()
+    {
+        super("lkill");
+    }
+
     @ExecutionPath("<selector|w2k:wrapped/entities>")
     public void kill(final EntitySelectorInterface selector)
     {

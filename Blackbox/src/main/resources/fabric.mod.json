@@ -13,7 +13,7 @@
   "environment": "client",
   "entrypoints": {
     "client": [
-      "me.videogamesm12.w2k.blackbox.Entrypoints"
+      "me.videogamesm12.w2k.blackbox.Bootstrapper"
     ],
     "w2k-experiments": [
       "me.videogamesm12.w2k.blackbox.experiments.BlackboxExperiments"

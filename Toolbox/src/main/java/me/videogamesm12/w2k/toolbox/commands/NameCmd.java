@@ -16,9 +16,13 @@ import java.io.FileNotFoundException;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
-@Parameters(name = "name", usage = "/<command> <uuid>")
 public class NameCmd extends WCommand
 {
+    public NameCmd()
+    {
+        super("name");
+    }
+
     @ExecutionPath("<uuid|w2k:online_players/uuid>")
     public void fetchName(final UUID uuid)
     {

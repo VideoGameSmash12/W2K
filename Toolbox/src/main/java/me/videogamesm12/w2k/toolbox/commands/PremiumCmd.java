@@ -11,9 +11,13 @@ import net.kyori.adventure.text.format.NamedTextColor;
 
 import java.io.FileNotFoundException;
 
-@Parameters(name = "premium", usage = "/<command> <name or UUID>")
 public class PremiumCmd extends WCommand
 {
+    public PremiumCmd()
+    {
+        super("premium");
+    }
+
     @ExecutionPath("<username or UUID|w2k:online_players/both>")
     public void checkPremium(final String nameOrUuid)
     {

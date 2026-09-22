@@ -24,6 +24,11 @@ public class QueryCmd extends WCommand
 {
     private final ForkJoinPool pool = new ForkJoinPool(4);
 
+    public QueryCmd()
+    {
+        super("query");
+    }
+
     @Override
     public boolean available()
     {

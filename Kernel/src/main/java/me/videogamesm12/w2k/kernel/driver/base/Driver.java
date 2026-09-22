@@ -16,7 +16,7 @@ public abstract class Driver
 
     public abstract List<WCommand> commands();
 
-    public void ready()
+    public void init()
     {
     }
 

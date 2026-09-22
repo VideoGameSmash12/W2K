@@ -21,21 +21,12 @@ public abstract class WCommand
     private static final Timer scheduler = new Timer();
 
     private final String name;
-    private final String usage;
     private final List<CommandPath<?, ?>> paths;
 
-    protected WCommand()
+    public WCommand(final String name)
     {
-        if (!getClass().isAnnotationPresent(Parameters.class))
-        {
-            throw new IllegalArgumentException("Commands must have the Parameters class to be initialized this way");
-        }
-
-        final Parameters parameters = getClass().getAnnotation(Parameters.class);
-
-        this.name       = parameters.name();
-        this.usage      = parameters.usage();
-        this.paths      = new ArrayList<>();
+        this.name   = name;
+        this.paths  = new ArrayList<>();
     }
 
     public boolean available()
