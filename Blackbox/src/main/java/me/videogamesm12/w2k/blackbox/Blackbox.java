@@ -5,6 +5,7 @@ import com.google.common.eventbus.Subscribe;
 import lombok.Getter;
 import me.videogamesm12.w2k.blackbox.command.BlackboxCmd;
 import me.videogamesm12.w2k.blackbox.theming.ITheme;
+import me.videogamesm12.w2k.blackbox.window.tool.crashpad.Bootstrap;
 import me.videogamesm12.w2k.blackbox.window.tool.crashpad.Crashpad;
 import me.videogamesm12.w2k.kernel.W2K;
 import me.videogamesm12.w2k.kernel.event.miscellaneous.KeyPressEvent;
@@ -27,7 +28,13 @@ import javax.swing.plaf.metal.MetalLookAndFeel;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 
 public class Blackbox extends Thread
 {
@@ -183,30 +190,20 @@ public class Blackbox extends Thread
                 case LINUX:
                 default:
                 {
-                    final Crashpad crashpad = new Crashpad(event.getCrashReportFile());
-                    final AtomicBoolean done = new AtomicBoolean(false);
-                    crashpad.setVisible(true);
-                    crashpad.setIconImage(Blackbox.getInstance().getMainWindow() != null ?
-                            Blackbox.getInstance().getMainWindow().getIconImage() : null);
-
-                    // Awful hacks below
-                    crashpad.addWindowListener(new WindowAdapter()
+                    try
                     {
-                        @Override
-                        public void windowClosed(WindowEvent e)
-                        {
-                            super.windowClosed(e);
-                            done.set(true);
-                        }
-                    });
-                    while (true)
+                        SysUtils.execute(Paths.get(System.getProperty("java.home"), "bin", "java").toString(),
+                                "-cp",
+                                Paths.get(Blackbox.class.getProtectionDomain().getCodeSource().getLocation().toURI()).toString(),
+                                Bootstrap.class.getName(),
+                                event.getCrashReportFile().getAbsolutePath()).waitFor();
+                    }
+                    catch (InterruptedException ignored)
                     {
-                        if (done.get() || !crashpad.isVisible())
-                        {
-                            break;
-                        }
-
-                        continue;
+                    }
+                    catch (IOException | URISyntaxException ex)
+                    {
+                        W2K.getLogger().error("Couldn't launch Crashpad", ex);
                     }
 
                     break;
