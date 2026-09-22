@@ -11,6 +11,7 @@ import me.videogamesm12.w2k.kernel.abstraction.network.AbstractPacketTranslator;
 import me.videogamesm12.w2k.kernel.abstraction.network.PlayNetworkHandlerInterface;
 import me.videogamesm12.w2k.kernel.abstraction.util.SessionInterface;
 import me.videogamesm12.w2k.kernel.abstraction.world.ClientPlayerEntityInterface;
+import me.videogamesm12.w2k.kernel.abstraction.world.ClientWorldInterface;
 import me.videogamesm12.w2k.kernel.abstraction.world.EntityInterface;
 import me.videogamesm12.w2k.kernel.event.entity.EntityInteractionEvent;
 import me.videogamesm12.w2k.kernel.event.lifecycle.ClientStartedEvent;
@@ -46,7 +47,6 @@ import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
-@SuppressWarnings("unchecked")
 public class VersionAbstractionLayer extends BaseVersionAbstractionLayer<MinecraftClient>
 {
     private final NBTConverter<NbtCompound> nbtConverter = new NBTConverter<>(
@@ -162,9 +162,9 @@ public class VersionAbstractionLayer extends BaseVersionAbstractionLayer<Minecra
     }
 
     @Override
-    public Optional<ClientPlayerEntity> getLocalPlayer()
+    public Optional<ClientPlayerEntityInterface> getLocalPlayer()
     {
-        return Optional.ofNullable(minecraft.player);
+        return Optional.ofNullable((ClientPlayerEntityInterface) minecraft.player);
     }
 
     @Override
@@ -175,9 +175,9 @@ public class VersionAbstractionLayer extends BaseVersionAbstractionLayer<Minecra
 
 
     @Override
-    public Optional<Entity> getTargetedEntity()
+    public Optional<EntityInterface> getTargetedEntity()
     {
-        return Optional.ofNullable(minecraft.targetedEntity);
+        return Optional.ofNullable((EntityInterface) minecraft.targetedEntity);
     }
 
     @Override
@@ -193,9 +193,9 @@ public class VersionAbstractionLayer extends BaseVersionAbstractionLayer<Minecra
     }
 
     @Override
-    public Optional<ClientWorld> getLocalWorld()
+    public Optional<ClientWorldInterface> getLocalWorld()
     {
-        return Optional.ofNullable(minecraft.world);
+        return Optional.ofNullable((ClientWorldInterface) minecraft.world);
     }
 
     @Override

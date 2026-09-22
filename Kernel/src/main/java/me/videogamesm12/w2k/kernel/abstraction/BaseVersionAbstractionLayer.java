@@ -17,7 +17,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
 
 /**
  * <h1>BaseVersionAbstractionLayer</h1>
@@ -60,28 +59,31 @@ public abstract class BaseVersionAbstractionLayer<Minecraft>
      *  sessions and will only have one present when in-game. As such, this is an optional to allow you to perform
      *  actions only if the player is in-game.</p>
      * @return          {@link Optional<ClientPlayerEntityInterface>}
-     * @param <Player>  {@code ClientPlayerEntity} or {@code LocalPlayer} (depending on your mappings)
      */
-    public abstract <Player extends ClientPlayerEntityInterface> Optional<Player> getLocalPlayer();
+    public abstract Optional<ClientPlayerEntityInterface> getLocalPlayer();
 
+    /**
+     * <p>Gets the {@code ClientPlayerEntity} representing the player.</p>
+     * <p>Like {@code ClientPlayNetworkHandler}s, Minecraft does not re-use instances of these across server or game
+     *  sessions and will only have one present when in-game. As such, this is can be null.</p>
+     * @return          {@link ClientPlayerEntityInterface}
+     */
     public abstract ClientPlayerEntityInterface getLocalPlayerUnsafe();
 
     /**
      * <p>Gets the {@code ClientWorld} representing the client-side world.</p>
      * <p>This is an optional to allow you to perform actions only if the player is in-game.</p>
-     * @return              {@link Optional<ClientWorld>}
-     * @param <ClientWorld> {@code ClientWorld} or {@code ClientLevel} (depending on your mappings)
+     * @return  {@link Optional<ClientWorldInterface>}
      */
-    public abstract <ClientWorld extends ClientWorldInterface> Optional<ClientWorld> getLocalWorld();
+    public abstract Optional<ClientWorldInterface> getLocalWorld();
 
     /**
      * <p>Gets the {@code Entity} representing the player that the user is currently looking at.</p>
      * <p>Since the player is not always going to be looking at an entity, this is an optional to allow you to perform
      *  actions only if the user is looking at an entity.</p>
-     * @return          Entity
-     * @param <Entity>  {@code Entity}
+     * @return  {@link Optional<EntityInterface>}
      */
-    public abstract <Entity extends EntityInterface> Optional<Entity> getTargetedEntity();
+    public abstract Optional<EntityInterface> getTargetedEntity();
 
     /**
      * <p>Gets the {@code Entity} representing the player that the user is currently looking at.</p>
@@ -147,6 +149,13 @@ public abstract class BaseVersionAbstractionLayer<Minecraft>
         return null;
     }
 
+    /**
+     * Gets an {@link AbstractPacketTranslator} instance which translates packets between the WCom standard and
+     *  Minecraft's native format for custom payloads. Since some versions of Minecraft do not have adequate libraries
+     *  for package management, there is a chance that this can be null.
+     * @see     me.videogamesm12.w2k.kernel.communication.WCommunicationManager
+     * @return  An extension of {@link AbstractPacketTranslator}
+     */
     @Nullable
     public AbstractPacketTranslator packetTranslator()
     {

@@ -12,7 +12,7 @@
   "icon": "assets/w2k-blackbox/icon.png",
   "environment": "client",
   "entrypoints": {
-    "client": [
+    "w2k-driver": [
       "me.videogamesm12.w2k.blackbox.Bootstrapper"
     ],
     "w2k-experiments": [

@@ -10,6 +10,7 @@ import me.videogamesm12.w2k.kernel.abstraction.conversion.TextConverter;
 import me.videogamesm12.w2k.kernel.abstraction.network.PlayNetworkHandlerInterface;
 import me.videogamesm12.w2k.kernel.abstraction.util.SessionInterface;
 import me.videogamesm12.w2k.kernel.abstraction.world.ClientPlayerEntityInterface;
+import me.videogamesm12.w2k.kernel.abstraction.world.ClientWorldInterface;
 import me.videogamesm12.w2k.kernel.abstraction.world.EntityInterface;
 import me.videogamesm12.w2k.kernel.event.entity.EntityInteractionEvent;
 import me.videogamesm12.w2k.kernel.event.lifecycle.ClientStartedEvent;
@@ -29,14 +30,12 @@ import net.fabricmc.fabric.api.networking.v1.ClientboundPlayChannelEvents;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.registries.VanillaRegistries;
 import net.minecraft.nbt.*;
 import net.minecraft.network.chat.ComponentSerialization;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.Entity;
 
 import java.io.IOException;
 import java.util.List;
@@ -118,8 +117,8 @@ public class VersionAbstractionLayer extends BaseVersionAbstractionLayer<Minecra
         ClientLifecycleEvents.CLIENT_STOPPING.register((client) -> W2K.getEventBus().post(new ClientStoppedEvent(client)));
         ClientPlayConnectionEvents.DISCONNECT.register((connection, client) -> W2K.getEventBus().post(new DisconnectEvent(connection, client)));
         ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> W2K.getEventBus().post(new JoinEvent(handler, sender, client)));
-        ClientboundPlayChannelEvents.REGISTER.register(((handler, sender, client, channels) -> W2K.getEventBus().post(new RegisterPluginMessageEvent(client))));
-        AttackEntityCallback.EVENT.register((player, world, hand, target, nullableHitResult) ->
+        ClientboundPlayChannelEvents.REGISTER.register(((_, _, client, _) -> W2K.getEventBus().post(new RegisterPluginMessageEvent(client))));
+        AttackEntityCallback.EVENT.register((player, _, _, target, _) ->
         {
             if (player instanceof LocalPlayer localPlayer)
             {
@@ -134,7 +133,7 @@ public class VersionAbstractionLayer extends BaseVersionAbstractionLayer<Minecra
 
             return InteractionResult.PASS;
         });
-        UseEntityCallback.EVENT.register((player, world, hand, target, nullableHitResult) ->
+        UseEntityCallback.EVENT.register((player, _, _, target, _) ->
         {
             if (player instanceof LocalPlayer localPlayer)
             {
@@ -158,9 +157,9 @@ public class VersionAbstractionLayer extends BaseVersionAbstractionLayer<Minecra
     }
 
     @Override
-    public Optional<LocalPlayer> getLocalPlayer()
+    public Optional<ClientPlayerEntityInterface> getLocalPlayer()
     {
-        return Optional.ofNullable(minecraft.player);
+        return Optional.ofNullable((ClientPlayerEntityInterface) minecraft.player);
     }
 
     @Override
@@ -170,15 +169,15 @@ public class VersionAbstractionLayer extends BaseVersionAbstractionLayer<Minecra
     }
 
     @Override
-    public Optional<ClientLevel> getLocalWorld()
+    public Optional<ClientWorldInterface> getLocalWorld()
     {
-        return Optional.ofNullable(minecraft.level);
+        return Optional.ofNullable((ClientWorldInterface) minecraft.level);
     }
 
     @Override
-    public Optional<Entity> getTargetedEntity()
+    public Optional<EntityInterface> getTargetedEntity()
     {
-        return Optional.ofNullable(minecraft.crosshairPickEntity);
+        return Optional.ofNullable((EntityInterface) minecraft.crosshairPickEntity);
     }
 
     @Override
