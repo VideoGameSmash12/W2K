@@ -2,9 +2,16 @@ package me.videogamesm12.w2k.toolbox.modules;
 
 import com.google.common.eventbus.Subscribe;
 import me.videogamesm12.w2k.kernel.W2K;
+import me.videogamesm12.w2k.kernel.data.Overlay;
+import me.videogamesm12.w2k.kernel.data.TextOverlay;
 import me.videogamesm12.w2k.kernel.event.protocol.WPacketReceivedEvent;
 import me.videogamesm12.w2k.kernel.module.WModule;
+import me.videogamesm12.wcom.Stage;
 import me.videogamesm12.wcom.protocol.clientbound.WClientboundHeartbeatPacket;
+import net.kyori.adventure.text.Component;
+
+import java.util.Arrays;
+import java.util.Collections;
 
 public class TPSOverlay extends WModule
 {
@@ -13,9 +20,17 @@ public class TPSOverlay extends WModule
     public TPSOverlay()
     {
         super("tps_overlay",
-                "TPS Overlay (Not Working)",
-                "Show an overlay of the average tick rate of the server.",
+                "TPS Overlay",
+                "Show an overlay of the average tick rate of the server. Requires LNX or a plugin implementing the WCom standard to be installed on the server-side.",
                 null);
+
+        addOverlay(new TextOverlay(0, 0, Overlay.Alignment.LEAST, Overlay.Alignment.MOST,
+                overlay -> isEnabled() && w2k().getCommunicationManager().getStage() == Stage.READY,
+                () -> Collections.singletonList(Component.text("TPS: " + Arrays.toString(ticks))),
+                () -> ticks[0] + ticks[1] + ticks[2],
+                true));
+
+        registerEventDispatcher(w2k().getCommunicationManager().getEventBus());
     }
 
     @Subscribe
@@ -24,7 +39,5 @@ public class TPSOverlay extends WModule
         ticks[0] = packet.getOneMinute();
         ticks[1] = packet.getFiveMinutes();
         ticks[2] = packet.getTenMinutes();
-
-        W2K.getLogger().info("Debug - got tps update packet");
     }
 }

@@ -28,19 +28,34 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import lombok.Getter;
 import me.videogamesm12.w2k.kernel.W2K;
-import me.videogamesm12.w2k.kernel.data.*;
+import me.videogamesm12.w2k.kernel.abstraction.inventory.ItemStackInterface;
+import me.videogamesm12.w2k.kernel.abstraction.network.PlayNetworkHandlerInterface;
+import me.videogamesm12.w2k.kernel.abstraction.network.PlayerListEntryInterface;
+import me.videogamesm12.w2k.kernel.abstraction.world.*;
 import me.videogamesm12.w2k.kernel.event.diagnostics.PopulateCrashReportEvent;
+import me.videogamesm12.w2k.kernel.event.lifecycle.ClientCleanedUpAfterCrashEvent;
+import me.videogamesm12.w2k.kernel.event.lifecycle.ClientCrashedEvent;
 import me.videogamesm12.w2k.kernel.event.lifecycle.ClientStartedEvent;
 import me.videogamesm12.w2k.kernel.event.lifecycle.ClientStoppedEvent;
+import me.videogamesm12.w2k.kernel.event.network.packet.*;
+import me.videogamesm12.w2k.kernel.event.render.BlockEntityRenderEvent;
+import me.videogamesm12.w2k.kernel.event.render.EntityRenderEvent;
+import me.videogamesm12.w2k.kernel.event.render.GameRenderEvent;
+import me.videogamesm12.w2k.kernel.event.render.WorldRenderEvent;
 import me.videogamesm12.w2k.supervisor.api.SVComponent;
 import me.videogamesm12.w2k.supervisor.components.fantasia.Fantasia;
 import me.videogamesm12.w2k.supervisor.components.flags.Flags;
 import me.videogamesm12.w2k.supervisor.components.watchdog.Watchdog;
 import net.fabricmc.loader.api.FabricLoader;
+import net.kyori.adventure.nbt.BinaryTag;
+import net.kyori.adventure.nbt.BinaryTagIO;
+import net.kyori.adventure.nbt.CompoundBinaryTag;
+import net.kyori.adventure.text.Component;
 
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -105,6 +120,17 @@ public class Supervisor extends Thread
     }
 
     @Subscribe
+    public void onClientCleanUpAfterCrash(ClientCleanedUpAfterCrashEvent event)
+    {
+        if (FabricLoader.getInstance().isModLoaded("notenoughcrashes"))
+        {
+            return;
+        }
+
+        shutdown();
+    }
+
+    @Subscribe
     public void onCrashReport(PopulateCrashReportEvent event)
     {
         final List<String> lines = new ArrayList<>();
@@ -123,36 +149,129 @@ public class Supervisor extends Thread
         event.appendSection("Supervisor", lines.toArray(new String[0]));
     }
 
+    @Subscribe
+    public void onGameRender(GameRenderEvent event)
+    {
+        if (config.getRenderingSettings().isGameRenderingDisabled())
+        {
+            event.setCancelled(true);
+        }
+    }
+
+    @Subscribe
+    public void onWorldRender(WorldRenderEvent event)
+    {
+        if (config.getRenderingSettings().isWorldRenderingDisabled()
+                || config.getRenderingSettings().isGameRenderingDisabled())
+        {
+            event.setCancelled(true);
+        }
+    }
+
+    @Subscribe
+    public void onBlockEntityRender(BlockEntityRenderEvent event)
+    {
+        if (config.getRenderingSettings().isTileEntityRenderingDisabled()
+                || config.getRenderingSettings().isGameRenderingDisabled())
+        {
+            event.setCancelled(true);
+        }
+    }
+
+    @Subscribe
+    public void onEntityRender(EntityRenderEvent event)
+    {
+        if (config.getRenderingSettings().isTileEntityRenderingDisabled()
+                || config.getRenderingSettings().isGameRenderingDisabled())
+        {
+            event.setCancelled(true);
+        }
+    }
+
+    @Subscribe
+    public void onIncomingEntityPacket(IncomingEntitySpawnPacketEvent event)
+    {
+        if (config.getNetworkSettings().isIgnoringEntitySpawns())
+        {
+            event.setCancelled(true);
+        }
+    }
+
+    @Subscribe
+    public void onExplosionPacket(IncomingExplosionPacketEvent event)
+    {
+        if (config.getNetworkSettings().isIgnoringExplosions())
+        {
+            event.setCancelled(true);
+        }
+    }
+
+    @Subscribe
+    public void onLightUpdatePacket(IncomingLightUpdatePacketEvent event)
+    {
+        if (config.getNetworkSettings().isIgnoringLightUpdates())
+        {
+            event.setCancelled(true);
+        }
+    }
+
+    @Subscribe
+    public void onParticleSpawnPacket(IncomingParticleSpawnPacketEvent event)
+    {
+        if (config.getNetworkSettings().isIgnoringParticleSpawns())
+        {
+            event.setCancelled(true);
+        }
+    }
+
+    @Subscribe
+    public void onMapUpdatePacket(IncomingMapUpdatePacketEvent event)
+    {
+        if (config.getNetworkSettings().isIgnoringMapUpdates())
+        {
+            event.setCancelled(true);
+        }
+    }
+
+    @Subscribe
+    public void onOpenScreenPacket(IncomingOpenScreenPacketEvent event)
+    {
+        if (config.getNetworkSettings().isIgnoringScreens())
+        {
+            event.setCancelled(true);
+        }
+    }
+
     public Configuration loadConfiguration()
     {
-        File file = new File(FabricLoader.getInstance().getConfigDir().toFile(), "w2k-supervisor.json");
+        final File file = new File(W2K.getModFolder(), "supervisor.nbt");
+
+        CompoundBinaryTag tag = CompoundBinaryTag.empty();
 
         if (file.exists())
         {
             try
             {
-                return new Gson().fromJson(new FileReader(file), Configuration.class);
+                tag = BinaryTagIO.reader().read(file.toPath());
             }
-            catch (Exception ex)
+            catch (IOException ex)
             {
                 W2K.getLogger().error("Failed to read Supervisor configuration", ex);
-                return new Configuration();
             }
         }
-        else
-        {
-            return new Configuration();
-        }
+
+        return Configuration.fromNbt(tag);
     }
 
     public void saveConfiguration()
     {
-        File file = new File(FabricLoader.getInstance().getConfigDir().toFile(), "w2k-supervisor.json");
-        try (FileWriter writer = new FileWriter(file))
+        final File file = new File(W2K.getModFolder(), "supervisor.nbt");
+
+        try
         {
-            writer.write(new GsonBuilder().setPrettyPrinting().create().toJson(config));
+            BinaryTagIO.writer().write(config.toNbt(), file.toPath());
         }
-        catch (Exception ex)
+        catch (IOException ex)
         {
             W2K.getLogger().error("Failed to write Supervisor configuration", ex);
         }
@@ -165,53 +284,78 @@ public class Supervisor extends Thread
 
     public void chatMessage(String message)
     {
-        W2K.getInstance().getDriverManager().getVersionBridge().sendMessage(message);
+        W2K.getInstance().getVersionAbstractionLayer().networkHandler()
+                .ifPresent(handler -> handler.w2k$sendChatMessage(message));
     }
 
     public void disconnect()
     {
-        W2K.getInstance().getDriverManager().getVersionBridge().disconnect();
+        W2K.getInstance().getVersionAbstractionLayer().networkHandler()
+                .ifPresent(handler -> handler.w2k$disconnect(Component.text("Disconnected by Supervisor")));
     }
 
     public void runCommand(String command)
     {
-        W2K.getInstance().getDriverManager().getVersionBridge().runCommand(command);
+        W2K.getInstance().getVersionAbstractionLayer().networkHandler()
+                .ifPresent(handler -> handler.w2k$sendCommand(command));
     }
 
-    public List<IPlayerEntry> getPlayerList()
+    public List<PlayerListEntryInterface> getPlayerList()
     {
-        return W2K.getInstance().getDriverManager().getVersionBridge().getPlayerList();
+        return W2K.getInstance().getVersionAbstractionLayer().networkHandler()
+                .map(PlayNetworkHandlerInterface::w2k$getOnlinePlayers)
+                .orElse(Collections.emptyList());
     }
 
-    public List<IEntityEntry> getNearbyEntities()
+    public List<EntityInterface> getNearbyEntities()
     {
-        return W2K.getInstance().getDriverManager().getVersionBridge().getEntities();
+        return W2K.getInstance().getVersionAbstractionLayer().getLocalWorld()
+                .map(ClientWorldInterface::w2k$getEntities)
+                .orElse(Collections.emptyList());
     }
 
-    public List<IBlockEntityEntry> getNearbyBlockEntities()
+    public List<BlockEntityInterface> getNearbyBlockEntities()
     {
-        return W2K.getInstance().getDriverManager().getVersionBridge().getBlockEntities();
+        return W2K.getInstance().getVersionAbstractionLayer().getLocalWorld()
+                .map(ClientWorldInterface::w2k$getBlockEntities)
+                .orElse(Collections.emptyList());
     }
 
-    public List<IMapEntry> getLoadedMaps()
+    public List<MapStateInterface> getLoadedMaps()
     {
-        return W2K.getInstance().getDriverManager().getVersionBridge().getMaps();
+        return W2K.getInstance().getVersionAbstractionLayer().getLocalWorld()
+                .map(ClientWorldInterface::w2k$getMapStates)
+                .map(map -> map.entrySet().stream()
+                        .map(entry -> entry.getValue().w2k$id(entry.getKey()))
+                        .collect(Collectors.toList()))
+                .orElse(Collections.emptyList());
     }
 
-    public List<IItemStackEntry> getInventory()
+    public List<ItemStackInterface> getInventory()
     {
-        return W2K.getInstance().getDriverManager().getVersionBridge().getPlayerInventory();
+        return W2K.getInstance().getVersionAbstractionLayer().getLocalPlayer()
+                .map(ClientPlayerEntityInterface::w2k$getInventory)
+                .orElse(Collections.emptyList());
     }
 
     public void closeCurrentScreen()
     {
-        W2K.getInstance().getDriverManager().getVersionBridge().closeCurrentScreen();
+        W2K.getInstance().getVersionAbstractionLayer().closeCurrentScreen();
     }
 
     public void shutdown()
     {
         saveConfiguration();
         components.forEach(SVComponent::shutdown);
+        interrupt();
+    }
+
+    public void crashClient()
+    {
+        W2K.getInstance().getVersionAbstractionLayer().execute(() ->
+        {
+            throw new Error("Intentionally crashed by Supervisor");
+        });
     }
 
     public void shutdownForcefully()
@@ -228,7 +372,7 @@ public class Supervisor extends Thread
 
     public void shutdownSafely()
     {
-        W2K.getInstance().getDriverManager().getVersionBridge().scheduleSafeShutdown();
+        W2K.getInstance().getVersionAbstractionLayer().scheduleShutdown();
     }
 
     public List<String> dumpThreads()

@@ -12,8 +12,8 @@
   "icon": "assets/w2k-blackbox/icon.png",
   "environment": "client",
   "entrypoints": {
-    "client": [
-      "me.videogamesm12.w2k.blackbox.Entrypoints"
+    "w2k-driver": [
+      "me.videogamesm12.w2k.blackbox.Bootstrapper"
     ],
     "w2k-experiments": [
       "me.videogamesm12.w2k.blackbox.experiments.BlackboxExperiments"

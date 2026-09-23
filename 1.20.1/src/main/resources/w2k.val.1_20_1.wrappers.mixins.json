@@ -1,0 +1,29 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "me.videogamesm12.w2k.val.v1_20_1.wrappers",
+  "compatibilityLevel": "JAVA_17",
+  "client": [
+    "network.ClientPlayNetworkHandlerWrapper",
+    "network.DataQueryHandlerWrapper",
+    "network.PlayerListEntryWrapper",
+    "util.SessionWrapper",
+    "world.ClientPlayerEntityWrapper",
+    "world.ClientWorldWrapper"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "mixins": [
+    "command.EntitySelectorWrapper",
+    "inventory.ItemStackWrapper",
+    "profile.GameProfileWrapper",
+    "profile.PropertyWrapper",
+    "util.BlockPosWrapper",
+    "world.BlockEntityWrapper",
+    "world.EntityWrapper",
+    "world.LivingEntityWrapper",
+    "world.MapStateWrapper",
+    "world.PlayerEntityWrapper"
+  ]
+}

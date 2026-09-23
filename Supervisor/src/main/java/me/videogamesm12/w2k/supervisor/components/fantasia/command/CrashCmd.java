@@ -36,7 +36,7 @@ public class CrashCmd extends FCommand
     public boolean run(CommandSender sender, String[] args)
     {
         sender.sendMessage("Setting flag to crash the client...");
-        Supervisor.getInstance().getFlags().setSupposedToCrash(true);
+        Supervisor.getInstance().crashClient();
         return true;
     }
 }

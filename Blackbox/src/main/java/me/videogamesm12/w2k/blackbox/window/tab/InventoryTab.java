@@ -2,9 +2,7 @@ package me.videogamesm12.w2k.blackbox.window.tab;
 
 import me.videogamesm12.w2k.blackbox.Blackbox;
 import me.videogamesm12.w2k.blackbox.window.general.Dynamic;
-import me.videogamesm12.w2k.blackbox.window.model.EntityTableModel;
 import me.videogamesm12.w2k.blackbox.window.model.InventoryTableModel;
-import me.videogamesm12.w2k.blackbox.window.model.enhanced.EnhancedInventoryTableModel;
 
 import javax.swing.*;
 
@@ -14,8 +12,7 @@ public class InventoryTab extends ScrollableTab
 
     public InventoryTab()
     {
-        table = new JTable(Blackbox.getInstance().getConfig().isEnhancedListingEnabled() ?
-                new EnhancedInventoryTableModel() : new InventoryTableModel());
+        table = new JTable(new InventoryTableModel(Blackbox.getInstance().getConfig().isEnhancedListingEnabled()));
         table.setCellSelectionEnabled(true);
         setup();
     }

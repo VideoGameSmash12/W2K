@@ -38,6 +38,17 @@ public class ComponentUtils
     }
 
     /**
+     * Deserialize a {@link JsonElement} as a {@link Component} formatted in a way that works with current versions of
+     *  the game with all the bells and whistles.
+     * @param element {@link Component}
+     * @return        {@link JsonElement}
+     */
+    public static Component deserializeComponent(JsonElement element)
+    {
+        return MODERN_GSON_SERIALIZER.deserializeFromTree(element);
+    }
+
+    /**
      * Read a String as a {@link JsonElement}.
      * @param json  String
      * @return      {@link JsonElement}

@@ -1,7 +1,5 @@
 package me.videogamesm12.w2k.blackbox.window.tool.console;
 
-import com.google.gson.JsonElement;
-import me.videogamesm12.w2k.kernel.W2K;
 import me.videogamesm12.w2k.supervisor.Supervisor;
 
 import javax.swing.*;
@@ -83,14 +81,6 @@ public abstract class AbstractTab<T extends JComponent> extends JPanel
         );
     }
 
-    public void showMessage(JsonElement text)
-    {
-        if (shouldDisplay(text))
-        {
-            showMessage(W2K.getInstance().getDriverManager().getVersionBridge().textToString(text));
-        }
-    }
-
     public abstract void showMessage(String text);
 
     public abstract void clear();
@@ -106,13 +96,6 @@ public abstract class AbstractTab<T extends JComponent> extends JPanel
             Supervisor.getInstance().chatMessage(messageOrCommand);
         }
     }
-
-    /**
-     * Filters the message to display.
-     * @param message   Text
-     * @return          True if the message should go through.
-     */
-    public abstract boolean shouldDisplay(JsonElement message);
 
     /**
      * Returns the intended tab name.

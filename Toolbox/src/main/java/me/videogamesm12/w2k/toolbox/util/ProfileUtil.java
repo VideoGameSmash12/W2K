@@ -6,12 +6,14 @@ import com.google.gson.Gson;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import me.videogamesm12.w2k.kernel.W2K;
-import me.videogamesm12.w2k.kernel.data.IPlayerEntry;
+import me.videogamesm12.w2k.kernel.abstraction.network.PlayNetworkHandlerInterface;
+import me.videogamesm12.w2k.kernel.abstraction.network.PlayerListEntryInterface;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -47,16 +49,18 @@ public class ProfileUtil
 
         CompletableFuture.runAsync(() ->
         {
-            final List<IPlayerEntry> players = W2K.getInstance().getDriverManager().getVersionBridge().getPlayerList();
-            final Optional<IPlayerEntry> candidate = players.stream()
-                    .filter(profile -> profile.w2k$profile().getName().equalsIgnoreCase(nameOrUuid)
-                            || profile.w2k$profile().getId().toString().equalsIgnoreCase(nameOrUuid))
+            final List<PlayerListEntryInterface> players = W2K.getInstance().getVersionAbstractionLayer().networkHandler()
+                    .map(PlayNetworkHandlerInterface::w2k$getOnlinePlayers)
+                    .orElse(Collections.emptyList());
+            final Optional<PlayerListEntryInterface> candidate = players.stream()
+                    .filter(profile -> profile.w2k$profile().w2k$name().equalsIgnoreCase(nameOrUuid)
+                            || profile.w2k$profile().w2k$uuid().toString().equalsIgnoreCase(nameOrUuid))
                     .findAny();
 
             if (candidate.isPresent())
             {
-                future.complete(new ProfileLookupResult(candidate.get().w2k$profile().getName(),
-                        candidate.get().w2k$profile().getId().toString()));
+                future.complete(new ProfileLookupResult(candidate.get().w2k$profile().w2k$name(),
+                        candidate.get().w2k$profile().w2k$uuid().toString()));
             }
             else
             {

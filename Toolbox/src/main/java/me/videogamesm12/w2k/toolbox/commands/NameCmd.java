@@ -3,7 +3,6 @@ package me.videogamesm12.w2k.toolbox.commands;
 import com.google.gson.JsonParseException;
 import me.videogamesm12.w2k.kernel.W2K;
 import me.videogamesm12.w2k.kernel.command.ExecutionPath;
-import me.videogamesm12.w2k.kernel.command.Parameters;
 import me.videogamesm12.w2k.kernel.command.WCommand;
 import me.videogamesm12.w2k.toolbox.util.ProfileUtil;
 import net.kyori.adventure.text.Component;
@@ -14,11 +13,14 @@ import net.kyori.adventure.text.format.TextDecoration;
 
 import java.io.FileNotFoundException;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
 
-@Parameters(name = "name", usage = "/<command> <uuid>")
 public class NameCmd extends WCommand
 {
+    public NameCmd()
+    {
+        super("name");
+    }
+
     @ExecutionPath("<uuid|w2k:online_players/uuid>")
     public void fetchName(final UUID uuid)
     {

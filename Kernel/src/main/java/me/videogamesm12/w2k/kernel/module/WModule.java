@@ -1,14 +1,17 @@
 package me.videogamesm12.w2k.kernel.module;
 
+import com.google.common.eventbus.EventBus;
 import lombok.Getter;
 import me.videogamesm12.w2k.kernel.W2K;
-import me.videogamesm12.w2k.kernel.driver.base.WAmbassadorDriver;
-import me.videogamesm12.w2k.kernel.driver.base.WVersionBridgeDriver;
+import me.videogamesm12.w2k.kernel.abstraction.BaseVersionAbstractionLayer;
+import me.videogamesm12.w2k.kernel.data.Overlay;
 import me.videogamesm12.w2k.kernel.event.module.ModuleStateUpdateEvent;
 import me.videogamesm12.w2k.kernel.module.setting.WModuleSetting;
 import net.kyori.adventure.nbt.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
@@ -20,6 +23,8 @@ public abstract class WModule
     private final String description;
     private final Consumer<Boolean> onToggle;
     private final Map<String, WModuleSetting<? extends BinaryTag, ?>> settings = new HashMap<>();
+    private final List<Overlay> overlays = new ArrayList<>();
+    private final List<EventBus> eventDispatchers = new ArrayList<>();
     private boolean enabled;
 
     public WModule(final String name, final String description)
@@ -29,7 +34,7 @@ public abstract class WModule
         this.description = description;
         this.onToggle = null;
         //--
-        W2K.getEventBus().register(this);
+        registerEventDispatcher(W2K.getEventBus());
     }
 
     public WModule(final String id, final String name, final String description, final Consumer<Boolean> onToggle)
@@ -39,7 +44,7 @@ public abstract class WModule
         this.description = description;
         this.onToggle = onToggle;
         //--
-        W2K.getEventBus().register(this);
+        registerEventDispatcher(W2K.getEventBus());
     }
 
     public <T extends BinaryTag, R, W extends WModuleSetting<T, R>> W register(W setting)
@@ -48,13 +53,25 @@ public abstract class WModule
         return setting;
     }
 
+    protected final <T extends Overlay> T addOverlay(T overlay)
+    {
+        overlays.add(overlay);
+        return overlay;
+    }
+
     public <T extends WModule> void setEnabled(boolean value)
     {
+        if (enabled == value)
+        {
+            return;
+        }
+
         final ModuleStateUpdateEvent<T> event = new ModuleStateUpdateEvent<>((T) this, this.enabled, value);
         W2K.getEventBus().post(event);
         if (!event.isCancelled())
         {
             this.enabled = value;
+            synchronizeEventDispatchers(enabled);
         }
     }
 
@@ -84,6 +101,7 @@ public abstract class WModule
 
         // Read enabled state
         this.enabled = tag.getBoolean("enabled", false);
+        synchronizeEventDispatchers(enabled);
 
         // Read settings
         final CompoundBinaryTag settingsTag = tag.getCompound("settings");
@@ -99,8 +117,8 @@ public abstract class WModule
                     return;
                 }
 
-                // iT's RaW
-                final WModuleSetting setting = settings.get(key);
+                // Get a generic form of the setting that we can read from
+                final WModuleSetting<BinaryTag, Object> setting = (WModuleSetting<BinaryTag, Object>) settings.get(key);
 
                 if (setting.getType() != entry.getValue().type().id())
                 {
@@ -108,17 +126,38 @@ public abstract class WModule
                     return;
                 }
 
-                // UnCheCKeD CaLl
-                try
-                {
-                    setting.read(entry.getValue());
-                }
-                catch (Throwable ex)
-                {
-                    W2K.getLogger().error("Unable to read value for setting {} in module {}", key, id, ex);
-                }
+                setting.read(entry.getValue());
             });
         }
+    }
+
+    public void registerEventDispatcher(final EventBus dispatcher)
+    {
+        if (!eventDispatchers.contains(dispatcher))
+        {
+            eventDispatchers.add(dispatcher);
+        }
+    }
+
+    private void synchronizeEventDispatchers(boolean value)
+    {
+        eventDispatchers.forEach(dispatcher ->
+        {
+            if (value)
+            {
+                dispatcher.register(this);
+            }
+            else
+            {
+                try
+                {
+                    dispatcher.unregister(this);
+                }
+                catch (Throwable ignored)
+                {
+                }
+            }
+        });
     }
 
     protected W2K w2k()
@@ -126,13 +165,8 @@ public abstract class WModule
         return W2K.getInstance();
     }
 
-    protected WAmbassadorDriver communicationsDriver()
+    protected <Minecraft> BaseVersionAbstractionLayer<Minecraft> versionAbstractionLayer()
     {
-        return w2k().getDriverManager().getCommunicationsDriver();
-    }
-
-    protected WVersionBridgeDriver versionBridge()
-    {
-        return w2k().getDriverManager().getVersionBridge();
+        return w2k().getVersionAbstractionLayer();
     }
 }

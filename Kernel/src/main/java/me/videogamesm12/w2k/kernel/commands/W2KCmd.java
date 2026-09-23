@@ -1,8 +1,6 @@
 package me.videogamesm12.w2k.kernel.commands;
 
-import me.videogamesm12.w2k.kernel.W2K;
 import me.videogamesm12.w2k.kernel.command.ExecutionPath;
-import me.videogamesm12.w2k.kernel.command.Parameters;
 import me.videogamesm12.w2k.kernel.command.WCommand;
 import me.videogamesm12.w2k.kernel.data.BuildMetadata;
 import me.videogamesm12.w2k.kernel.experiment.Experiment;
@@ -19,9 +17,13 @@ import net.kyori.adventure.text.format.TextDecoration;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Parameters(name = "w2k", usage = "/<command> [details]")
 public class W2KCmd extends WCommand
 {
+    public W2KCmd()
+    {
+        super("w2k");
+    }
+
     @ExecutionPath
     public void summary()
     {

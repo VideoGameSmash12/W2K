@@ -1,5 +1,6 @@
 package me.videogamesm12.w2k.blackbox.window.menu.w2k;
 
+import com.google.common.collect.Multimap;
 import com.google.common.eventbus.Subscribe;
 import lombok.Getter;
 import me.videogamesm12.w2k.blackbox.Blackbox;
@@ -11,7 +12,7 @@ import me.videogamesm12.w2k.kernel.module.WModule;
 import net.fabricmc.loader.api.ModContainer;
 
 import javax.swing.*;
-import java.util.Map;
+import java.util.Objects;
 
 public class ModulesMenu extends JMenu
 {
@@ -19,7 +20,7 @@ public class ModulesMenu extends JMenu
     {
         super("Modules");
         //--
-        final Map<ModContainer, Map<String, WModule>> moduleRegistry = W2K.getInstance().getModuleManager().getRegistry();
+        final Multimap<ModContainer, WModule> moduleRegistry = W2K.getInstance().getModuleManager().getModRegistry();
         //--
         // Show (none) if no modules were registered
         if (moduleRegistry.isEmpty())
@@ -38,19 +39,16 @@ public class ModulesMenu extends JMenu
             add(item);
         }
         // Show all the modules if there's only one module
-        else if (moduleRegistry.size() == 1)
-        {
-            moduleRegistry.values().forEach(registry -> registry.values().forEach(module -> add(new ModuleMenu<>(module))));
+        else if (Objects.requireNonNull(moduleRegistry.keySet()).size() == 1)
+        {;
+            Objects.requireNonNull(moduleRegistry.values()).forEach(module -> add(new ModuleMenu<>(module)));
         }
         // Otherwise, split them by the mods which provided them
         else
         {
-            W2K.getInstance().getModuleManager().getRegistry().forEach((mod, registry) ->
-            {
-                final JMenu providerMenu = new JMenu(mod.getMetadata().getName());
-                registry.values().forEach(module -> providerMenu.add(new ModuleMenu<>(module)));
-                add(providerMenu);
-            });
+            Objects.requireNonNull(moduleRegistry.asMap()).forEach((mod, modules) ->
+                    add(JComponents.createMenu(mod.getMetadata().getName(), null, modules.stream()
+                            .map(ModuleMenu::new).toArray(ModuleMenu[]::new))));
         }
     }
 

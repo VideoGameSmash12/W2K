@@ -22,7 +22,6 @@
 
 package me.videogamesm12.w2k.supervisor.components.fantasia.command;
 
-import me.videogamesm12.w2k.kernel.W2K;
 import me.videogamesm12.w2k.supervisor.components.fantasia.session.CommandSender;
 
 public class FPSCmd extends FCommand
@@ -35,7 +34,6 @@ public class FPSCmd extends FCommand
     @Override
     public boolean run(CommandSender sender, String[] args)
     {
-        sender.sendMessage(W2K.getInstance().getDriverManager().getVersionBridge().getClientDebugInformation());
-        return true;
+        throw new UnsupportedOperationException("Needs to be reimplemented");
     }
 }

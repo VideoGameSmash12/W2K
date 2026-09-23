@@ -167,7 +167,7 @@ public class WurstAltManagerDialog extends JDialog
             {
                 case 0:
                 {
-                    return W2K.getInstance().getDriverManager().getVersionBridge().getCurrentUsername()
+                    return W2K.getInstance().getVersionAbstractionLayer().getSession().w2k$getUsername()
                             .equalsIgnoreCase(alt.getName()) ? "*" : "";
                 }
                 case 1:
