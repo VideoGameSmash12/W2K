@@ -5,7 +5,6 @@ import me.videogamesm12.w2k.kernel.abstraction.command.EntitySelectorInterface;
 import me.videogamesm12.w2k.kernel.abstraction.network.PlayNetworkHandlerInterface;
 import me.videogamesm12.w2k.kernel.abstraction.world.EntityInterface;
 import me.videogamesm12.w2k.kernel.command.ExecutionPath;
-import me.videogamesm12.w2k.kernel.command.Parameters;
 import me.videogamesm12.w2k.kernel.command.WCommand;
 import me.videogamesm12.w2k.kernel.event.BulkEvent;
 import me.videogamesm12.w2k.kernel.event.network.DataQueryResponseEvent;
@@ -19,7 +18,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.TimeoutException;
 
-@Parameters(name = "query", usage = "")
 public class QueryCmd extends WCommand
 {
     private final ForkJoinPool pool = new ForkJoinPool(4);

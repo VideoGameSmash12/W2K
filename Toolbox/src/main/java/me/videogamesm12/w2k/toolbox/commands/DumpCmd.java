@@ -3,7 +3,6 @@ package me.videogamesm12.w2k.toolbox.commands;
 import me.videogamesm12.w2k.kernel.W2K;
 import me.videogamesm12.w2k.kernel.abstraction.command.EntitySelectorInterface;
 import me.videogamesm12.w2k.kernel.command.ExecutionPath;
-import me.videogamesm12.w2k.kernel.command.Parameters;
 import me.videogamesm12.w2k.kernel.command.WCommand;
 import me.videogamesm12.w2k.toolbox.util.DumpUtil;
 import net.kyori.adventure.text.Component;

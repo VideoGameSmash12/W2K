@@ -6,7 +6,6 @@ import me.videogamesm12.w2k.kernel.data.BuildMetadata;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Objects;
 
-@Parameters(name = "test", usage = "No point here")
 public class TestCmd extends WCommand
 {
     public TestCmd()

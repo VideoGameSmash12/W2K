@@ -45,8 +45,7 @@ public class WCommandManager
     }
 
     /**
-     * Register a WCommand class as an instance. Classes registered this way must have the {@link Parameters} annotation
-     * present.
+     * Register a WCommand class as an instance. Classes registered this way must have a constructor with zero parameters.
      * @param command   {@code Class<WCommand>}
      */
     public void registerCommand(Class<? extends WCommand> command)

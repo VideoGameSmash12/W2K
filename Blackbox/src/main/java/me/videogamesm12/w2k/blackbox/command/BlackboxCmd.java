@@ -2,7 +2,6 @@ package me.videogamesm12.w2k.blackbox.command;
 
 import me.videogamesm12.w2k.blackbox.Blackbox;
 import me.videogamesm12.w2k.kernel.command.ExecutionPath;
-import me.videogamesm12.w2k.kernel.command.Parameters;
 import me.videogamesm12.w2k.kernel.command.WCommand;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
