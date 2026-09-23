@@ -41,6 +41,7 @@ import me.videogamesm12.w2k.kernel.event.network.packet.*;
 import me.videogamesm12.w2k.kernel.event.render.BlockEntityRenderEvent;
 import me.videogamesm12.w2k.kernel.event.render.EntityRenderEvent;
 import me.videogamesm12.w2k.kernel.event.render.GameRenderEvent;
+import me.videogamesm12.w2k.kernel.event.render.WorldRenderEvent;
 import me.videogamesm12.w2k.supervisor.api.SVComponent;
 import me.videogamesm12.w2k.supervisor.components.fantasia.Fantasia;
 import me.videogamesm12.w2k.supervisor.components.flags.Flags;
@@ -152,6 +153,16 @@ public class Supervisor extends Thread
     public void onGameRender(GameRenderEvent event)
     {
         if (config.getRenderingSettings().isGameRenderingDisabled())
+        {
+            event.setCancelled(true);
+        }
+    }
+
+    @Subscribe
+    public void onWorldRender(WorldRenderEvent event)
+    {
+        if (config.getRenderingSettings().isWorldRenderingDisabled()
+                || config.getRenderingSettings().isGameRenderingDisabled())
         {
             event.setCancelled(true);
         }
