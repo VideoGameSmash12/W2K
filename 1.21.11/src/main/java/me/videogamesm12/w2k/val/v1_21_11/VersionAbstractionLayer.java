@@ -28,6 +28,7 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.event.player.AttackEntityCallback;
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
@@ -86,7 +87,9 @@ public class VersionAbstractionLayer extends BaseVersionAbstractionLayer<Minecra
             @Override
             public Component nativeToAdventure(Text text)
             {
-                return ComponentUtils.deserializeComponent(TextCodecs.CODEC.encodeStart(getLookupOrElse(backupLookup).getOps(JsonOps.INSTANCE), text).getOrThrow());
+                return TextCodecs.CODEC.encodeStart(getLookupOrElse(backupLookup).getOps(JsonOps.INSTANCE), text)
+                        .mapOrElse(ComponentUtils::deserializeComponent,
+                                error -> Component.text(text.getString()).append(Component.text(" (!)").hoverEvent(HoverEvent.showText(Component.text(error.message())))));
             }
 
             @Override

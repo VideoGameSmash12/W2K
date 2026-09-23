@@ -74,12 +74,14 @@ public class JComponents
         final Color value = getter.get();
 
         button.setBackground(value);
+        button.setText(stringify(value));
         button.addActionListener(e -> {
             Color newColor = JColorChooser.showDialog(parent, "Choose a color", button.getBackground());
             if (newColor != null)
             {
                 button.setBackground(newColor);
                 setter.accept(newColor);
+                button.setText(stringify(newColor));
             }
         });
 
@@ -121,5 +123,15 @@ public class JComponents
         for (JMenuItem item : items)
             menu.add(item);
         return menu;
+    }
+
+    private static String stringify(final Color input)
+    {
+        return ("#" +
+                Integer.toHexString(input.getRed()) +
+                Integer.toHexString(input.getGreen()) +
+                Integer.toHexString(input.getBlue()) +
+                Integer.toHexString(input.getAlpha()))
+                .toUpperCase();
     }
 }

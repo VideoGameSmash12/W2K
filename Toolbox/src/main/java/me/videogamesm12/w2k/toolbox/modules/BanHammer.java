@@ -18,12 +18,15 @@ import java.awt.*;
 public class BanHammer extends WModule
 {
     // TODO: Make configurable
-    private final String itemName = "Ban Hammer";
-
     private final StringSetting banCommand = register(new StringSetting("ban_command", "Ban Command", "ban %username%"));
     private final StringSetting banIpCommand = register(new StringSetting("ban_ip_command", "Ban IP Command", "banip %uuid%"));
+    private final StringSetting itemName = register(new StringSetting("item_name", "Item Name", "Ban Hammer"));
     private final StringSetting itemType = register(new StringSetting("item_type", "Item Type",
-            VersionUtils.isNewerThanOrRunning("1.16.5") ? "minecraft:netherite_axe" : "minecraft:diamond_axe"));
+            VersionUtils.isNewerThanOrRunning("1.20.5") ?
+                    "minecraft:mace" :
+                    VersionUtils.isNewerThanOrRunning("1.16") ?
+                            "minecraft:netherite_axe" :
+                            "minecraft:diamond_axe"));
 
     public final BooleanSetting outlineTarget = register(new BooleanSetting("outline_target", "Outline Target", true));
     public final BooleanSetting useCustomHighlightColor = register(new BooleanSetting("use_custom_highlight_color", "Use Custom Highlight Color", true));
@@ -32,7 +35,11 @@ public class BanHammer extends WModule
     public BanHammer()
     {
         super("Ban Hammer",
-                "Repurposes an item to act as a literal ban hammer. \nThis should only be used for extreme cases where you need to \nremove a large quantity of bots in a given space. \n\nLeft click to ban regularly, right click to ban IP.");
+                "Repurposes an item to act as a literal ban hammer. \n"
+                        + "This should only be used for extreme cases where you need to \n"
+                        + "remove a large quantity of bots in a given space. \n"
+                        + "\n"
+                        + "Left click to ban regularly, right click to ban IP.");
     }
 
     @Subscribe
@@ -92,6 +99,6 @@ public class BanHammer extends WModule
                 && stack.w2k$isNotEmpty()
                 && stack.w2k$type().equalsIgnoreCase(itemType.get())
                 && stack.w2k$name() != null
-                && versionAbstractionLayer().text().jsonToString(stack.w2k$name()).contains(itemName);
+                && versionAbstractionLayer().text().jsonToString(stack.w2k$name()).contains(itemName.get());
     }
 }

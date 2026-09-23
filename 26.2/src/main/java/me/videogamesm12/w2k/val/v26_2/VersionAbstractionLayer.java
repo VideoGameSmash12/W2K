@@ -2,6 +2,7 @@ package me.videogamesm12.w2k.val.v26_2;
 
 import com.google.gson.JsonElement;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
 import me.videogamesm12.w2k.kernel.W2K;
 import me.videogamesm12.w2k.kernel.abstraction.BaseVersionAbstractionLayer;
@@ -28,6 +29,7 @@ import net.fabricmc.fabric.api.event.player.AttackEntityCallback;
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
 import net.fabricmc.fabric.api.networking.v1.ClientboundPlayChannelEvents;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -83,7 +85,9 @@ public class VersionAbstractionLayer extends BaseVersionAbstractionLayer<Minecra
             @Override
             public Component nativeToAdventure(net.minecraft.network.chat.Component text)
             {
-                return ComponentUtils.deserializeComponent(ComponentSerialization.CODEC.encodeStart(getLookupOrElse(backupLookup).createSerializationContext(JsonOps.INSTANCE), text).getOrThrow());
+                return ComponentSerialization.CODEC.encodeStart(getLookupOrElse(backupLookup).createSerializationContext(JsonOps.INSTANCE), text)
+                        .mapOrElse(ComponentUtils::deserializeComponent,
+                                error -> Component.text(text.getString()).append(Component.text(" (!)").hoverEvent(HoverEvent.showText(Component.text(error.message())))));
             }
 
             @Override
