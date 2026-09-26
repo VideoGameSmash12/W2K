@@ -13,6 +13,7 @@
   "client": [
     "BlockEntityRenderDispatcherInjector",
     "ChatHudInjector",
+    "ClickableWidgetAccessor",
     "ClientPlayNetworkHandlerInjector",
     "DebugHudAccessor",
     "EntityRenderDispatcherInjector",

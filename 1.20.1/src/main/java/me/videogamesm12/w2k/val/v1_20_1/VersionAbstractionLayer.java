@@ -7,7 +7,7 @@ import me.videogamesm12.w2k.kernel.W2K;
 import me.videogamesm12.w2k.kernel.abstraction.BaseVersionAbstractionLayer;
 import me.videogamesm12.w2k.kernel.abstraction.conversion.NBTConverter;
 import me.videogamesm12.w2k.kernel.abstraction.conversion.TextConverter;
-import me.videogamesm12.w2k.kernel.abstraction.network.AbstractPacketTranslator;
+import me.videogamesm12.w2k.kernel.abstraction.graphics.AbstractGraphicsHandler;
 import me.videogamesm12.w2k.kernel.abstraction.network.PlayNetworkHandlerInterface;
 import me.videogamesm12.w2k.kernel.abstraction.util.SessionInterface;
 import me.videogamesm12.w2k.kernel.abstraction.world.ClientPlayerEntityInterface;
@@ -22,7 +22,7 @@ import me.videogamesm12.w2k.kernel.event.network.RegisterPluginMessageEvent;
 import me.videogamesm12.w2k.kernel.util.ComponentUtils;
 import me.videogamesm12.w2k.kernel.util.VersionUtils;
 import me.videogamesm12.w2k.val.v1_20_1.command.CommandRegistrar;
-import me.videogamesm12.w2k.val.v1_20_1.graphics.OverlayRenderDispatcherImpl;
+import me.videogamesm12.w2k.val.v1_20_1.graphics.GraphicsHandler;
 import me.videogamesm12.w2k.val.v1_20_1.mixin.DebugHudAccessor;
 import me.videogamesm12.w2k.val.v1_20_1.mixin.InGameHudAccessor;
 import me.videogamesm12.w2k.val.v1_20_1.protocol.PacketTranslator;
@@ -36,8 +36,6 @@ import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import net.minecraft.client.ClientBrandRetriever;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.client.world.ClientWorld;
-import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.StringNbtReader;
 import net.minecraft.text.Text;
@@ -74,9 +72,9 @@ public class VersionAbstractionLayer extends BaseVersionAbstractionLayer<Minecra
             },
             NbtCompound::toString);
     private final TextConverter<Text> textConverter;
-    private final OverlayRenderDispatcherImpl renderDispatcher;
     private final CommandRegistrar commandRegistrar;
     private final PacketTranslator packetTranslator;
+    private final GraphicsHandler graphicsHandler;
 
     public VersionAbstractionLayer()
     {
@@ -109,9 +107,9 @@ public class VersionAbstractionLayer extends BaseVersionAbstractionLayer<Minecra
                 return Objects.requireNonNull(Text.Serializer.fromJson(component)).getString();
             }
         };
-        this.renderDispatcher = new OverlayRenderDispatcherImpl();
         this.commandRegistrar = new CommandRegistrar();
         this.packetTranslator = new PacketTranslator();
+        this.graphicsHandler = new GraphicsHandler();
     }
 
     @Override
@@ -239,6 +237,12 @@ public class VersionAbstractionLayer extends BaseVersionAbstractionLayer<Minecra
     }
 
     @Override
+    public AbstractGraphicsHandler graphicsHandler()
+    {
+        return graphicsHandler;
+    }
+
+    @Override
     public TextConverter<Text> text()
     {
         return textConverter;
@@ -248,12 +252,6 @@ public class VersionAbstractionLayer extends BaseVersionAbstractionLayer<Minecra
     public NBTConverter<NbtCompound> nbt()
     {
         return nbtConverter;
-    }
-
-    @Override
-    public OverlayRenderDispatcherImpl renderDispatcher()
-    {
-        return renderDispatcher;
     }
 
     @Override

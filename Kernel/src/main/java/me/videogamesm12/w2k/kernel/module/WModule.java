@@ -4,8 +4,8 @@ import com.google.common.eventbus.EventBus;
 import lombok.Getter;
 import me.videogamesm12.w2k.kernel.W2K;
 import me.videogamesm12.w2k.kernel.abstraction.BaseVersionAbstractionLayer;
-import me.videogamesm12.w2k.kernel.data.Overlay;
 import me.videogamesm12.w2k.kernel.event.module.ModuleStateUpdateEvent;
+import me.videogamesm12.w2k.kernel.graphics.DrawableObject;
 import me.videogamesm12.w2k.kernel.module.setting.WModuleSetting;
 import net.kyori.adventure.nbt.*;
 
@@ -23,7 +23,7 @@ public abstract class WModule
     private final String description;
     private final Consumer<Boolean> onToggle;
     private final Map<String, WModuleSetting<? extends BinaryTag, ?>> settings = new HashMap<>();
-    private final List<Overlay> overlays = new ArrayList<>();
+    private final List<DrawableObject<?>> drawableOverlays = new ArrayList<>();
     private final List<EventBus> eventDispatchers = new ArrayList<>();
     private boolean enabled;
 
@@ -53,9 +53,9 @@ public abstract class WModule
         return setting;
     }
 
-    protected final <T extends Overlay> T addOverlay(T overlay)
+    protected final <T extends DrawableObject<T>> T addDrawableOverlay(T overlay)
     {
-        overlays.add(overlay);
+        drawableOverlays.add(overlay);
         return overlay;
     }
 
@@ -101,7 +101,7 @@ public abstract class WModule
 
         // Read enabled state
         this.enabled = tag.getBoolean("enabled", false);
-        synchronizeEventDispatchers(enabled);
+        synchronizeEventDispatchers(isEnabled());
 
         // Read settings
         final CompoundBinaryTag settingsTag = tag.getCompound("settings");

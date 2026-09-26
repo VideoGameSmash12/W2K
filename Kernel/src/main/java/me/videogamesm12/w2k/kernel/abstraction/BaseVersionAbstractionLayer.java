@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import me.videogamesm12.w2k.kernel.abstraction.command.AbstractCommandRegistrar;
 import me.videogamesm12.w2k.kernel.abstraction.conversion.NBTConverter;
 import me.videogamesm12.w2k.kernel.abstraction.conversion.TextConverter;
+import me.videogamesm12.w2k.kernel.abstraction.graphics.AbstractGraphicsHandler;
 import me.videogamesm12.w2k.kernel.abstraction.network.AbstractPacketTranslator;
 import me.videogamesm12.w2k.kernel.abstraction.network.PlayNetworkHandlerInterface;
 import me.videogamesm12.w2k.kernel.abstraction.util.SessionInterface;
@@ -131,13 +132,6 @@ public abstract class BaseVersionAbstractionLayer<Minecraft>
     public abstract <NbtCompound> NBTConverter<NbtCompound> nbt();
 
     /**
-     * Gets an {@link OverlayRenderDispatcher} instance which handles rendering for overlays.
-     * @return                  {@link OverlayRenderDispatcher}
-     * @param <BaseRenderer>    {@code AbstractOverlayRenderer}
-     */
-    public abstract <BaseRenderer> OverlayRenderDispatcher<BaseRenderer> renderDispatcher();
-
-    /**
      * Gets an {@link AbstractCommandRegistrar} instance which handles client-side command registration. Since some
      *  versions of Minecraft do not have adequate client command libraries, there is a chance that this can be null.
      * @return              {@link AbstractCommandRegistrar}
@@ -169,6 +163,8 @@ public abstract class BaseVersionAbstractionLayer<Minecraft>
      * @return  String
      */
     public abstract List<String> getClientOverview();
+
+    public abstract AbstractGraphicsHandler graphicsHandler();
 
     /**
      * <p>Gets the current client version using the Fabric Loader API.</p>

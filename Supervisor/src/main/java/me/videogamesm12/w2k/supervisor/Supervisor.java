@@ -181,7 +181,7 @@ public class Supervisor extends Thread
     @Subscribe
     public void onEntityRender(EntityRenderEvent event)
     {
-        if (config.getRenderingSettings().isTileEntityRenderingDisabled()
+        if (config.getRenderingSettings().isEntityRenderingDisabled()
                 || config.getRenderingSettings().isGameRenderingDisabled())
         {
             event.setCancelled(true);

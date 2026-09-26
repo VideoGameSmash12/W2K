@@ -1,6 +1,8 @@
 package me.videogamesm12.w2k.kernel.graphics;
 
-public interface DrawableObject
+import me.videogamesm12.w2k.kernel.abstraction.graphics.CompiledDrawableObject;
+
+public interface DrawableObject<T extends DrawableObject<T>>
 {
     int x();
 
@@ -9,4 +11,13 @@ public interface DrawableObject
     int width();
 
     int height();
+
+    default int weight()
+    {
+        return 0;
+    }
+
+    CompiledDrawableObject<T> compiled();
+
+    void compiled(CompiledDrawableObject<T> compiledObject);
 }

@@ -7,6 +7,7 @@ import me.videogamesm12.w2k.kernel.W2K;
 import me.videogamesm12.w2k.kernel.abstraction.BaseVersionAbstractionLayer;
 import me.videogamesm12.w2k.kernel.abstraction.conversion.NBTConverter;
 import me.videogamesm12.w2k.kernel.abstraction.conversion.TextConverter;
+import me.videogamesm12.w2k.kernel.abstraction.graphics.AbstractGraphicsHandler;
 import me.videogamesm12.w2k.kernel.abstraction.network.PlayNetworkHandlerInterface;
 import me.videogamesm12.w2k.kernel.abstraction.util.SessionInterface;
 import me.videogamesm12.w2k.kernel.abstraction.world.ClientPlayerEntityInterface;
@@ -20,7 +21,7 @@ import me.videogamesm12.w2k.kernel.event.network.JoinEvent;
 import me.videogamesm12.w2k.kernel.event.network.RegisterPluginMessageEvent;
 import me.videogamesm12.w2k.kernel.util.ComponentUtils;
 import me.videogamesm12.w2k.val.v1_21_11.command.CommandRegistrar;
-import me.videogamesm12.w2k.val.v1_21_11.graphics.OverlayRenderDispatcherImpl;
+import me.videogamesm12.w2k.val.v1_21_11.graphics.GraphicsHandler;
 import me.videogamesm12.w2k.val.v1_21_11.protocol.PacketTranslator;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.client.networking.v1.C2SPlayChannelEvents;
@@ -72,9 +73,9 @@ public class VersionAbstractionLayer extends BaseVersionAbstractionLayer<Minecra
             },
             NbtCompound::toString);
     private final TextConverter<Text> textConverter;
-    private final OverlayRenderDispatcherImpl renderDispatcher;
     private final CommandRegistrar commandRegistrar;
     private final PacketTranslator packetTranslator;
+    private final GraphicsHandler graphicsHandler;
 
     public VersionAbstractionLayer()
     {
@@ -110,9 +111,9 @@ public class VersionAbstractionLayer extends BaseVersionAbstractionLayer<Minecra
                 return Objects.requireNonNull(TextCodecs.CODEC.parse(getLookupOrElse(backupLookup).getOps(JsonOps.INSTANCE), component)).getOrThrow().getString();
             }
         };
-        this.renderDispatcher = new OverlayRenderDispatcherImpl();
         this.commandRegistrar = new CommandRegistrar();
         this.packetTranslator = new PacketTranslator();
+        this.graphicsHandler = new GraphicsHandler();
     }
 
     @Override
@@ -229,15 +230,15 @@ public class VersionAbstractionLayer extends BaseVersionAbstractionLayer<Minecra
     }
 
     @Override
-    public OverlayRenderDispatcherImpl renderDispatcher()
-    {
-        return renderDispatcher;
-    }
-
-    @Override
     public List<String> getClientOverview()
     {
         return List.of("Due to internal changes in how Minecraft handles the F3 overlay and the complications that come with that, this information is currently unavailable in this build for this version of Minecraft. Sorry!");
+    }
+
+    @Override
+    public AbstractGraphicsHandler graphicsHandler()
+    {
+        return graphicsHandler;
     }
 
     @Override

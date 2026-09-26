@@ -24,7 +24,9 @@ public class Toolbox extends Driver
                 new QueryLogger(),
                 new TargetHighlighter(),
                 new TPSOverlay(),
-                new Watermark());
+                new Watermark(),
+
+                new DebugOverlay());
 
         commands = Arrays.asList(
                 new NameCmd(),

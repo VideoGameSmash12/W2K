@@ -2,12 +2,12 @@ package me.videogamesm12.w2k.val.v26_2;
 
 import com.google.gson.JsonElement;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
 import me.videogamesm12.w2k.kernel.W2K;
 import me.videogamesm12.w2k.kernel.abstraction.BaseVersionAbstractionLayer;
 import me.videogamesm12.w2k.kernel.abstraction.conversion.NBTConverter;
 import me.videogamesm12.w2k.kernel.abstraction.conversion.TextConverter;
+import me.videogamesm12.w2k.kernel.abstraction.graphics.AbstractGraphicsHandler;
 import me.videogamesm12.w2k.kernel.abstraction.network.PlayNetworkHandlerInterface;
 import me.videogamesm12.w2k.kernel.abstraction.util.SessionInterface;
 import me.videogamesm12.w2k.kernel.abstraction.world.ClientPlayerEntityInterface;
@@ -21,7 +21,7 @@ import me.videogamesm12.w2k.kernel.event.network.JoinEvent;
 import me.videogamesm12.w2k.kernel.event.network.RegisterPluginMessageEvent;
 import me.videogamesm12.w2k.kernel.util.ComponentUtils;
 import me.videogamesm12.w2k.val.v26_2.command.CommandRegistrar;
-import me.videogamesm12.w2k.val.v26_2.graphics.OverlayRenderDispatcherImpl;
+import me.videogamesm12.w2k.val.v26_2.graphics.GraphicsHandler;
 import me.videogamesm12.w2k.val.v26_2.protocol.PacketTranslator;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
@@ -70,9 +70,9 @@ public class VersionAbstractionLayer extends BaseVersionAbstractionLayer<Minecra
             },
             CompoundTag::toString);
     private final TextConverter<net.minecraft.network.chat.Component> textConverter;
-    private final OverlayRenderDispatcherImpl renderDispatcher;
     private final CommandRegistrar commandRegistrar;
     private final PacketTranslator packetTranslator;
+    private final GraphicsHandler graphicsHandler;
 
     public VersionAbstractionLayer()
     {
@@ -108,9 +108,9 @@ public class VersionAbstractionLayer extends BaseVersionAbstractionLayer<Minecra
                 return ComponentSerialization.CODEC.parse(getLookupOrElse(backupLookup).createSerializationContext(JsonOps.INSTANCE), component).getOrThrow().getString();
             }
         };
-        this.renderDispatcher = new OverlayRenderDispatcherImpl();
         this.commandRegistrar = new CommandRegistrar();
         this.packetTranslator = new PacketTranslator();
+        this.graphicsHandler = new GraphicsHandler();
     }
 
     @Override
@@ -227,15 +227,15 @@ public class VersionAbstractionLayer extends BaseVersionAbstractionLayer<Minecra
     }
 
     @Override
-    public OverlayRenderDispatcherImpl renderDispatcher()
-    {
-        return renderDispatcher;
-    }
-
-    @Override
     public List<String> getClientOverview()
     {
         return List.of("Due to internal changes in how Minecraft handles the F3 overlay and the complications that come with that, this information is currently unavailable in this build for this version of Minecraft. Sorry!");
+    }
+
+    @Override
+    public AbstractGraphicsHandler graphicsHandler()
+    {
+        return graphicsHandler;
     }
 
     @Override
