@@ -8,7 +8,6 @@ import me.videogamesm12.w2k.kernel.abstraction.graphics.AbstractGraphicsHandler;
 import me.videogamesm12.w2k.kernel.abstraction.network.AbstractPacketTranslator;
 import me.videogamesm12.w2k.kernel.abstraction.network.PlayNetworkHandlerInterface;
 import me.videogamesm12.w2k.kernel.abstraction.util.SessionInterface;
-import me.videogamesm12.w2k.kernel.abstraction.render.OverlayRenderDispatcher;
 import me.videogamesm12.w2k.kernel.abstraction.world.ClientPlayerEntityInterface;
 import me.videogamesm12.w2k.kernel.abstraction.world.ClientWorldInterface;
 import me.videogamesm12.w2k.kernel.abstraction.world.EntityInterface;

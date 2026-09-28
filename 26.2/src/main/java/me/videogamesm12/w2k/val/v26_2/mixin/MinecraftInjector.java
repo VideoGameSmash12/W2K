@@ -3,6 +3,7 @@ package me.videogamesm12.w2k.val.v26_2.mixin;
 import com.llamalad7.mixinextras.sugar.Local;
 import me.videogamesm12.w2k.kernel.W2K;
 import me.videogamesm12.w2k.kernel.abstraction.world.EntityInterface;
+import me.videogamesm12.w2k.kernel.event.entity.TargetEntityUpdateEvent;
 import me.videogamesm12.w2k.kernel.event.lifecycle.ClientCleanedUpAfterCrashEvent;
 import me.videogamesm12.w2k.kernel.event.lifecycle.ClientCrashedEvent;
 import me.videogamesm12.w2k.kernel.event.render.EntityGlowCheckEvent;
@@ -10,7 +11,9 @@ import me.videogamesm12.w2k.kernel.event.render.RenderCompleteEvent;
 import net.minecraft.CrashReport;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.Entity;
+import org.jspecify.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -23,8 +26,13 @@ import java.nio.file.Path;
 @Mixin(Minecraft.class)
 public class MinecraftInjector
 {
+    @Shadow
+    @Nullable
+    public Entity crosshairPickEntity;
     @Unique
     private final RenderCompleteEvent renderCompleteEvent = new RenderCompleteEvent();
+    @Unique
+    private final TargetEntityUpdateEvent targetEntityUpdateEvent = new TargetEntityUpdateEvent();
     @Unique
     private final EntityGlowCheckEvent entityGlowCheckEvent = new EntityGlowCheckEvent();
 
@@ -45,6 +53,13 @@ public class MinecraftInjector
     public void callRenderCompleteEvent(CallbackInfo ci)
     {
         W2K.getEventBus().post(renderCompleteEvent.update(System.currentTimeMillis()));
+    }
+
+
+    @Inject(method = "pick", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/profiling/ProfilerFiller;pop()V", shift = At.Shift.BEFORE))
+    public void callTargetEntityUpdateEvent(float partialTicks, CallbackInfo ci)
+    {
+        W2K.getEventBus().post(targetEntityUpdateEvent.update((EntityInterface) crosshairPickEntity));
     }
 
     @Inject(method = "shouldEntityAppearGlowing", at = @At("HEAD"), cancellable = true)

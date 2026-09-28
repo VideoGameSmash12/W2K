@@ -1,6 +1,8 @@
 package me.videogamesm12.w2k.kernel.abstraction.profile;
 
-public interface PropertyInterface
+import me.videogamesm12.w2k.kernel.abstraction.ObjectInterface;
+
+public interface PropertyInterface extends ObjectInterface
 {
     String w2k$name();
 

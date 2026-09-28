@@ -1,6 +1,8 @@
 package me.videogamesm12.w2k.kernel.abstraction.util;
 
-public interface BlockPosInterface
+import me.videogamesm12.w2k.kernel.abstraction.ObjectInterface;
+
+public interface BlockPosInterface extends ObjectInterface
 {
     int w2k$x();
 
