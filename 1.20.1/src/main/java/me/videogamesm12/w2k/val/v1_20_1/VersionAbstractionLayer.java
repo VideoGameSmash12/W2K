@@ -86,7 +86,14 @@ public class VersionAbstractionLayer extends BaseVersionAbstractionLayer<Minecra
             @Override
             public Component nativeToAdventure(Text text)
             {
-                return ComponentUtils.deserializeComponent(Text.Serializer.toJsonTree(text));
+                try
+                {
+                    return ComponentUtils.deserializeComponent(Text.Serializer.toJsonTree(text));
+                }
+                catch (Exception ex)
+                {
+                    return Component.text(text.getString() + " (!)");
+                }
             }
 
             @Override
