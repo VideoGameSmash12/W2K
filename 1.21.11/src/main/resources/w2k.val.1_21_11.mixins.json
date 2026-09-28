@@ -20,6 +20,7 @@
     "InGameHudInjector",
     "KeyboardInjector",
     "MainInjector",
-    "MinecraftClientInjector"
+    "MinecraftClientInjector",
+    "WorldRendererInjector"
   ]
 }

@@ -14,12 +14,13 @@
     "BlockEntityRenderDispatcherInjector",
     "ChatComponentInjector",
     "ClientPacketListenerInjector",
-    "EntityRendererInjector",
     "EntityRenderDispatcherInjector",
+    "EntityRendererInjector",
     "GameRendererInjector",
     "GuiInjector",
     "KeyboardHandlerInjector",
     "MainInjector",
-    "MinecraftInjector"
+    "MinecraftInjector",
+    "WeatherEffectRendererInjector"
   ]
 }

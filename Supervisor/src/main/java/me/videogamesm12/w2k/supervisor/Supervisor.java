@@ -38,10 +38,7 @@ import me.videogamesm12.w2k.kernel.event.lifecycle.ClientCrashedEvent;
 import me.videogamesm12.w2k.kernel.event.lifecycle.ClientStartedEvent;
 import me.videogamesm12.w2k.kernel.event.lifecycle.ClientStoppedEvent;
 import me.videogamesm12.w2k.kernel.event.network.packet.*;
-import me.videogamesm12.w2k.kernel.event.render.BlockEntityRenderEvent;
-import me.videogamesm12.w2k.kernel.event.render.EntityRenderEvent;
-import me.videogamesm12.w2k.kernel.event.render.GameRenderEvent;
-import me.videogamesm12.w2k.kernel.event.render.WorldRenderEvent;
+import me.videogamesm12.w2k.kernel.event.render.*;
 import me.videogamesm12.w2k.supervisor.api.SVComponent;
 import me.videogamesm12.w2k.supervisor.components.fantasia.Fantasia;
 import me.videogamesm12.w2k.supervisor.components.flags.Flags;
@@ -182,6 +179,16 @@ public class Supervisor extends Thread
     public void onEntityRender(EntityRenderEvent event)
     {
         if (config.getRenderingSettings().isEntityRenderingDisabled()
+                || config.getRenderingSettings().isGameRenderingDisabled())
+        {
+            event.setCancelled(true);
+        }
+    }
+
+    @Subscribe
+    public void onWeatherRender(WeatherRenderCheckEvent event)
+    {
+        if (config.getRenderingSettings().isWeatherRenderingDisabled()
                 || config.getRenderingSettings().isGameRenderingDisabled())
         {
             event.setCancelled(true);

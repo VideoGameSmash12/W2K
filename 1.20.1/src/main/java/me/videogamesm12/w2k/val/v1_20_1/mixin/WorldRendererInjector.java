@@ -4,6 +4,7 @@ import com.llamalad7.mixinextras.sugar.Local;
 import me.videogamesm12.w2k.kernel.W2K;
 import me.videogamesm12.w2k.kernel.abstraction.world.EntityInterface;
 import me.videogamesm12.w2k.kernel.event.render.EntityGlowColorEvent;
+import me.videogamesm12.w2k.kernel.event.render.WeatherRenderCheckEvent;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.*;
 import net.minecraft.client.util.math.MatrixStack;
@@ -28,6 +29,8 @@ public class WorldRendererInjector
 
     @Unique
     private final EntityGlowColorEvent glowColorEvent = new EntityGlowColorEvent();
+    @Unique
+    private final WeatherRenderCheckEvent weatherRenderCheckEvent = new WeatherRenderCheckEvent();
 
     @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/OutlineVertexConsumerProvider;setColor(IIII)V", shift = At.Shift.AFTER))
     public void applyOverlayColor(MatrixStack matrices, float tickDelta, long limitTime, boolean renderBlockOutline, Camera camera, GameRenderer gameRenderer, LightmapTextureManager lightmapTextureManager, Matrix4f projectionMatrix, CallbackInfo ci, @Local Entity entity, @Local OutlineVertexConsumerProvider provider)
@@ -42,6 +45,17 @@ public class WorldRendererInjector
         {
             final Color proposedReplacement = glowColorEvent.getColors().get(0);
             provider.setColor(proposedReplacement.getRed(), proposedReplacement.getGreen(), proposedReplacement.getBlue(), proposedReplacement.getAlpha());
+        }
+    }
+
+    @Inject(method = "renderWeather", at = @At("HEAD"), cancellable = true)
+    public void callWeatherRenderCheckEvent(LightmapTextureManager manager, float tickDelta, double cameraX, double cameraY, double cameraZ, CallbackInfo ci)
+    {
+        W2K.getEventBus().post(weatherRenderCheckEvent.update());
+
+        if (weatherRenderCheckEvent.isCancelled())
+        {
+            ci.cancel();
         }
     }
 }
