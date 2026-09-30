@@ -42,16 +42,6 @@ public class MainChatTab extends AbstractTab<JList<String>>
     @Subscribe
     public void onChatMessage(ChatMessageAddedEvent event)
     {
-        String message;
-        try
-        {
-            message = W2K.getInstance().getVersionAbstractionLayer().text().adventureToString(event.getMessage(), true);
-        }
-        catch (Exception ex)
-        {
-            message = W2K.getInstance().getVersionAbstractionLayer().text().adventureToString(event.getMessage(), false);
-        }
-
-        showMessage(message);
+        showMessage(W2K.getInstance().getVersionAbstractionLayer().text().jsonToString(event.getMessage()));
     }
 }

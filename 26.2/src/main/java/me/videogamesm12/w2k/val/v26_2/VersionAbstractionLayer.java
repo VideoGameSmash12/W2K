@@ -1,6 +1,7 @@
 package me.videogamesm12.w2k.val.v26_2;
 
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.serialization.JsonOps;
 import me.videogamesm12.w2k.kernel.W2K;
@@ -85,9 +86,21 @@ public class VersionAbstractionLayer extends BaseVersionAbstractionLayer<Minecra
             @Override
             public Component nativeToAdventure(net.minecraft.network.chat.Component text)
             {
+                final Component fallback = Component.text(text.getString()).append(Component.text(" (!)"));
+
                 return ComponentSerialization.CODEC.encodeStart(getLookupOrElse(backupLookup).createSerializationContext(JsonOps.INSTANCE), text)
-                        .mapOrElse(ComponentUtils::deserializeComponent,
-                                error -> Component.text(text.getString()).append(Component.text(" (!)").hoverEvent(HoverEvent.showText(Component.text(error.message())))));
+                        .mapOrElse(json ->
+                                {
+                                    try
+                                    {
+                                        return ComponentUtils.deserializeComponent(json);
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        return fallback.hoverEvent(HoverEvent.showText(Component.text(ex.getMessage() != null ? ex.getMessage() : ex.getClass().getName())));
+                                    }
+                                },
+                                error -> fallback.hoverEvent(HoverEvent.showText(Component.text(error.message()))));
             }
 
             @Override
@@ -100,6 +113,19 @@ public class VersionAbstractionLayer extends BaseVersionAbstractionLayer<Minecra
             public String adventureToString(Component component, boolean useNative)
             {
                 return useNative ? adventureToNative(component).getString() : plainText.serialize(component);
+            }
+
+            @Override
+            public JsonElement nativeToJson(net.minecraft.network.chat.Component component)
+            {
+                return ComponentSerialization.CODEC.encodeStart(getLookupOrElse(backupLookup).createSerializationContext(JsonOps.INSTANCE), component)
+                        .mapOrElse(result -> result,
+                                error ->
+                                {
+                                    final JsonObject fallback = new JsonObject();
+                                    fallback.addProperty("text", error.message());
+                                    return fallback;
+                                });
             }
 
             @Override

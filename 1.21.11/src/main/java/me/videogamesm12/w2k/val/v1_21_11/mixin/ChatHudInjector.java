@@ -17,6 +17,6 @@ public class ChatHudInjector
     @Inject(method = "addMessage(Lnet/minecraft/text/Text;Lnet/minecraft/network/message/MessageSignatureData;Lnet/minecraft/client/gui/hud/MessageIndicator;)V", at = @At("RETURN"))
     public void callChatMessageAddedEvent(Text text, MessageSignatureData messageSignatureData, MessageIndicator messageIndicator, CallbackInfo ci)
     {
-        W2K.getEventBus().post(new ChatMessageAddedEvent(W2K.getInstance().getVersionAbstractionLayer().text().nativeToAdventure(text)));
+        W2K.getEventBus().post(new ChatMessageAddedEvent(W2K.getInstance().getVersionAbstractionLayer().text().nativeToJson(text)));
     }
 }

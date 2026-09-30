@@ -109,6 +109,12 @@ public class VersionAbstractionLayer extends BaseVersionAbstractionLayer<Minecra
             }
 
             @Override
+            public JsonElement nativeToJson(Text text)
+            {
+                return Text.Serializer.toJsonTree(text);
+            }
+
+            @Override
             public String jsonToString(JsonElement component)
             {
                 return Objects.requireNonNull(Text.Serializer.fromJson(component)).getString();

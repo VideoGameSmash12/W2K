@@ -36,6 +36,13 @@ public interface TextConverter<NativeText>
     String adventureToString(Component component, boolean useNative);
 
     /**
+     * Converts a text component from the native format to JSON.
+     * @param text      {@code Text} or {@code Component} (depending on your mappings)
+     * @return          {@link JsonElement}
+     */
+    JsonElement nativeToJson(NativeText text);
+
+    /**
      * Gets a stringified form of a text component from a {@link JsonElement}.
      * @param component {@link JsonElement}
      * @return          {@link String}

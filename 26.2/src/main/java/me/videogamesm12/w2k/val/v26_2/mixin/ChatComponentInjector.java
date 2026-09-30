@@ -18,6 +18,6 @@ public class ChatComponentInjector
     @Inject(method = "addMessage", at = @At("RETURN"))
     public void callChatMessageAddedEvent(Component contents, MessageSignature signature, GuiMessageSource source, GuiMessageTag tag, CallbackInfo ci)
     {
-        W2K.getEventBus().post(new ChatMessageAddedEvent(W2K.getInstance().getVersionAbstractionLayer().text().nativeToAdventure(contents)));
+        W2K.getEventBus().post(new ChatMessageAddedEvent(W2K.getInstance().getVersionAbstractionLayer().text().nativeToJson(contents)));
     }
 }
