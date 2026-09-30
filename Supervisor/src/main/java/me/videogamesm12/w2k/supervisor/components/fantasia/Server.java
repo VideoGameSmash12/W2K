@@ -188,8 +188,8 @@ public class Server extends Thread
         session.sendMessage(" | _/ _` | ' \\  _/ _` (_-< / _` |");
         session.sendMessage(" |_|\\__,_|_||_\\__\\__,_/__/_\\__,_|");
         session.sendMessage(" --============================--");
-        session.sendMessage(" Welcome to Fantasia, the Supervisor's internal console.\n"
-                + " This allows you control it even before the Blackbox &\n"
+        session.sendMessage(" Welcome to Fantasia, the Supervisor's internal console.\r\n"
+                + " This allows you control it even before the Blackbox &\r\n"
                 + " main game have even initialized.");
         session.sendMessage(" --");
         session.sendMessage(" Use 'help' for a list of commands.");
