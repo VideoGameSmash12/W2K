@@ -6,6 +6,10 @@ import me.videogamesm12.w2k.kernel.event.CustomEvent;
 
 import java.util.List;
 
+/**
+ * <h1>IncomingInventoryDataPacketEvent</h1>
+ * <p>Event that is updated and called when the client receives an "inventory contents" packet from a server.</p>
+ */
 @Getter
 public class IncomingInventoryDataPacketEvent extends CustomEvent
 {

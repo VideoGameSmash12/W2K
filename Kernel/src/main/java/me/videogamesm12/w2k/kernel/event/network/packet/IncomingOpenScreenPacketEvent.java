@@ -4,6 +4,10 @@ import com.google.gson.JsonElement;
 import lombok.Getter;
 import me.videogamesm12.w2k.kernel.event.CustomEvent;
 
+/**
+ * <h1>IncomingOpenScreenPacketEvent</h1>
+ * <p>Event that is updated and called when the client receives an "open screen" packet from a server.</p>
+ */
 @Getter
 public class IncomingOpenScreenPacketEvent extends CustomEvent
 {

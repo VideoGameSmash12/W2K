@@ -7,7 +7,7 @@ import java.util.Arrays;
 
 /**
  * <h1>PopulateCrashReportEvent</h1>
- * <p>Event that is called while the game is generating a crash report.</p>
+ * <p>Event that is called while the client is generating a crash report.</p>
  */
 @Getter
 public class PopulateCrashReportEvent extends CustomEvent

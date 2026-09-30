@@ -7,7 +7,7 @@
     "network.ClientPacketListenerWrapper",
     "network.DebugQueryHandlerWrapper",
     "network.PlayerInfoWrapper",
-    "util.SessionWrapper",
+    "util.UserWrapper",
     "world.LocalPlayerWrapper",
     "world.ClientWorldWrapper"
   ],

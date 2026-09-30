@@ -5,6 +5,10 @@ import me.videogamesm12.w2k.kernel.event.CustomEvent;
 
 import java.util.UUID;
 
+/**
+ * <h1>IncomingEntitySpawnPacketEvent</h1>
+ * <p>Event that is updated and called when the client receives a "spawn entity" packet from a server.</p>
+ */
 @Getter
 public class IncomingEntitySpawnPacketEvent extends CustomEvent
 {

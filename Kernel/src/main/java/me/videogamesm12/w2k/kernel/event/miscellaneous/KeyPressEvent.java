@@ -2,7 +2,12 @@ package me.videogamesm12.w2k.kernel.event.miscellaneous;
 
 import lombok.Getter;
 import me.videogamesm12.w2k.kernel.event.CustomEvent;
+import me.videogamesm12.w2k.kernel.module.WModule;
 
+/**
+ * <h1>KeyPressEvent</h1>
+ * <p>Event that is called when the client registers a key combination.</p>
+ */
 @Getter
 public class KeyPressEvent extends CustomEvent
 {

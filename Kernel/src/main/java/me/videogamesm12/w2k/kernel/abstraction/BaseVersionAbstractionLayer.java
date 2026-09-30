@@ -145,7 +145,7 @@ public abstract class BaseVersionAbstractionLayer<Minecraft>
     /**
      * Gets an {@link AbstractPacketTranslator} instance which translates packets between the WCom standard and
      *  Minecraft's native format for custom payloads. Since some versions of Minecraft do not have adequate libraries
-     *  for package management, there is a chance that this can be null.
+     *  for custom packet management, there is a chance that this can be null.
      * @see     me.videogamesm12.w2k.kernel.communication.WCommunicationManager
      * @return  An extension of {@link AbstractPacketTranslator}
      */
@@ -163,6 +163,12 @@ public abstract class BaseVersionAbstractionLayer<Minecraft>
      */
     public abstract List<String> getClientOverview();
 
+    /**
+     * Gets an {@link AbstractGraphicsHandler} instance which compiles
+     *  {@link me.videogamesm12.w2k.kernel.graphics.DrawableObject} instances into objects that can be either added to a
+     *  screen or render as part of the in-game HUD.
+     * @return  An extension of {@link AbstractGraphicsHandler}
+     */
     public abstract AbstractGraphicsHandler graphicsHandler();
 
     /**

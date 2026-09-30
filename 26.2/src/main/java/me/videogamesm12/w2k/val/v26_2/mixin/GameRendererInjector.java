@@ -1,8 +1,8 @@
 package me.videogamesm12.w2k.val.v26_2.mixin;
 
 import me.videogamesm12.w2k.kernel.W2K;
-import me.videogamesm12.w2k.kernel.event.render.GameRenderEvent;
-import me.videogamesm12.w2k.kernel.event.render.WorldRenderEvent;
+import me.videogamesm12.w2k.kernel.event.render.GameRenderCheckEvent;
+import me.videogamesm12.w2k.kernel.event.render.WorldRenderCheckEvent;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.renderer.GameRenderer;
 import org.spongepowered.asm.mixin.Mixin;
@@ -15,16 +15,16 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class GameRendererInjector
 {
     @Unique
-    private final WorldRenderEvent worldRenderEvent = new WorldRenderEvent();
+    private final WorldRenderCheckEvent worldRenderCheckEvent = new WorldRenderCheckEvent();
     @Unique
-    private final GameRenderEvent gameRenderEvent = new GameRenderEvent();
+    private final GameRenderCheckEvent gameRenderCheckEvent = new GameRenderCheckEvent();
 
     @Inject(method = "render", at = @At("HEAD"), cancellable = true)
     public void startRender(DeltaTracker deltaTracker, boolean advanceGameTime, CallbackInfo ci)
     {
-        W2K.getEventBus().post(gameRenderEvent.update(deltaTracker.getGameTimeDeltaTicks()));
+        W2K.getEventBus().post(gameRenderCheckEvent.update(deltaTracker.getGameTimeDeltaTicks()));
 
-        if (gameRenderEvent.isCancelled())
+        if (gameRenderCheckEvent.isCancelled())
         {
             ci.cancel();
         }
@@ -33,9 +33,9 @@ public class GameRendererInjector
     @Inject(method = "renderLevel", at = @At("HEAD"), cancellable = true)
     public void injectRenderWorld(DeltaTracker deltaTracker, CallbackInfo ci)
     {
-        W2K.getEventBus().post(worldRenderEvent.update(deltaTracker.getGameTimeDeltaTicks()));
+        W2K.getEventBus().post(worldRenderCheckEvent.update(deltaTracker.getGameTimeDeltaTicks()));
 
-        if (worldRenderEvent.isCancelled())
+        if (worldRenderCheckEvent.isCancelled())
         {
             ci.cancel();
         }

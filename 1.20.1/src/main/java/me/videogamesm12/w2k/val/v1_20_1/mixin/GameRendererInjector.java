@@ -3,8 +3,8 @@ package me.videogamesm12.w2k.val.v1_20_1.mixin;
 import me.videogamesm12.w2k.kernel.W2K;
 import me.videogamesm12.w2k.kernel.abstraction.world.EntityInterface;
 import me.videogamesm12.w2k.kernel.event.entity.TargetEntityUpdateEvent;
-import me.videogamesm12.w2k.kernel.event.render.GameRenderEvent;
-import me.videogamesm12.w2k.kernel.event.render.WorldRenderEvent;
+import me.videogamesm12.w2k.kernel.event.render.GameRenderCheckEvent;
+import me.videogamesm12.w2k.kernel.event.render.WorldRenderCheckEvent;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.util.math.MatrixStack;
@@ -24,18 +24,18 @@ public class GameRendererInjector
     @Final
     private MinecraftClient client;
     @Unique
-    private final GameRenderEvent gameRenderEvent = new GameRenderEvent();
+    private final GameRenderCheckEvent gameRenderCheckEvent = new GameRenderCheckEvent();
     @Unique
     private final TargetEntityUpdateEvent targetEntityUpdateEvent = new TargetEntityUpdateEvent();
     @Unique
-    private final WorldRenderEvent worldRenderEvent = new WorldRenderEvent();
+    private final WorldRenderCheckEvent worldRenderCheckEvent = new WorldRenderCheckEvent();
 
     @Inject(method = "render", at = @At("HEAD"), cancellable = true)
     public void startRender(float tickDelta, long startTime, boolean tick, CallbackInfo ci)
     {
-        W2K.getEventBus().post(gameRenderEvent.update(tickDelta));
+        W2K.getEventBus().post(gameRenderCheckEvent.update(tickDelta));
 
-        if (gameRenderEvent.isCancelled())
+        if (gameRenderCheckEvent.isCancelled())
         {
             ci.cancel();
         }
@@ -50,9 +50,9 @@ public class GameRendererInjector
     @Inject(method = "renderWorld", at = @At("HEAD"), cancellable = true)
     public void injectRenderWorld(float tickDelta, long limitTime, MatrixStack matrix, CallbackInfo ci)
     {
-        W2K.getEventBus().post(worldRenderEvent.update(tickDelta));
+        W2K.getEventBus().post(worldRenderCheckEvent.update(tickDelta));
 
-        if (worldRenderEvent.isCancelled())
+        if (worldRenderCheckEvent.isCancelled())
         {
             ci.cancel();
         }

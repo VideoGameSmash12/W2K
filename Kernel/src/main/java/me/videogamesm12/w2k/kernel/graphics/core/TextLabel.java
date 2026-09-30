@@ -2,13 +2,13 @@ package me.videogamesm12.w2k.kernel.graphics.core;
 
 import lombok.Getter;
 import lombok.Setter;
-import me.videogamesm12.w2k.kernel.graphics.Alignable;
+import me.videogamesm12.w2k.kernel.graphics.Anchorable;
 import me.videogamesm12.w2k.kernel.graphics.Alignment;
 import me.videogamesm12.w2k.kernel.abstraction.graphics.CompiledDrawableObject;
 import me.videogamesm12.w2k.kernel.graphics.DrawableObject;
 import net.kyori.adventure.text.Component;
 
-public class TextLabel implements DrawableObject<TextLabel>, Alignable
+public class TextLabel implements DrawableObject<TextLabel>, Anchorable
 {
     @Getter
     @Setter
@@ -76,25 +76,25 @@ public class TextLabel implements DrawableObject<TextLabel>, Alignable
     }
 
     @Override
-    public Alignment horizontalAlignment()
+    public Alignment horizontalAnchor()
     {
         return horizontal;
     }
 
     @Override
-    public void horizontalAlignment(final Alignment alignment)
+    public void horizontalAnchor(final Alignment alignment)
     {
         this.horizontal = alignment;
     }
 
     @Override
-    public Alignment verticalAlignment()
+    public Alignment verticalAnchor()
     {
         return vertical;
     }
 
     @Override
-    public void verticalAlignment(final Alignment alignment)
+    public void verticalAnchor(final Alignment alignment)
     {
         this.vertical = alignment;
     }

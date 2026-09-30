@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import java.util.UUID;
 
 @Mixin(User.class)
-public abstract class SessionWrapper implements SessionInterface
+public abstract class UserWrapper implements SessionInterface
 {
     @Shadow
     @Final

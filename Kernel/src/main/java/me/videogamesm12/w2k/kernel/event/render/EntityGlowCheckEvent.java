@@ -5,6 +5,10 @@ import lombok.Setter;
 import me.videogamesm12.w2k.kernel.abstraction.world.EntityInterface;
 import me.videogamesm12.w2k.kernel.event.CustomEvent;
 
+/**
+ * <h1>EntityGlowCheckEvent</h1>
+ * <p>Event that is updated and called when the client checks whether to apply a glow effect to an entity.</p>
+ */
 @Getter
 public class EntityGlowCheckEvent extends CustomEvent
 {

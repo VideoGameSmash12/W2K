@@ -2,7 +2,7 @@ package me.videogamesm12.w2k.val.v1_20_1.mixin;
 
 import me.videogamesm12.w2k.kernel.W2K;
 import me.videogamesm12.w2k.kernel.abstraction.world.EntityInterface;
-import me.videogamesm12.w2k.kernel.event.render.EntityRenderEvent;
+import me.videogamesm12.w2k.kernel.event.render.EntityRenderCheckEvent;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.minecraft.client.util.math.MatrixStack;
@@ -17,7 +17,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class EntityRenderDispatcherInjector
 {
     @Unique
-    private final EntityRenderEvent event = new EntityRenderEvent();
+    private final EntityRenderCheckEvent event = new EntityRenderCheckEvent();
 
     @Inject(method = "render", at = @At("HEAD"), cancellable = true)
     public void injectRenderEntity(Entity entity, double x, double y, double z, float yaw, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, CallbackInfo ci)

@@ -8,6 +8,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * <h1>OverlayRequestEvent</h1>
+ * <p>Event that is updated and called while the client is rendering the in-game HUD for the purpose of figuring out
+ *  what {@link DrawableObject}s need to be rendered as overlays.</p>
+ */
 public class OverlayRequestEvent extends CustomEvent
 {
     private final Object sync = new Object();

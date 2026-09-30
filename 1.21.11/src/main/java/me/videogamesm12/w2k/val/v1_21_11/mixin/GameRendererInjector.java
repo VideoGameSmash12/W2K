@@ -3,12 +3,11 @@ package me.videogamesm12.w2k.val.v1_21_11.mixin;
 import me.videogamesm12.w2k.kernel.W2K;
 import me.videogamesm12.w2k.kernel.abstraction.world.EntityInterface;
 import me.videogamesm12.w2k.kernel.event.entity.TargetEntityUpdateEvent;
-import me.videogamesm12.w2k.kernel.event.render.GameRenderEvent;
-import me.videogamesm12.w2k.kernel.event.render.WorldRenderEvent;
+import me.videogamesm12.w2k.kernel.event.render.GameRenderCheckEvent;
+import me.videogamesm12.w2k.kernel.event.render.WorldRenderCheckEvent;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.render.RenderTickCounter;
-import net.minecraft.client.util.math.MatrixStack;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -24,18 +23,18 @@ public class GameRendererInjector
     @Final
     private MinecraftClient client;
     @Unique
-    private final WorldRenderEvent worldRenderEvent = new WorldRenderEvent();
+    private final WorldRenderCheckEvent worldRenderCheckEvent = new WorldRenderCheckEvent();
     @Unique
     private final TargetEntityUpdateEvent targetEntityUpdateEvent = new TargetEntityUpdateEvent();
     @Unique
-    private final GameRenderEvent gameRenderEvent = new GameRenderEvent();
+    private final GameRenderCheckEvent gameRenderCheckEvent = new GameRenderCheckEvent();
 
     @Inject(method = "render", at = @At("HEAD"), cancellable = true)
     public void startRender(RenderTickCounter renderTickCounter, boolean bl, CallbackInfo ci)
     {
-        W2K.getEventBus().post(gameRenderEvent.update(renderTickCounter.getDynamicDeltaTicks()));
+        W2K.getEventBus().post(gameRenderCheckEvent.update(renderTickCounter.getDynamicDeltaTicks()));
 
-        if (gameRenderEvent.isCancelled())
+        if (gameRenderCheckEvent.isCancelled())
         {
             ci.cancel();
         }
@@ -50,9 +49,9 @@ public class GameRendererInjector
     @Inject(method = "renderWorld", at = @At("HEAD"), cancellable = true)
     public void injectRenderWorld(RenderTickCounter renderTickCounter, CallbackInfo ci)
     {
-        W2K.getEventBus().post(worldRenderEvent.update(renderTickCounter.getDynamicDeltaTicks()));
+        W2K.getEventBus().post(worldRenderCheckEvent.update(renderTickCounter.getDynamicDeltaTicks()));
 
-        if (worldRenderEvent.isCancelled())
+        if (worldRenderCheckEvent.isCancelled())
         {
             ci.cancel();
         }

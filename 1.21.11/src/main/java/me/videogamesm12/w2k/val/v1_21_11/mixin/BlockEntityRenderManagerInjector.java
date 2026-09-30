@@ -1,7 +1,8 @@
 package me.videogamesm12.w2k.val.v1_21_11.mixin;
 
 import me.videogamesm12.w2k.kernel.W2K;
-import me.videogamesm12.w2k.kernel.event.render.BlockEntityRenderEvent;
+import me.videogamesm12.w2k.kernel.abstraction.world.BlockEntityInterface;
+import me.videogamesm12.w2k.kernel.event.render.BlockEntityRenderCheckEvent;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.block.entity.BlockEntityRenderManager;
 import net.minecraft.client.render.block.entity.state.BlockEntityRenderState;
@@ -20,14 +21,14 @@ import java.util.Objects;
 public class BlockEntityRenderManagerInjector
 {
     @Unique
-    private final BlockEntityRenderEvent blockEntityRenderEvent = new BlockEntityRenderEvent();
+    private final BlockEntityRenderCheckEvent blockEntityRenderCheckEvent = new BlockEntityRenderCheckEvent();
 
     @Inject(method = "render", at = @At("HEAD"), cancellable = true)
     public <S extends BlockEntityRenderState> void injectRender(S blockEntityRenderState, MatrixStack matrixStack, OrderedRenderCommandQueue orderedRenderCommandQueue, CameraRenderState cameraRenderState, CallbackInfo ci)
     {
         // TODO: Add workaround
-        W2K.getEventBus().post(blockEntityRenderEvent.update(Objects.requireNonNull(MinecraftClient.getInstance().world).getBlockEntity(blockEntityRenderState.pos)));
-        if (blockEntityRenderEvent.isCancelled())
+        W2K.getEventBus().post(blockEntityRenderCheckEvent.update((BlockEntityInterface) Objects.requireNonNull(MinecraftClient.getInstance().world).getBlockEntity(blockEntityRenderState.pos), blockEntityRenderState));
+        if (blockEntityRenderCheckEvent.isCancelled())
         {
             ci.cancel();
         }

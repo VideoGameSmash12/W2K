@@ -58,8 +58,8 @@ public class CompiledTextLabel implements CompiledDrawableObject<TextLabel>, Ren
         final Font font = Minecraft.getInstance().font;
         final Component compiled = compiledText;
 
-        final Alignment horizontal = label.horizontalAlignment();
-        final Alignment vertical = label.verticalAlignment();
+        final Alignment horizontal = label.horizontalAnchor();
+        final Alignment vertical = label.verticalAnchor();
 
         int startingXPosition = Math.round(context.guiWidth() * horizontal.getOffset());
         int startingYPosition = Math.round(context.guiHeight() * vertical.getOffset());

@@ -24,8 +24,6 @@ package me.videogamesm12.w2k.supervisor;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import lombok.Getter;
 import me.videogamesm12.w2k.kernel.W2K;
 import me.videogamesm12.w2k.kernel.abstraction.inventory.ItemStackInterface;
@@ -34,7 +32,6 @@ import me.videogamesm12.w2k.kernel.abstraction.network.PlayerListEntryInterface;
 import me.videogamesm12.w2k.kernel.abstraction.world.*;
 import me.videogamesm12.w2k.kernel.event.diagnostics.PopulateCrashReportEvent;
 import me.videogamesm12.w2k.kernel.event.lifecycle.ClientCleanedUpAfterCrashEvent;
-import me.videogamesm12.w2k.kernel.event.lifecycle.ClientCrashedEvent;
 import me.videogamesm12.w2k.kernel.event.lifecycle.ClientStartedEvent;
 import me.videogamesm12.w2k.kernel.event.lifecycle.ClientStoppedEvent;
 import me.videogamesm12.w2k.kernel.event.network.packet.*;
@@ -44,14 +41,11 @@ import me.videogamesm12.w2k.supervisor.components.fantasia.Fantasia;
 import me.videogamesm12.w2k.supervisor.components.flags.Flags;
 import me.videogamesm12.w2k.supervisor.components.watchdog.Watchdog;
 import net.fabricmc.loader.api.FabricLoader;
-import net.kyori.adventure.nbt.BinaryTag;
 import net.kyori.adventure.nbt.BinaryTagIO;
 import net.kyori.adventure.nbt.CompoundBinaryTag;
 import net.kyori.adventure.text.Component;
 
 import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.util.*;
@@ -147,7 +141,7 @@ public class Supervisor extends Thread
     }
 
     @Subscribe
-    public void onGameRender(GameRenderEvent event)
+    public void onGameRender(GameRenderCheckEvent event)
     {
         if (config.getRenderingSettings().isGameRenderingDisabled())
         {
@@ -156,7 +150,7 @@ public class Supervisor extends Thread
     }
 
     @Subscribe
-    public void onWorldRender(WorldRenderEvent event)
+    public void onWorldRender(WorldRenderCheckEvent event)
     {
         if (config.getRenderingSettings().isWorldRenderingDisabled()
                 || config.getRenderingSettings().isGameRenderingDisabled())
@@ -166,7 +160,7 @@ public class Supervisor extends Thread
     }
 
     @Subscribe
-    public void onBlockEntityRender(BlockEntityRenderEvent event)
+    public void onBlockEntityRender(BlockEntityRenderCheckEvent event)
     {
         if (config.getRenderingSettings().isTileEntityRenderingDisabled()
                 || config.getRenderingSettings().isGameRenderingDisabled())
@@ -176,7 +170,7 @@ public class Supervisor extends Thread
     }
 
     @Subscribe
-    public void onEntityRender(EntityRenderEvent event)
+    public void onEntityRender(EntityRenderCheckEvent event)
     {
         if (config.getRenderingSettings().isEntityRenderingDisabled()
                 || config.getRenderingSettings().isGameRenderingDisabled())
