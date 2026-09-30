@@ -1,19 +1,22 @@
 package me.videogamesm12.w2k.toolbox.commands;
 
 import me.videogamesm12.w2k.kernel.W2K;
+import me.videogamesm12.w2k.kernel.abstraction.command.EntitySelectorInterface;
 import me.videogamesm12.w2k.kernel.command.ExecutionPath;
-import me.videogamesm12.w2k.kernel.command.Parameters;
 import me.videogamesm12.w2k.kernel.command.WCommand;
-import me.videogamesm12.w2k.kernel.data.IEntitySelector;
 import me.videogamesm12.w2k.toolbox.util.DumpUtil;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 
-@Parameters(name = "dump", usage = "/dump <<entities | maps | screen | tiles [heap]> | threads | <heap [live objects?]>>")
 public class DumpCmd extends WCommand
 {
+	public DumpCmd()
+	{
+		super("dump");
+	}
+
 	@ExecutionPath("heap")
 	public void heap()
 	{
@@ -105,7 +108,7 @@ public class DumpCmd extends WCommand
 	}
 
 	@ExecutionPath({"entities", "<selector|w2k:wrapped/entities>"})
-	public void entities(final IEntitySelector selector)
+	public void entities(final EntitySelectorInterface selector)
 	{
 		msg(Component.translatable("w2k.toolbox.dump.starting.entities", NamedTextColor.GRAY));
 		DumpUtil.performEntityDump(selector::w2k$getClientEntities, true).whenComplete((results, throwable) ->

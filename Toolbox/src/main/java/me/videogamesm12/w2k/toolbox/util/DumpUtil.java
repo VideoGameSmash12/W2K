@@ -3,6 +3,8 @@ package me.videogamesm12.w2k.toolbox.util;
 import com.sun.management.HotSpotDiagnosticMXBean;
 import lombok.Getter;
 import me.videogamesm12.w2k.kernel.W2K;
+import me.videogamesm12.w2k.kernel.abstraction.inventory.ItemStackInterface;
+import me.videogamesm12.w2k.kernel.abstraction.world.*;
 import me.videogamesm12.w2k.kernel.data.*;
 import me.videogamesm12.w2k.toolbox.data.DumpResult;
 import net.kyori.adventure.nbt.*;
@@ -36,7 +38,12 @@ public class DumpUtil
 			final List<String> completedMaps = new ArrayList<>();
 			final List<String> failedMaps = new ArrayList<>();
 
-			final List<IMapEntry> entries = W2K.getInstance().getDriverManager().getVersionBridge().getMaps();
+			final List<MapStateInterface> entries = W2K.getInstance().getVersionAbstractionLayer().getLocalWorld()
+					.map(ClientWorldInterface::w2k$getMapStates)
+					.map(map -> map.entrySet().stream()
+							.map(entry -> entry.getValue().w2k$id(entry.getKey()))
+							.collect(Collectors.toList()))
+					.orElse(Collections.emptyList());
 
 			final File dumpDir = generateDumpFolder();
 
@@ -70,7 +77,9 @@ public class DumpUtil
 			final List<String> completedEntities = new ArrayList<>();
 			final List<String> failedEntities = new ArrayList<>();
 
-			final List<IEntityEntry> entry = W2K.getInstance().getDriverManager().getVersionBridge().getEntities();
+			final List<EntityInterface> entry = W2K.getInstance().getVersionAbstractionLayer().getLocalWorld()
+					.map(ClientWorldInterface::w2k$getEntities)
+					.orElse(Collections.emptyList());
 
 			final File dumpDir = generateDumpFolder();
 
@@ -109,7 +118,7 @@ public class DumpUtil
 		});
 	}
 
-	public static CompletableFuture<DumpResult> performEntityDump(final Supplier<List<IEntityEntry>> supplier, final boolean parallel)
+	public static CompletableFuture<DumpResult> performEntityDump(final Supplier<List<EntityInterface>> supplier, final boolean parallel)
 	{
 		final CompletableFuture<DumpResult> future = new CompletableFuture<>();
 
@@ -119,7 +128,7 @@ public class DumpUtil
 			final List<String> failedEntities = new ArrayList<>();
 			final File dumpDir = generateDumpFolder();
 
-			final List<IEntityEntry> list = supplier.get();
+			final List<EntityInterface> list = supplier.get();
 
 			(parallel ? list.parallelStream() : list.stream()).forEach(entity ->
 			{
@@ -167,7 +176,9 @@ public class DumpUtil
 			final List<String> failedItems = new ArrayList<>();
 			final List<String> ignoredItems = new ArrayList<>();
 
-			final List<IItemStackEntry> entry = W2K.getInstance().getDriverManager().getVersionBridge().getOpenInventory();
+			final List<ItemStackInterface> entry = W2K.getInstance().getVersionAbstractionLayer().getLocalPlayer()
+					.map(ClientPlayerEntityInterface::w2k$getInventory)
+					.orElse(Collections.emptyList());
 
 			final File dumpDir = generateDumpFolder();
 
@@ -224,7 +235,9 @@ public class DumpUtil
 			final List<String> failedTiles = new ArrayList<>();
 			final List<String> ignoredTiles = new ArrayList<>();
 
-			final List<IBlockEntityEntry> entry = W2K.getInstance().getDriverManager().getVersionBridge().getBlockEntities();
+			final List<BlockEntityInterface> entry = W2K.getInstance().getVersionAbstractionLayer().getLocalWorld()
+					.map(ClientWorldInterface::w2k$getBlockEntities)
+					.orElse(Collections.emptyList());
 
 			final File dumpDir = generateDumpFolder();
 

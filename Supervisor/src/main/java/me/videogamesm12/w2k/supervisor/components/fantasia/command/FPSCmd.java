@@ -29,13 +29,13 @@ public class FPSCmd extends FCommand
 {
     public FPSCmd()
     {
-        super("fps", "Returns a very basic FPS string.", "fps");
+        super("fps", "Returns an FPS string.", "fps");
     }
 
     @Override
     public boolean run(CommandSender sender, String[] args)
     {
-        sender.sendMessage(W2K.getInstance().getDriverManager().getVersionBridge().getClientDebugInformation());
+        W2K.getInstance().getVersionAbstractionLayer().getClientOverview().forEach(sender::sendMessage);
         return true;
     }
 }

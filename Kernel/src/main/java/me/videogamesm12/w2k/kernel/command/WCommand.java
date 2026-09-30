@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 /**
  * <h1>WCommand</h1>
@@ -20,21 +21,17 @@ public abstract class WCommand
     private static final Timer scheduler = new Timer();
 
     private final String name;
-    private final String usage;
     private final List<CommandPath<?, ?>> paths;
 
-    protected WCommand()
+    public WCommand(final String name)
     {
-        if (!getClass().isAnnotationPresent(Parameters.class))
-        {
-            throw new IllegalArgumentException("Commands must have the Parameters class to be initialized this way");
-        }
+        this.name   = name;
+        this.paths  = new ArrayList<>();
+    }
 
-        final Parameters parameters = getClass().getAnnotation(Parameters.class);
-
-        this.name       = parameters.name();
-        this.usage      = parameters.usage();
-        this.paths      = new ArrayList<>();
+    public boolean available()
+    {
+        return true;
     }
 
     public void addPath(final CommandPath<?, ?> path)
@@ -45,7 +42,8 @@ public abstract class WCommand
     public final void msg(@NotNull Component component)
     {
         Objects.requireNonNull(component);
-        W2K.getInstance().getDriverManager().getVersionBridge().displayMessage(component);
+        W2K.getInstance().getVersionAbstractionLayer().getLocalPlayer().ifPresent(player ->
+                player.w2k$displayMessage(component));
     }
 
     public final void schedule(@NotNull Runnable task, int delay)

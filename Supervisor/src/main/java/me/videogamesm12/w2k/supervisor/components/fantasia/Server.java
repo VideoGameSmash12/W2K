@@ -25,7 +25,6 @@ package me.videogamesm12.w2k.supervisor.components.fantasia;
 import com.google.common.eventbus.Subscribe;
 import lombok.Getter;
 import me.videogamesm12.w2k.kernel.W2K;
-import me.videogamesm12.w2k.kernel.event.miscellaneous.PanicKeyCombinationEvent;
 import me.videogamesm12.w2k.supervisor.Supervisor;
 import me.videogamesm12.w2k.supervisor.api.event.ClientFreezeEvent;
 import me.videogamesm12.w2k.supervisor.components.fantasia.command.*;
@@ -33,13 +32,11 @@ import me.videogamesm12.w2k.supervisor.components.fantasia.event.SessionPreProce
 import me.videogamesm12.w2k.supervisor.components.fantasia.event.SessionStartedEvent;
 import me.videogamesm12.w2k.supervisor.components.fantasia.event.SessionStartedPreSetupEvent;
 import me.videogamesm12.w2k.supervisor.components.fantasia.listener.IConnectionListener;
-import me.videogamesm12.w2k.supervisor.components.fantasia.listener.TelnetConnectionListener;
 import me.videogamesm12.w2k.supervisor.components.fantasia.session.CommandSender;
 import me.videogamesm12.w2k.supervisor.components.fantasia.session.ISession;
 import org.apache.commons.lang3.ArrayUtils;
 
 import java.io.IOException;
-import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -94,8 +91,7 @@ public class Server extends Thread
         registerCommand(ExitCmd.class);
         registerCommand(FPSCmd.class);
         registerCommand(HelpCmd.class);
-        // TODO: Port this command with W2K's new system
-        //registerCommand(ListCmd.class);
+        registerCommand(ListCmd.class);
         registerCommand(RunCmd.class);
         registerCommand(ShutdownCmd.class);
         registerCommand(StacktraceDumpCmd.class);
@@ -177,12 +173,6 @@ public class Server extends Thread
     }
 
     @Subscribe
-    public void onPanicCombination(PanicKeyCombinationEvent event)
-    {
-        broadcast(" ** ATTENTION: PANIC KEY COMBINATION ENTERED AT " + event.getTimestamp() + " MS ** ");
-    }
-
-    @Subscribe
     public void onSessionStartedPreSetup(SessionStartedPreSetupEvent event)
     {
         W2K.getLogger().info("{} connected.", event.getSession().getConnectionIdentifier());
@@ -197,8 +187,8 @@ public class Server extends Thread
         session.sendMessage(" | _/ _` | ' \\  _/ _` (_-< / _` |");
         session.sendMessage(" |_|\\__,_|_||_\\__\\__,_/__/_\\__,_|");
         session.sendMessage(" --============================--");
-        session.sendMessage(" Welcome to Fantasia, the Supervisor's internal console.\n"
-                + " This allows you control it even before the Blackbox &\n"
+        session.sendMessage(" Welcome to Fantasia, the Supervisor's internal console.\r\n"
+                + " This allows you control it even before the Blackbox &\r\n"
                 + " main game have even initialized.");
         session.sendMessage(" --");
         session.sendMessage(" Use 'help' for a list of commands.");

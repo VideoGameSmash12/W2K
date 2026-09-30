@@ -1,8 +1,6 @@
 package me.videogamesm12.w2k.blackbox.window.tool.console;
 
-import com.google.common.eventbus.Subscribe;
-import me.videogamesm12.w2k.supervisor.Supervisor;
-import me.videogamesm12.w2k.supervisor.api.event.ChatMessageEvent;
+import me.videogamesm12.w2k.kernel.W2K;
 
 import javax.swing.*;
 import java.awt.*;
@@ -51,21 +49,7 @@ public class Console extends JFrame
         pack();
 
         // Register event listeners
-        Supervisor.getEventBus().register(this);
-    }
-
-    @Subscribe
-    public void onChatMessage(ChatMessageEvent event)
-    {
-        // Future-proofing; I might add integration for AdvancedChat in the future so why not lay the groundwork for that?
-        for (int i = 0; i < tabs.getTabCount(); i++)
-        {
-            if (tabs.getComponentAt(i) instanceof AbstractTab)
-            {
-                AbstractTab tab = (AbstractTab) tabs.getComponentAt(i);
-                tab.showMessage(event.getMessage());
-            }
-        }
+        W2K.getEventBus().register(this);
     }
 
     public void addTab(AbstractTab<?> tab)

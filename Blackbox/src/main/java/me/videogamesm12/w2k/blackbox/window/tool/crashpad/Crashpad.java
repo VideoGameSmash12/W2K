@@ -45,6 +45,7 @@ public class Crashpad extends JFrame
         // Finally, we do this
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         setLocation(dim.width/2 - getSize().width/2, dim.height/2 - getSize().height/2);
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         pack();
     }
 }

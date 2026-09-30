@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "id": "w2k-val-26_1_x",
+  "version": "${version}",
+  "name": "Version Abstraction Layer",
+  "description": "Implementation of W2K's Version Abstraction Layer for Minecraft 26.1.x",
+  "authors": [
+    "videogamesm12"
+  ],
+  "contact": {
+    "repo": "https://github.com/videogamesm12/W2K"
+  },
+  "license": "MIT",
+  "icon": "assets/w2k-val-26_1_x/icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "w2k-version-abstraction-layer": [
+      "me.videogamesm12.w2k.val.v26_1_x.VersionAbstractionLayer"
+    ]
+  },
+  "mixins": [
+    "w2k.val.26_1_x.mixins.json",
+    "w2k.val.26_1_x.wrappers.mixins.json"
+  ],
+  "depends": {
+    "minecraft": ["26.1.x"]
+  },
+  "custom": {
+    "modmenu": {
+      "badges": ["library"],
+      "parent": "w2k"
+    }
+  }
+}

@@ -3,10 +3,12 @@ package me.videogamesm12.w2k.kernel;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import lombok.Getter;
+import me.videogamesm12.w2k.kernel.abstraction.BaseVersionAbstractionLayer;
 import me.videogamesm12.w2k.kernel.command.WCommand;
 import me.videogamesm12.w2k.kernel.command.WCommandManager;
 import me.videogamesm12.w2k.kernel.commands.TestCmd;
 import me.videogamesm12.w2k.kernel.commands.W2KCmd;
+import me.videogamesm12.w2k.kernel.communication.WCommunicationManager;
 import me.videogamesm12.w2k.kernel.data.BuildMetadata;
 import me.videogamesm12.w2k.kernel.driver.WDriverManager;
 import me.videogamesm12.w2k.kernel.event.diagnostics.PopulateCrashReportEvent;
@@ -44,10 +46,13 @@ public class W2K implements ModInitializer
         }
     }
 
+    private BaseVersionAbstractionLayer<?> versionAbstractionLayer;
     @Getter
     private WDriverManager driverManager;
     @Getter
     private WCommandManager commandManager;
+    @Getter
+    private WCommunicationManager communicationManager;
     @Getter
     private WModuleManager moduleManager;
 
@@ -56,23 +61,45 @@ public class W2K implements ModInitializer
     {
         instance = this;
 
-        logger.info("Setting up driver manager");
-        driverManager = new WDriverManager();
+        logger.info("Setting up version abstraction layer");
+        installVersionAbstractionLayer();
+
         logger.info("Setting up command manager");
         commandManager = new WCommandManager();
+        logger.info("Setting up communication manager");
+        communicationManager = new WCommunicationManager();
         logger.info("Setting up module manager");
         moduleManager = new WModuleManager();
+        logger.info("Setting up driver manager");
+        driverManager = new WDriverManager();
         logger.info("Kernel successfully initialized");
-
-        logger.info("Loading required drivers");
-        driverManager.loadRequiredDrivers();
-
-        logger.info("Loading optional drivers");
-        driverManager.loadOptionalDrivers();
 
         logger.info("Registering commands");
         commandManager.registerCommand(W2KCmd.class);
         commandManager.registerCommand(TestCmd.class);
+
+        logger.info("Loading drivers");
+        driverManager.loadDrivers();
+        logger.info("Setting up drivers");
+        driverManager.driversByMod().forEach((mod, drivers) ->
+        {
+            drivers.forEach(driver ->
+            {
+                try
+                {
+                    driver.init();
+                }
+                catch (Throwable ex)
+                {
+                    W2K.getLogger().error("Driver {} failed to initialize, skipping", driver.getClass().getName(), ex);
+                    return;
+                }
+
+                driver.commands().forEach(commandManager::registerCommand);
+                driver.modules().forEach(module -> moduleManager.registerModule(mod, module));
+            });
+        });
+        logger.info("Drivers successfully set up");
 
         // Experiment
         if (!ExperimentManager.getEnabledExperiments().isEmpty())
@@ -81,12 +108,31 @@ public class W2K implements ModInitializer
             ExperimentManager.getEnabledExperiments().forEach(experiment -> logger.warn("[!]  - {}", experiment.getIdentifier()));
         }
 
-        logger.info("Initializing modules");
-        moduleManager.registerModules();
+        logger.info("Loading module configuration");
         moduleManager.loadModules();
-        logger.info("Modules successfully initialized");
+        logger.info("Modules successfully configured");
 
         getEventBus().register(this);
+    }
+
+    @SuppressWarnings("unchecked")
+    public <Minecraft> BaseVersionAbstractionLayer<Minecraft> getVersionAbstractionLayer()
+    {
+        if (versionAbstractionLayer == null)
+        {
+            installVersionAbstractionLayer();
+        }
+
+        return (BaseVersionAbstractionLayer<Minecraft>) versionAbstractionLayer;
+    }
+
+    private void installVersionAbstractionLayer()
+    {
+        versionAbstractionLayer = FabricLoader.getInstance().getEntrypoints("w2k-version-abstraction-layer", BaseVersionAbstractionLayer.class).stream()
+                .findAny()
+                .orElseThrow(() -> new IllegalStateException("Unable to find a version abstraction layer compatible with this version of the game"));
+
+        versionAbstractionLayer.setup();
     }
 
     @Subscribe
@@ -98,17 +144,10 @@ public class W2K implements ModInitializer
 
         // Append our loaded drivers
         final StringBuilder driverList = new StringBuilder();
-        driverList.append("Primary Drivers:\n");
-        driverList.append("\tWCommandDriver: ").append(driverManager.getCommandWrapper() != null ?
-                        driverManager.getCommandWrapper().getClass().getName() : "(not loaded)").append("\n");
-        driverList.append("\tWEventPassThruDriver: ").append(driverManager.getEventPassThru() != null ?
-                driverManager.getEventPassThru().getClass().getName() : "(not loaded)").append("\n");
-        driverList.append("\tWVersionBridgeDriver: ").append(driverManager.getVersionBridge() != null ?
-                driverManager.getVersionBridge().getClass().getName() : "(not loaded)").append("\n");
-        if (!driverManager.getOptionalDrivers().isEmpty())
+        if (!driverManager.getDrivers().isEmpty())
         {
-            driverList.append("\nOptional Drivers:\n");
-            driverManager.getOptionalDrivers().forEach((id, instance) ->
+            driverList.append("\nDrivers:\n");
+            driverManager.getDrivers().forEach((id, instance) ->
                     driverList.append("\t").append(instance.getClass().getName()).append(" (")
                             .append("registered under ").append(id).append(")"));
         }

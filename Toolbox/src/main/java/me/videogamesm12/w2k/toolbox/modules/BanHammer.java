@@ -1,8 +1,12 @@
 package me.videogamesm12.w2k.toolbox.modules;
 
-import lombok.Getter;
-import me.videogamesm12.w2k.kernel.data.IEntityEntry;
-import me.videogamesm12.w2k.kernel.data.IItemStackEntry;
+import com.google.common.eventbus.Subscribe;
+import me.videogamesm12.w2k.kernel.abstraction.inventory.ItemStackInterface;
+import me.videogamesm12.w2k.kernel.abstraction.world.ClientPlayerEntityInterface;
+import me.videogamesm12.w2k.kernel.abstraction.world.EntityInterface;
+import me.videogamesm12.w2k.kernel.event.entity.EntityInteractionEvent;
+import me.videogamesm12.w2k.kernel.event.render.EntityGlowCheckEvent;
+import me.videogamesm12.w2k.kernel.event.render.EntityGlowColorEvent;
 import me.videogamesm12.w2k.kernel.module.WModule;
 import me.videogamesm12.w2k.kernel.module.setting.BooleanSetting;
 import me.videogamesm12.w2k.kernel.module.setting.ColorSetting;
@@ -14,14 +18,16 @@ import java.awt.*;
 public class BanHammer extends WModule
 {
     // TODO: Make configurable
-    private final String itemName = "Ban Hammer";
-
     private final StringSetting banCommand = register(new StringSetting("ban_command", "Ban Command", "ban %username%"));
     private final StringSetting banIpCommand = register(new StringSetting("ban_ip_command", "Ban IP Command", "banip %uuid%"));
+    private final StringSetting itemName = register(new StringSetting("item_name", "Item Name", "Ban Hammer"));
     private final StringSetting itemType = register(new StringSetting("item_type", "Item Type",
-            VersionUtils.isNewerThanOrRunning("1.16.5") ? "minecraft:netherite_axe" : "minecraft:diamond_axe"));
+            VersionUtils.isNewerThanOrRunning("1.20.5") ?
+                    "minecraft:mace" :
+                    VersionUtils.isNewerThanOrRunning("1.16") ?
+                            "minecraft:netherite_axe" :
+                            "minecraft:diamond_axe"));
 
-    public final BooleanSetting showOverlay = register(new BooleanSetting("show_overlay", "Show Overlay", true));
     public final BooleanSetting outlineTarget = register(new BooleanSetting("outline_target", "Outline Target", true));
     public final BooleanSetting useCustomHighlightColor = register(new BooleanSetting("use_custom_highlight_color", "Use Custom Highlight Color", true));
     public final ColorSetting highlightColor = register(new ColorSetting("custom_highlight_color", "Custom Highlight Color", new Color(255, 0, 0)));
@@ -29,30 +35,70 @@ public class BanHammer extends WModule
     public BanHammer()
     {
         super("Ban Hammer",
-                "Repurposes an item to act as a literal ban hammer. \nThis should only be used for extreme cases where you need to \nremove a large quantity of bots in a given space. \n\nLeft click to ban regularly, right click to ban IP.");
+                "Repurposes an item to act as a literal ban hammer. \n"
+                        + "This should only be used for extreme cases where you need to \n"
+                        + "remove a large quantity of bots in a given space. \n"
+                        + "\n"
+                        + "Left click to ban regularly, right click to ban IP.");
     }
 
-    public boolean handleClick(final IEntityEntry entity, final IItemStackEntry stack, final boolean hit)
+    @Subscribe
+    public void onEntityHit(EntityInteractionEvent event)
     {
-        if (!isHammerActive(stack)
-                || !entity.w2k$type().equalsIgnoreCase("minecraft:player"))
+        final ClientPlayerEntityInterface clientPlayer = event.getClientPlayerEntity();
+        final EntityInterface target = event.getTarget();
+
+        if (!isEnabled()
+                || !clientPlayer.w2k$isCreative()
+                || !clientPlayer.w2k$getStackInMainHand().filter(this::isHammerActive).isPresent()
+                || !target.w2k$type().equalsIgnoreCase("minecraft:player"))
         {
-            return false;
+            return;
         }
 
-        final String command = (hit ? banCommand.get() : banIpCommand.get())
-                .replaceAll("%uuid%", entity.w2k$uuid().toString())
-                .replaceAll("%username%", entity.w2k$internalName());
-        versionBridge().runCommand(command);
-        return true;
+        final String command = (event.isLeftClick() ? banCommand.get() : banIpCommand.get())
+                .replaceAll("%uuid%", target.w2k$uuid().toString())
+                .replaceAll("%username%", target.w2k$internalName());
+
+        versionAbstractionLayer().networkHandler().ifPresent(handler -> handler.w2k$sendCommand(command));
     }
 
-    public boolean isHammerActive(final IItemStackEntry stack)
+    @Subscribe
+    public void onEntityGlowCheck(EntityGlowCheckEvent event)
+    {
+        if (!isEnabled()
+                || !outlineTarget.get()
+                || !event.getEntity().equals(versionAbstractionLayer().getTargetedEntityUnsafe())
+                || !isHammerActive(versionAbstractionLayer().getLocalPlayerUnsafe().w2k$getStackInMainHandUnsafe()))
+        {
+            return;
+        }
+
+        event.setOutcome(true);
+    }
+
+    @Subscribe
+    public void onEntityGlowColor(EntityGlowColorEvent event)
+    {
+        if (!isEnabled()
+                || !event.getEntity().equals(versionAbstractionLayer().getTargetedEntityUnsafe())
+                || !outlineTarget.get()
+                || !useCustomHighlightColor.get()
+                || !isHammerActive(versionAbstractionLayer().getLocalPlayerUnsafe().w2k$getStackInMainHandUnsafe()))
+        {
+            return;
+        }
+
+        event.addColor(highlightColor.get());
+        event.setCancelled(true);
+    }
+
+    public boolean isHammerActive(final ItemStackInterface stack)
     {
         return stack != null
                 && stack.w2k$isNotEmpty()
                 && stack.w2k$type().equalsIgnoreCase(itemType.get())
                 && stack.w2k$name() != null
-                && stack.w2k$name().toString().contains(itemName);
+                && versionAbstractionLayer().text().jsonToString(stack.w2k$name()).contains(itemName.get());
     }
 }

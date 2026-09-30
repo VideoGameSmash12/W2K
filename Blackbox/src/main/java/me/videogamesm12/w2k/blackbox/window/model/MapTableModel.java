@@ -1,7 +1,7 @@
 package me.videogamesm12.w2k.blackbox.window.model;
 
 import me.videogamesm12.w2k.blackbox.window.general.Dynamic;
-import me.videogamesm12.w2k.kernel.data.IMapEntry;
+import me.videogamesm12.w2k.kernel.abstraction.world.MapStateInterface;
 import me.videogamesm12.w2k.supervisor.Supervisor;
 
 import javax.swing.table.AbstractTableModel;
@@ -12,8 +12,15 @@ import java.util.stream.Collectors;
 
 public class MapTableModel extends AbstractTableModel implements Dynamic
 {
-    private final List<String> columns = Arrays.asList("ID", "Scale", "World");
+    private final List<String> columns;
     private final List<List<Object>> rows = new ArrayList<>();
+
+    public MapTableModel(boolean enhanced)
+    {
+        this.columns = enhanced ?
+                Arrays.asList("ID", "Scale", "World", "Center X", "Center Z", "Locked") :
+                Arrays.asList("ID", "Scale", "World");
+    }
 
     @Override
     public String getColumnName(int column)
@@ -44,7 +51,9 @@ public class MapTableModel extends AbstractTableModel implements Dynamic
     {
         rows.clear();
 
-        rows.addAll(Supervisor.getInstance().getLoadedMaps().stream().map(IMapEntry::w2k$toTableRow).collect(Collectors.toList()));
+        rows.addAll(Supervisor.getInstance().getLoadedMaps().stream()
+                .map(MapStateInterface::w2k$toTableRow)
+                .collect(Collectors.toList()));
 
         fireTableDataChanged();
     }

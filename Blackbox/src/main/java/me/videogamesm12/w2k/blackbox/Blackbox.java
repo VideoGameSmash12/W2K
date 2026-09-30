@@ -3,14 +3,14 @@ package me.videogamesm12.w2k.blackbox;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import lombok.Getter;
-import me.videogamesm12.w2k.blackbox.command.BlackboxCmd;
 import me.videogamesm12.w2k.blackbox.theming.ITheme;
-import me.videogamesm12.w2k.blackbox.window.tool.crashpad.Crashpad;
+import me.videogamesm12.w2k.blackbox.window.tool.crashpad.Bootstrap;
 import me.videogamesm12.w2k.kernel.W2K;
-import me.videogamesm12.w2k.kernel.event.miscellaneous.PanicKeyCombinationEvent;
+import me.videogamesm12.w2k.kernel.event.miscellaneous.KeyPressEvent;
 import me.videogamesm12.w2k.kernel.event.lifecycle.ClientCrashedEvent;
 import me.videogamesm12.w2k.kernel.event.lifecycle.ClientStartedEvent;
 import me.videogamesm12.w2k.kernel.event.lifecycle.ClientStoppedEvent;
+import me.videogamesm12.w2k.kernel.util.KeyboardUtils;
 import me.videogamesm12.w2k.kernel.util.SysUtils;
 import me.videogamesm12.w2k.supervisor.Supervisor;
 import me.videogamesm12.w2k.blackbox.theming.ThemeRegistry;
@@ -21,10 +21,10 @@ import net.fabricmc.loader.api.FabricLoader;
 
 import javax.swing.*;
 import javax.swing.plaf.metal.MetalLookAndFeel;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.io.File;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.nio.file.Paths;
 
 public class Blackbox extends Thread
 {
@@ -48,7 +48,7 @@ public class Blackbox extends Thread
 
     public static File getFolder()
     {
-        return new File(FabricLoader.getInstance().getConfigDir().toFile(), "w2k-blackbox");
+        return new File(W2K.getModFolder(), "blackbox");
     }
 
     @Getter
@@ -95,8 +95,6 @@ public class Blackbox extends Thread
         {
             startup();
         }
-
-        W2K.getInstance().getCommandManager().registerCommand(BlackboxCmd.class);
     }
     
     @Subscribe
@@ -180,30 +178,20 @@ public class Blackbox extends Thread
                 case LINUX:
                 default:
                 {
-                    final Crashpad crashpad = new Crashpad(event.getCrashReportFile());
-                    final AtomicBoolean done = new AtomicBoolean(false);
-                    crashpad.setVisible(true);
-                    crashpad.setIconImage(Blackbox.getInstance().getMainWindow() != null ?
-                            Blackbox.getInstance().getMainWindow().getIconImage() : null);
-
-                    // Awful hacks below
-                    crashpad.addWindowListener(new WindowAdapter()
+                    try
                     {
-                        @Override
-                        public void windowClosed(WindowEvent e)
-                        {
-                            super.windowClosed(e);
-                            done.set(true);
-                        }
-                    });
-                    while (true)
+                        SysUtils.execute(Paths.get(System.getProperty("java.home"), "bin", "java").toString(),
+                                "-cp",
+                                Paths.get(Blackbox.class.getProtectionDomain().getCodeSource().getLocation().toURI()).toString(),
+                                Bootstrap.class.getName(),
+                                event.getCrashReportFile().getAbsolutePath()).waitFor();
+                    }
+                    catch (InterruptedException ignored)
                     {
-                        if (done.get() || !crashpad.isVisible())
-                        {
-                            break;
-                        }
-
-                        continue;
+                    }
+                    catch (IOException | URISyntaxException ex)
+                    {
+                        W2K.getLogger().error("Couldn't launch Crashpad", ex);
                     }
 
                     break;
@@ -215,10 +203,31 @@ public class Blackbox extends Thread
     }
 
     @Subscribe
-    public void onPanicKeyCombination(PanicKeyCombinationEvent event)
+    public void onPanicKeyCombination(KeyPressEvent event)
     {
-        W2K.getLogger().info("Received panic alert with ID {}, opening Blackbox", event.getTimestamp());
-        SwingUtilities.invokeLater(() -> Blackbox.getInstance().openWindow());
+        // Microsoft, in their infinite "wisdom", replaced the context menu key with the stupid Copilot key because they
+        //  were huffling glue trying to shove AI into absolutely everything they could. As such, some keyboards no
+        //  longer have the context menu key, so we have to have a secondary combination as a backup.
+        //
+        // I chose CTRL + Context Menu for the primary combination and CTRL + ALT + Z for the backup combination.
+
+        final Integer controlModifier = KeyboardUtils.getModifier("modifier.control");
+        final Integer altModifier = KeyboardUtils.getModifier("modifier.alt");
+        final Integer menuKey = KeyboardUtils.getKeyId("key.keyboard.menu");
+        final Integer zKey = KeyboardUtils.getKeyId("key.keyboard.z");
+
+        // Don't bother if our keys don't exist
+        if (controlModifier == null || altModifier == null || menuKey == null || zKey == null)
+        {
+            return;
+        }
+
+        // Ctrl + Alt + Z or Ctrl + Menu opens the Blackbox
+        if ((event.getModifiers() == controlModifier + altModifier && event.getKeyCode() == zKey)
+                || event.getModifiers() == controlModifier && event.getKeyCode() == menuKey)
+        {
+            SwingUtilities.invokeLater(() -> Blackbox.getInstance().openWindow());
+        }
     }
 
     private void startup()
