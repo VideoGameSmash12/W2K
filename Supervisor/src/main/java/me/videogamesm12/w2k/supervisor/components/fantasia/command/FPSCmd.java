@@ -22,18 +22,20 @@
 
 package me.videogamesm12.w2k.supervisor.components.fantasia.command;
 
+import me.videogamesm12.w2k.kernel.W2K;
 import me.videogamesm12.w2k.supervisor.components.fantasia.session.CommandSender;
 
 public class FPSCmd extends FCommand
 {
     public FPSCmd()
     {
-        super("fps", "Returns a very basic FPS string.", "fps");
+        super("fps", "Returns an FPS string.", "fps");
     }
 
     @Override
     public boolean run(CommandSender sender, String[] args)
     {
-        throw new UnsupportedOperationException("Needs to be reimplemented");
+        W2K.getInstance().getVersionAbstractionLayer().getClientOverview().forEach(sender::sendMessage);
+        return true;
     }
 }

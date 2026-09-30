@@ -91,8 +91,7 @@ public class Server extends Thread
         registerCommand(ExitCmd.class);
         registerCommand(FPSCmd.class);
         registerCommand(HelpCmd.class);
-        // TODO: Port this command with W2K's new system
-        //registerCommand(ListCmd.class);
+        registerCommand(ListCmd.class);
         registerCommand(RunCmd.class);
         registerCommand(ShutdownCmd.class);
         registerCommand(StacktraceDumpCmd.class);
